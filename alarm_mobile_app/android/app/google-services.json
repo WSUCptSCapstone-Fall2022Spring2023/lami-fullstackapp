@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "547099170398",
+    "project_id": "sl-lami-fullstackapp",
+    "storage_bucket": "sl-lami-fullstackapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547099170398:android:de23c7142de8a41a5b46cf",
+        "android_client_info": {
+          "package_name": "com.example.alarm_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547099170398-dec6cj05qao2gf5tpq8f8kihfegcmcb3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCFUlDP6sg7nsKKWuOpLj9VhX8-pa37pI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547099170398-dec6cj05qao2gf5tpq8f8kihfegcmcb3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
