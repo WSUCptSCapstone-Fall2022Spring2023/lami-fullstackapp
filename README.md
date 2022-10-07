@@ -6,11 +6,11 @@ If any of the sections in this template grows to more than one screen, consider 
 
 Provide a README file with the following information:
 
-# Project Name
+# LAMI Fullstack Application
 
 ## Project summary
 
-### One-sentence description of the project
+This project is an application for the phone and website so residents and caretakers at the LAMI house can track medication taken and how well that medication is working for the residents. 
 
 TODO: A 20-second elevator pitch of your project - its core idea summarized in one sentence.
 
@@ -44,17 +44,6 @@ and showcase your features.
 
 TODO: Describe any known issues, bugs, odd behaviors or code smells. 
 Provide steps to reproduce the problem and/or name a file or a function where the problem lives.
-
-
-## Contributing
-
-TODO: Leave the steps below if you want others to contribute to your project.
-
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
 
 ## Additional Documentation
 
