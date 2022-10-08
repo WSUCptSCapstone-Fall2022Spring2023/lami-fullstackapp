@@ -12,8 +12,7 @@ The application will be able to work on phone and online and be able to seperate
 
 ### Prerequisites
 
-TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
-To get this application to work for the oline application we will be connecting the application to the already existing LAMI house website so no downloading will be needed. However, for the phone insallation it would be best to downlaod the code from the git website and make a shortcut for the code so it can used as an app on the phone. 
+To get this application to work for the online application we will be connecting the application to the already existing LAMI house website so no downloading will be needed. However, for the phone insallation it would be best to downlaod the code from the git website and make a shortcut for the code so it can used as an app on the phone. 
 
 ### Add-ons
 
@@ -35,6 +34,7 @@ The only problem that was stated by the last years team was that you couldnt set
 ## Additional Documentation
 
 * https://github.com/WSUCptSCapstone-Fall2021Spring2022/sl-lami-fullstackapp/blob/main/Sprint%208%20Report.md
+
 This link is for the last years LAMI teams sprint 8 where they talk about how they left the project and what they were able to get done
 
 ## License
