@@ -1,11 +1,3 @@
-Update your `README.md` using the template below. We are specifically interested in the installation instructions (e.g., all the gems, how to load real or seed data, etc.). This sample README was developed for a Rails project, so you can swap the "Gems" section of the "Installation" instructions to include add-ons that are relevant to you.
-
-If any of the sections in this template grows to more than one screen, consider placing it in its own file and linking to it from this file. Those files could live in a subdirectory called `docs`.
-
-**Make sure to check out the repo anew and test your installation instructions.**
-
-Provide a README file with the following information:
-
 # LAMI Fullstack Application
 
 ## Project summary
@@ -48,5 +40,3 @@ This link is for the last years LAMI teams sprint 8 where they talk about how th
 ## License
 
 Something proprietary.
-If you haven't already, add a file called `LICENSE.txt` with the text of the appropriate license.
-We recommend using the MIT license: <https://choosealicense.com/licenses/mit/>
