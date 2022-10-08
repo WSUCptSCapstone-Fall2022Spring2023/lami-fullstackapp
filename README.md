@@ -29,28 +29,24 @@ No add ons.
 
 ### Installation Steps
 
-TODO: Describe the installation process (making sure you mention `bundle install`).
-Instructions need to be such that a user can just copy/paste the commands to get things set up and running. 
-
+No instructiosn for installation yet, will be added as we move ahead to more progressed versions of the project
 
 ## Functionality
 
-TODO: Write usage instructions. Structuring it as a walkthrough can help structure this section,
-and showcase your features.
+So far we just have the same code as the last team that worked on this application, and what they demonstrated was an app that could be set up to have a medication reminder and set up that timer for the medication. This was doen through and in app btton that sent you to another screen that allowed you to input the times of the reminder and the type of medication that was needed. 
 
 
 ## Known Problems
 
-TODO: Describe any known issues, bugs, odd behaviors or code smells. 
-Provide steps to reproduce the problem and/or name a file or a function where the problem lives.
+The only problem that was stated by the last years team was that you couldnt set a timer to remind during sleep hours, however this may end up working in our favor since the client wants to make sure that the timer doesnt go off during the night waking the residents. 
 
 ## Additional Documentation
 
-TODO: Provide links to additional documentation that may exist in the repo, e.g.,
-  * Sprint reports
-  * User links
+* https://github.com/WSUCptSCapstone-Fall2021Spring2022/sl-lami-fullstackapp/blob/main/Sprint%208%20Report.md
+This link is for the last years LAMI teams sprint 8 where they talk about how they left the project and what they were able to get done
 
 ## License
 
+Something proprietary.
 If you haven't already, add a file called `LICENSE.txt` with the text of the appropriate license.
 We recommend using the MIT license: <https://choosealicense.com/licenses/mit/>
