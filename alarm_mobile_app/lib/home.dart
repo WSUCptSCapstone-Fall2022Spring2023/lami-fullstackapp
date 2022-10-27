@@ -43,115 +43,106 @@ class AlarmItem extends StatelessWidget {
 
     // represents a single alarm in the home screen
     return ListTile(
-      title: Column(children: [
-        Row(children: [
+        title: Column(children: [
+      const SizedBox(height: 10),
+      Row(children: [
+        Expanded(
+            child: Text(
+          alarm.nameOfDrug,
+          textScaleFactor: 2.0,
+        )),
+        Expanded(
+            child: Row(children: [
+          // const Text(
+          //   "Enabled: ",
+          //   textScaleFactor: 1.25,
+          // ),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: getColor(), shape: const CircleBorder()),
+              onPressed: () {},
+              child: Text(getText()))
+        ]))
+      ]),
+      const SizedBox(height: 10),
+      Row(
+        children: [
           Expanded(
               child: Text(
-            alarm.nameOfDrug,
-            textScaleFactor: 1.25,
+            " Time:  " + alarm.time.format(context),
+            textScaleFactor: 1.2,
           )),
           Expanded(
-              child: Row(children: [
-            const Text(
-              "Enabled: ",
-              textScaleFactor: 1.25,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: getColor(), shape: const CircleBorder()),
-                onPressed: () {},
-                child: Text(getText()))
-          ]))
-        ]),
-        const Divider(
-          thickness: 3.0,
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: Text(
-              "Time: " + alarm.time.format(context),
-              textScaleFactor: 1.2,
-            )),
-            Expanded(
-                child: Text(
-              "Desc: " + alarm.description,
-              textScaleFactor: 1.2,
-            ))
-          ],
-        )
-      ]),
-      onLongPress: () async {
-        FirebaseFirestore instance = FirebaseFirestore.instance;
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        return showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                  title: const Text(
-                    "Change Alarm",
-                    textScaleFactor: 1,
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          runApp(EditAlarm(alarm: alarm));
-                        },
-                        child: const Text(
-                          "Edit Alarm",
-                          textScaleFactor: 1.2,
-                        )),
-                    TextButton(
-                        child: const Text(
-                          "Delete Alarm",
-                          textScaleFactor: 1.2,
-                        ),
-                        onPressed: () {
-                          // secondary confirmation dialog for deleting an alarm
-                          Navigator.of(context).pop();
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                    title: const Text("Are you sure?"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            await deleteAlarm(
-                                                alarm.id, instance);
-                                            runApp(Home(
-                                                alarms: await getAlarms(
-                                                    prefs.getString("id") ?? '',
-                                                    instance)));
-                                          },
-                                          child: const Text(
-                                            "Yes",
-                                            textScaleFactor: 1.2,
-                                          )),
-                                      TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text(
-                                            "No",
-                                            textScaleFactor: 1.2,
-                                          )),
-                                    ]);
-                              });
-                        })
-                  ]);
-            });
-      },
-    );
+              child: Text(
+            "Desc: " + alarm.description,
+            textScaleFactor: 1.2,
+          ))
+        ],
+      ),
+      Row(
+        children: [
+          TextButton(
+              onPressed: () {
+                runApp(EditAlarm(alarm: alarm));
+              },
+              child: const Text(
+                "Edit Alarm",
+                textScaleFactor: 1.2,
+              )),
+          TextButton(
+              child: const Text(
+                "Delete Alarm",
+                textScaleFactor: 1.2,
+              ),
+              onPressed: () async {
+                FirebaseFirestore instance = FirebaseFirestore.instance;
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                // secondary confirmation dialog for deleting an alarm
+                Navigator.of(context).pop();
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: const Text("Are you sure?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  await deleteAlarm(alarm.id, instance);
+                                  runApp(Home(
+                                      alarms: await getAlarms(
+                                          prefs.getString("id") ?? '',
+                                          instance)));
+                                },
+                                child: const Text(
+                                  "Yes",
+                                  textScaleFactor: 1.2,
+                                )),
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  "No",
+                                  textScaleFactor: 1.2,
+                                )),
+                          ]);
+                    });
+              })
+        ],
+      ),
+      const Divider(
+        thickness: 3.0,
+      ),
+    ]));
   }
 }
 
 class Home extends StatelessWidget {
   const Home({required this.alarms, Key? key}) : super(key: key);
   final List<Alarm> alarms;
+
   @override
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
@@ -197,6 +188,7 @@ class Home extends StatelessWidget {
 class HomeScreen extends StatefulWidget {
   const HomeScreen({required this.alarms, Key? key}) : super(key: key);
   final List<Alarm> alarms;
+
   @override
   HomeScreenState createState() {
     return HomeScreenState();
