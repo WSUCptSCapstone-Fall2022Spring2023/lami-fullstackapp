@@ -159,16 +159,15 @@ class Home extends StatelessWidget {
     const appTitle = "Alliance House Medication Reminder";
     return MaterialApp(
       title: appTitle,
-      darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
-      themeMode: ThemeMode.system,
+      theme: ThemeColors.darkData,
+      themeMode: ThemeMode.dark,
       home: Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
             actions: [
               // settings button
               IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.black),
+                  icon: const Icon(Icons.settings, color: Color.fromRGBO(246, 244, 232, 1)),
                   onPressed: () async {
                     Users user = getCurrentUserLocal(
                         await SharedPreferences.getInstance());
@@ -185,9 +184,8 @@ class Home extends StatelessWidget {
             },
             child: const Icon(
               Icons.add,
-              color: Colors.white,
-            ),
-            backgroundColor: Colors.blue,
+              color: Color.fromRGBO(246, 244, 232, 1),
+            )
           )),
     );
   }

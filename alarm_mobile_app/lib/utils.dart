@@ -15,15 +15,27 @@ import 'package:fluttertoast/fluttertoast.dart';
 abstract class ThemeColors {
   static ThemeData darkData = ThemeData(
       brightness: Brightness.dark,
-      primaryColorDark: const Color.fromARGB(255, 0, 34, 89),
+      primaryColorDark: const Color.fromRGBO(24, 150, 190, 1),
+      scaffoldBackgroundColor: const Color.fromRGBO(7, 42, 64, 1),
       appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Colors.blue));
+          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Color.fromRGBO(24, 183, 190, 1)),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color.fromRGBO(24, 183, 190, 1))
+  );
+
   static ThemeData lightData = ThemeData(
       brightness: Brightness.light,
       primaryColor: Colors.blue,
       appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Colors.blue));
+          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Color.fromRGBO(7, 42, 64, 1)));
 }
+
+class Theme{
+  static Color darkBlue = const Color(0x00072a40);
+  static Color lightBlue = const Color(0x0018b7be);
+  static Color white = const Color(0x00f9f7f0);
+}
+
 
 ///Gets the list of alarms associated with the given userid
 ///@returns the list of alarms if it is found [] if not
