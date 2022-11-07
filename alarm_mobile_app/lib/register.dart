@@ -209,7 +209,7 @@ class RegisterFormState extends State<RegisterForm> {
                           FirebaseFirestore.instance.collection('/users');
                       Map<String, dynamic> data = newuser.toMap();
                       users.doc(newuser.id.toString()).set(data);
-                      runApp(const Home(alarms: []));
+                      runApp(Home(alarms: []));
                     }
                   }
                 },
