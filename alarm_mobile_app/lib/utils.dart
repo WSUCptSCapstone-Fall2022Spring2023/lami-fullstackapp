@@ -99,6 +99,26 @@ TimeOfDay parseTimeOfDayString(String time) {
       minute: int.parse(time.split(":")[1]));
 }
 
+parseDaysOfWeekList(List days){
+}
+
+List<bool> parseDaysOfWeekString(String days){
+  var parseList = days.substring(1, days.length-1).split(', ');
+  var returnList = List.filled(7, true);
+  for (int i = 0; i < 7; i++)
+    {
+      if (parseList[i] == 'true')
+        {
+          returnList[i] = true;
+        }
+      else
+        {
+          returnList[i] = false;
+        }
+    }
+  return returnList;
+}
+
 /// deletes the given alarmid from the users collection and returns true if it exists, false otherwise
 /// @param id: alarm id
 /// @param instance: instance of firebasefirestore

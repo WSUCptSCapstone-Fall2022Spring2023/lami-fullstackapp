@@ -256,7 +256,8 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
                           time: time,
                           nameOfDrug: medicationcontroller.text,
                           description: descriptioncontroller.text,
-                          enabled: enabled);
+                          enabled: enabled,
+                      daysOfWeek: List.filled(7, true));
                       newalarm.repeatduration = Duration(hours: durationvalue);
                       newalarm.repeattimes =
                           int.parse(repeattimescontroller.text);

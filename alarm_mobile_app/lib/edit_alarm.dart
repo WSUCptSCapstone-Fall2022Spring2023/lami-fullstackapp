@@ -61,12 +61,13 @@ class EditAlarmFormState extends State<EditAlarmForm> {
   final descriptionController = TextEditingController();
   late TimeOfDay time = alarm.time;
   late bool enabled = alarm.enabled;
+  late List<bool> repeatDays = alarm.daysOfWeek;
   late Alarm alarm = widget.alarm;
+  // final daysController = TextEditingController();
   final timeController = TextEditingController();
   final repeatTimeController = TextEditingController();
   final repeatDurationController = TextEditingController();
   late int durationValue = 24;
-  final repeatDays = List.filled(7, true);
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +136,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             ]),
             StatefulBuilder(builder: (context, _setState) {
               return Row(children: [
-                Text(getTime(), style: const TextStyle(fontSize: 30.0)),
+                Text(alarm.time.format(context), style: const TextStyle(fontSize: 30.0)),
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () async {
@@ -155,7 +156,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             const HorizontalDivider(thickness: 2),
 
             //// Repeat Days
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Row(children: const [
               Text("Repeat (Days):",
                   style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
@@ -214,7 +215,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             // ),
 
             //// Repeat Hours
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Row(children: const [
               Text(
                 "Repeat (Hours):",
@@ -225,7 +226,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             StatefulBuilder(builder: (context, _setState) {
               return Row(children: [
                 Text(getRepeatDuration(),
-                    style: const TextStyle(fontSize: 17.0)),
+                    style: const TextStyle(fontSize: 25.0)),
                 const Spacer(),
                 ElevatedButton(
                     onPressed: () async {
@@ -292,7 +293,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                           time: time,
                           nameOfDrug: medicationController.text,
                           description: descriptionController.text,
-                          enabled: enabled);
+                          enabled: enabled,
+                          daysOfWeek: repeatDays);
                       newAlarm.repeatduration = Duration(hours: durationValue);
                       newAlarm.repeattimes =
                           int.parse(repeatTimeController.text);
@@ -358,21 +360,12 @@ class EditAlarmFormState extends State<EditAlarmForm> {
 
   getRepeatDuration() {
     if (durationValue == 0) {
-      return "Press Edit to Enable";
+      return "Press Edit to enable";
     } else if (durationValue == 1) {
-      return "Repeat Every Hour";
+      return "Repeat every hour";
     } else {
-      return "Repeat Every " + durationValue.toString() + " Hours";
+      return "Repeat every " + durationValue.toString() + " hours";
     }
-  }
-
-  getTime() {
-    int hour = int.parse(time.toString().substring(10, 12));
-    int minutes = int.parse(time.toString().substring(13, 15));
-    if (hour > 12){
-      return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
-    }
-    return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
   }
 
   showPickerNumber(BuildContext context) {
