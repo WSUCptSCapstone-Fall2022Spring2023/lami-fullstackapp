@@ -17,13 +17,10 @@ import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 
 class EditAlarm extends StatelessWidget {
   final Alarm alarm;
-
   const EditAlarm({Key? key, required this.alarm}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     const appTitle = "Alliance House Medication Reminder";
-
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -42,9 +39,7 @@ class EditAlarm extends StatelessWidget {
 // Create a Form widget.
 class EditAlarmForm extends StatefulWidget {
   final Alarm alarm;
-
   const EditAlarmForm({Key? key, required this.alarm}) : super(key: key);
-
   @override
   EditAlarmFormState createState() {
     return EditAlarmFormState();
@@ -83,15 +78,14 @@ class EditAlarmFormState extends State<EditAlarmForm> {
       durationValue = alarm.repeatduration.inHours;
     }
 
-    // Build a Form widget using the _formKey created above.
+    //// Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: <Widget>[
-            // Add TextFormFields and ElevatedButton here.
-            // Medication name
+            //// Medication name
             TextFormField(
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
@@ -109,53 +103,9 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               },
               controller: medicationController,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
 
-            // input the time for medication
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 20.0),
-            //   child: ElevatedButton(
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: Colors.blue, // button
-            //       foregroundColor: Colors.white, // letter
-            //       fixedSize: const Size(200.0, 60.0),
-            //     ),
-            //     onPressed: () async {
-            //       final TimeOfDay? result = await showTimePicker(
-            //           context: context,
-            //           initialTime: time,
-            //           initialEntryMode: TimePickerEntryMode.input);
-            //       if (result != null) {
-            //         time = result;
-            //       }
-            //     },
-            //     child: const Text(
-            //       'Set Time',
-            //       style: TextStyle(
-            //         fontSize: 20.0,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                hintText: "Enter a time for your alarm.",
-                labelText: 'Time:',
-                labelStyle:
-                    TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter the name of your medication.';
-                }
-                return null;
-              },
-              controller: medicationController,
-            ),
-            const SizedBox(height: 10),
-            // Description for medication
+            //// Medication Description
             TextFormField(
               decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
@@ -173,7 +123,39 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               },
               controller: descriptionController,
             ),
-            const SizedBox(height: 20),
+
+            //// Time
+            const SizedBox(height: 10),
+            Row(children: const [
+              Text(
+                "Time:",
+                style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start,
+              )
+            ]),
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(getTime(), style: const TextStyle(fontSize: 30.0)),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () async {
+                    final TimeOfDay? result = await showTimePicker(
+                        context: context,
+                        initialTime: time,
+                        initialEntryMode: TimePickerEntryMode.input);
+                    if (result != null) {
+                      time = result;
+                      _setState(() => time = result);
+                    }
+                  },
+                  child: const Text('Edit', style: TextStyle(fontSize: 14.0)),
+                )
+              ]);
+            }),
+            const HorizontalDivider(thickness: 2),
+
+            //// Repeat Days
+            const SizedBox(height: 10),
             Row(children: const [
               Text("Repeat (Days):",
                   style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
@@ -193,9 +175,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               },
               values: repeatDays,
             ),
-            const HorizontalDivider(
-              thickness: 2,
-            ),
+            const HorizontalDivider(thickness: 2),
 
             // const SizedBox(height: 10),
             // DropdownButtonFormField<int>(
@@ -233,6 +213,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             //   }).toList(),
             // ),
 
+            //// Repeat Hours
             const SizedBox(height: 20),
             Row(children: const [
               Text(
@@ -245,7 +226,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               return Row(children: [
                 Text(getRepeatDuration(),
                     style: const TextStyle(fontSize: 17.0)),
-                const SizedBox(width: 50),
+                const Spacer(),
                 ElevatedButton(
                     onPressed: () async {
                       List? result = await showPickerNumber(context);
@@ -258,6 +239,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               ]);
             }),
             const HorizontalDivider(thickness: 2),
+
+            //// Alarm On/Off
             Row(children: [
               const Text(
                 "Alarm On/Off: ",
@@ -275,7 +258,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                   activeColor: Colors.blue,
                   activeTrackColor: Colors.lightBlueAccent)
             ]),
-            // Submit
+
+            //// Submit Button
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 30, 0, 5),
               child: ElevatedButton(
@@ -336,6 +320,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                 ),
               ),
             ),
+
+            //// Cancel Button
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
               child: ElevatedButton(
@@ -374,10 +360,19 @@ class EditAlarmFormState extends State<EditAlarmForm> {
     if (durationValue == 0) {
       return "Press Edit to Enable";
     } else if (durationValue == 1) {
-      return "Current: Repeat Every Hour";
+      return "Repeat Every Hour";
     } else {
       return "Repeat Every " + durationValue.toString() + " Hours";
     }
+  }
+
+  getTime() {
+    int hour = int.parse(time.toString().substring(10, 12));
+    int minutes = int.parse(time.toString().substring(13, 15));
+    if (hour > 12){
+      return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
+    }
+    return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
   }
 
   showPickerNumber(BuildContext context) {
@@ -395,3 +390,80 @@ class EditAlarmFormState extends State<EditAlarmForm> {
         }).showDialog(context);
   }
 }
+
+
+
+// input the time for medication
+// const Text(
+//   "Repeat (Hours):",
+//   style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic)
+// ),
+// Row(
+//   children: [
+//     ElevatedButton(
+//     style: ElevatedButton.styleFrom(
+//       backgroundColor: Colors.blue, // button
+//       foregroundColor: Colors.white, // letter
+//       fixedSize: const Size(200.0, 60.0),
+//     ),
+//     onPressed: () async {
+//       final TimeOfDay? result = await showTimePicker(
+//           context: context,
+//           initialTime: time,
+//           initialEntryMode: TimePickerEntryMode.input);
+//       if (result != null) {
+//         time = result;
+//       }
+//     },
+//     child: const Text(
+//       'Set Time',
+//       style: TextStyle(
+//         fontSize: 20.0,
+//       ),
+//     ),
+//   )]
+// ),
+
+// TextFormField(
+//   decoration: const InputDecoration(
+//     border: UnderlineInputBorder(),
+//     hintText: "Enter a time for your alarm.",
+//     labelText: 'Time:',
+//     labelStyle:
+//         TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+//   ),
+//   // The validator receives the text that the user has entered.
+//   validator: (value) {
+//     if (value == null || value.isEmpty) {
+//       return 'Please enter the name of your medication.';
+//     }
+//     return null;
+//   },
+//   controller: medicationController,
+// ),
+
+// ElevatedButton(
+// style: ElevatedButton.styleFrom(
+//   backgroundColor: Colors.blue, // button
+//   foregroundColor: Colors.white, // letter
+//   fixedSize: const Size(200.0, 60.0),
+// ),
+// onPressed: () async {
+//   final TimeOfDay? result = await showTimePicker(
+//       context: context,
+//       initialTime: time,
+//       initialEntryMode: TimePickerEntryMode.input);
+//   if (result != null) {
+//     time = result;
+//   }
+// },
+// child: const Text(
+//   'Set Time',
+//   style: TextStyle(
+//     fontSize: 20.0,
+//   ),
+// ),
+//   )
+
+//// Time
+
