@@ -1,15 +1,20 @@
-# Sprint x Report (8/26/21 - 9/24/2021)
+# Sprint 2 Report (9/24/22 - 11/09/2022)
 
 ## What's New (User Facing)
- * Feature 1 or Bug Fix 1
- * Feature 2 or Bug Fix 2
- * Feature n or Bug Fix n
+ * Color scheme of the application
+ * added the edit/delete buttons
+ * on and off switch for the alarms
+ * added repeat days feature
+ * added a navigation bar at the bottom of with a button for add alarm
+ * changed repat hours from a 4,8,12,24 to a method that allows any hour and minute combination
 
 ## Work Summary (Developer Facing)
-Provide a one paragraph synposis of what your team accomplished this sprint. Don't repeat the "What's New" list of features. Instead, help the instructor understand how you went about the work described there, any barriers you overcame, and any significant learnings for your team.
+
+In this sprint we were able to get a better understanding of the last years teams code and of how flutter works. In this sprint we have been able to add some new UI designes to make the app look more modern and fresh compared to what the last team left the UI as. We also added a edit and delete button that allows the user to do both thos actions without having to hold a button press to do the same thing. We also added a switch that allows the user to turn on and off alarms so that if there is a medicine break for the resident they can just flip the switch so the alarm wont go off but it is still able to be used later.
 
 ## Unfinished Work
-If applicable, explain the work you did not finish in this sprint. For issues/user stories in the current sprint that have not been closed, (a) any progress toward completion of the issues has been clearly tracked (by checking the checkboxes of  acceptance criteria), (b) a comment has been added to the issue to explain why the issue could not be completed (e.g., "we ran out of time" or "we did not anticipate it would be so much work"), and (c) the issue is added to a subsequent sprint, so that it can be addressed later.
+
+In this sprint we have made soem decent progress but there are a few things that we havent been able to finish due to time and other classes. For one, we are trying to have the device scale better when it is flipped horizontal since if flipped right now its scaling is very bad. Also, we havent been able to impliment the notification sound, this is soemthing that has been on the back burner for this sprint but will most likly be tackled for the next sprint. 
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
@@ -47,16 +52,13 @@ Please review the following code files, which were actively developed during thi
  
 ## Retrospective Summary
 Here's what went well:
-  * Item 1
-  * Item 2
-  * Item x
+  * Leanring flutter
+  * Making headway on most of the issues
  
 Here's what we'd like to improve:
-   * Item 1
-   * Item 2
-   * Item x
+   * N/A
   
 Here are changes we plan to implement in the next sprint:
-   * Item 1
-   * Item 2
-   * Item x
+   * scaling so the app can be used horizonatly
+   * Add the notification noise for the alarm
+   * single factor authentication
