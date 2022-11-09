@@ -167,39 +167,39 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               },
               controller: repeattimescontroller,
             ),
-            DropdownButtonFormField<int>(
-              value: durationvalue,
-              icon: const Icon(Icons.arrow_drop_down),
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: "Select repeat duration (hours): ",
-                labelStyle: TextStyle(fontSize: 20),
-              ),
-              onChanged: (int? newvalue) {
-                durationvalue = newvalue ?? 24;
-              },
-              validator: (newvalue) {
-                int duration = newvalue ?? 24;
-                int repeattimes = int.parse(repeattimescontroller.text);
-                if (repeattimes < 1) {
-                  return "Repeat times must be greater than 0";
-                }
-                if (duration * repeattimes > 24) {
-                  return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-                }
-                return null;
-              },
-              // values for list = 4, 8, 12, 24
-              items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
-                return DropdownMenuItem<int>(
-                  value: val,
-                  child: Text(
-                    val.toString(),
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                );
-              }).toList(),
-            ),
+            // DropdownButtonFormField<int>(
+            //   value: durationvalue,
+            //   icon: const Icon(Icons.arrow_drop_down),
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText: "Select repeat duration (hours): ",
+            //     labelStyle: TextStyle(fontSize: 20),
+            //   ),
+            //   onChanged: (int? newvalue) {
+            //     durationvalue = newvalue ?? 24;
+            //   },
+            //   validator: (newvalue) {
+            //     int duration = newvalue ?? 24;
+            //     int repeattimes = int.parse(repeattimescontroller.text);
+            //     if (repeattimes < 1) {
+            //       return "Repeat times must be greater than 0";
+            //     }
+            //     if (duration * repeattimes > 24) {
+            //       return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
+            //     }
+            //     return null;
+            //   },
+            //   // values for list = 4, 8, 12, 24
+            //   items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
+            //     return DropdownMenuItem<int>(
+            //       value: val,
+            //       child: Text(
+            //         val.toString(),
+            //         style: const TextStyle(fontSize: 20),
+            //       ),
+            //     );
+            //   }).toList(),
+            // ),
 
             Row(children: [
               const Text(

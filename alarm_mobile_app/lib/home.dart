@@ -7,6 +7,7 @@
 import 'package:alarm_mobile_app/create_alarm.dart';
 import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';
@@ -22,8 +23,9 @@ class AlarmItem extends StatelessWidget {
     required this.alarm,
   }) : super(key: ObjectKey(alarm));
 
-  final _controller = ValueNotifier<bool>(false);
+  // late bool enabled = alarm.enabled;
   final Alarm alarm;
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +44,12 @@ class AlarmItem extends StatelessWidget {
     //   }
     //   return Colors.red;
     // }
-
+    // var enabled = alarm.enabled;
+    // ValueNotifier<bool> _controller = enabled as ValueNotifier<bool>;
     // represents a single alarm in the home screen
+    late bool enabled = alarm.enabled;
+    ValueNotifier<bool> enabledController = ValueNotifier(enabled);
+    // ValueListenable<bool> enabledListener () { int i = 0; }
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
         title: Column(children: [
@@ -86,7 +92,7 @@ class AlarmItem extends StatelessWidget {
               // )),
               // const SizedBox(width: 70),
               AdvancedSwitch(
-                  controller: _controller,
+                  controller: enabledController,
                   width: 80,
                   activeColor: const Color.fromRGBO(24, 150, 190, 1),
                   inactiveColor: const Color.fromRGBO(7, 42, 64, 1),
@@ -217,7 +223,9 @@ class Home extends StatelessWidget {
                         Icons.add,
                         size: 50,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        runApp(const CreateAlarm());
+                      },
                     )
                   ])),
           // floatingActionButtonLocation:
