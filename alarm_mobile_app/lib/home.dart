@@ -47,8 +47,18 @@ class AlarmItem extends StatelessWidget {
     // var enabled = alarm.enabled;
     // ValueNotifier<bool> _controller = enabled as ValueNotifier<bool>;
     // represents a single alarm in the home screen
-    late bool enabled = alarm.enabled;
-    ValueNotifier<bool> enabledController = ValueNotifier(enabled);
+    ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
+    enabledController.addListener(() {
+      if (enabledController.value == true){
+        alarm.enabled = true;
+      }
+      else
+      {
+        alarm.enabled = false;
+      }
+    });
+
+
     // ValueListenable<bool> enabledListener () { int i = 0; }
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
