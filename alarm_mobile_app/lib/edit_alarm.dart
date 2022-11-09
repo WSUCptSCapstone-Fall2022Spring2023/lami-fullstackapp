@@ -136,7 +136,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
             ]),
             StatefulBuilder(builder: (context, _setState) {
               return Row(children: [
-                Text(alarm.time.format(context), style: const TextStyle(fontSize: 30.0)),
+                Text(getStatefulTime(), style: const TextStyle(fontSize: 30.0)),
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () async {
@@ -177,42 +177,6 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               values: repeatDays,
             ),
             const HorizontalDivider(thickness: 2),
-
-            // const SizedBox(height: 10),
-            // DropdownButtonFormField<int>(
-            //   value: durationValue,
-            //   icon: const Icon(Icons.arrow_drop_down),
-            //   decoration:  InputDecoration(
-            //     border: const UnderlineInputBorder(),
-            //     labelText: "Select repeat duration (hours): " + alarm.repeatduration.inHours.toString(),
-            //     labelStyle:
-            //         const TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
-            //   ),
-            //   onChanged: (int? newValue) {
-            //     durationValue = newValue ?? 24;
-            //   },
-            //   validator: (newValue) {
-            //     int duration = newValue ?? 24;
-            //     int repeatTimes = int.parse(repeatTimeController.text);
-            //     if (repeatTimes < 1) {
-            //       return "Repeat times must be greater than 0";
-            //     }
-            //     if (duration * repeatTimes > 24) {
-            //       return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-            //     }
-            //     return null;
-            //   },
-            //   // values for list = 4, 8, 12, 24
-            //   items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
-            //     return DropdownMenuItem<int>(
-            //       value: val,
-            //       child: Text(
-            //         val.toString(),
-            //         style: const TextStyle(fontSize: 20),
-            //       ),
-            //     );
-            //   }).toList(),
-            // ),
 
             //// Repeat Hours
             const SizedBox(height: 10),
@@ -368,6 +332,15 @@ class EditAlarmFormState extends State<EditAlarmForm> {
     }
   }
 
+  getStatefulTime(){
+    int hour = int.parse(time.toString().substring(10, 12));
+    int minutes = int.parse(time.toString().substring(13, 15));
+    if (hour > 12){
+      return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
+    }
+    return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+  }
+
   showPickerNumber(BuildContext context) {
     Picker(
         adapter: NumberPickerAdapter(data: [
@@ -458,5 +431,41 @@ class EditAlarmFormState extends State<EditAlarmForm> {
 // ),
 //   )
 
-//// Time
+
+// const SizedBox(height: 10),
+// DropdownButtonFormField<int>(
+//   value: durationValue,
+//   icon: const Icon(Icons.arrow_drop_down),
+//   decoration:  InputDecoration(
+//     border: const UnderlineInputBorder(),
+//     labelText: "Select repeat duration (hours): " + alarm.repeatduration.inHours.toString(),
+//     labelStyle:
+//         const TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+//   ),
+//   onChanged: (int? newValue) {
+//     durationValue = newValue ?? 24;
+//   },
+//   validator: (newValue) {
+//     int duration = newValue ?? 24;
+//     int repeatTimes = int.parse(repeatTimeController.text);
+//     if (repeatTimes < 1) {
+//       return "Repeat times must be greater than 0";
+//     }
+//     if (duration * repeatTimes > 24) {
+//       return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
+//     }
+//     return null;
+//   },
+//   // values for list = 4, 8, 12, 24
+//   items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
+//     return DropdownMenuItem<int>(
+//       value: val,
+//       child: Text(
+//         val.toString(),
+//         style: const TextStyle(fontSize: 20),
+//       ),
+//     );
+//   }).toList(),
+// ),
+
 
