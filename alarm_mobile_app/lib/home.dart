@@ -48,13 +48,46 @@ class AlarmItem extends StatelessWidget {
     // ValueNotifier<bool> _controller = enabled as ValueNotifier<bool>;
     // represents a single alarm in the home screen
     ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
-    enabledController.addListener(() {
+    enabledController.addListener(() async {
       if (enabledController.value == true){
         alarm.enabled = true;
       }
       else
       {
         alarm.enabled = false;
+      }
+      SharedPreferences pref =
+      await SharedPreferences.getInstance();
+      FirebaseFirestore inst = FirebaseFirestore.instance;
+      // gets the current user from the local shared preferences
+      Users currentUser = getCurrentUserLocal(pref);
+      CollectionReference users = inst.collection('/users');
+      DocumentSnapshot<Object?> snap =
+      await users.doc(currentUser.id).get();
+      if (snap.exists) {
+        Map<String, dynamic> data =
+        snap.data() as Map<String, dynamic>;
+        String id = alarm.id;
+        // creating a new alarm from the given information
+        Alarm newAlarm = Alarm(
+            id: id,
+            time: alarm.time,
+            nameOfDrug: alarm.nameOfDrug,
+            description: alarm.description,
+            enabled: alarm.enabled);
+        newAlarm.repeatduration = alarm.repeatduration;
+        newAlarm.repeattimes = alarm.repeattimes;
+        // updating the alarm that was changed
+        for (int i = 0;
+        i < (data['alarms'] as List<dynamic>).length;
+        i++) {
+          if (data['alarms'][i]['id'] == newAlarm.id) {
+            data['alarms'][i] = newAlarm.toMap();
+            break;
+          }
+        }
+        // updates the alarm information
+        await users.doc(currentUser.id).update(data);
       }
     });
 
