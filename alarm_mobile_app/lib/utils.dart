@@ -244,3 +244,23 @@ Duration parseStringDuration(String dur) {
   List<String> values = dur.split(":");
   return Duration(hours: int.parse(values[0]));
 }
+
+getRepeatDuration(int durationValue) {
+  if (durationValue == 0) {
+    return "Press Edit to enable";
+  } else if (durationValue == 1) {
+    return "Repeat every hour";
+  } else {
+    return "Repeat every " + durationValue.toString() + " hours";
+  }
+}
+
+getStatefulTime(TimeOfDay time){
+  int hour = int.parse(time.toString().substring(10, 12));
+  int minutes = int.parse(time.toString().substring(13, 15));
+  if (hour > 12){
+    return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
+  }
+  return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+}
+
