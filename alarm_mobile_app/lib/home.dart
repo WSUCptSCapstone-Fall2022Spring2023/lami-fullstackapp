@@ -91,8 +91,6 @@ class AlarmItem extends StatelessWidget {
       }
     });
 
-
-    // ValueListenable<bool> enabledListener () { int i = 0; }
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
         title: Column(children: [
@@ -137,16 +135,16 @@ class AlarmItem extends StatelessWidget {
               AdvancedSwitch(
                   controller: enabledController,
                   width: 80,
-                  activeColor: const Color.fromRGBO(24, 150, 190, 1),
-                  inactiveColor: const Color.fromRGBO(7, 42, 64, 1),
+                  activeColor: ThemeColors.darkData.primaryColorLight,
+                  inactiveColor: ThemeColors.darkData.disabledColor,
                   activeChild: const Text('ON',
                       textScaleFactor: 1.3,
                       style:
                           TextStyle(color: Color.fromRGBO(246, 244, 232, 1))),
-                  inactiveChild: const Text('OFF',
+                  inactiveChild: Text('OFF',
                       textScaleFactor: 1.3,
                       style:
-                          TextStyle(color: Color.fromRGBO(246, 244, 232, 1)))),
+                          TextStyle(color: ThemeColors.darkData.primaryColorDark))),
               const SizedBox(width: 35),
             ],
           ),
@@ -156,6 +154,7 @@ class AlarmItem extends StatelessWidget {
             children: [
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight,
                       minimumSize: const Size(120, 50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
@@ -169,6 +168,7 @@ class AlarmItem extends StatelessWidget {
               const SizedBox(width: 30),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight,
                       minimumSize: const Size(120, 50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
@@ -232,7 +232,7 @@ class Home extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
+      theme: ThemeColors.darkData,
       themeMode: ThemeMode.system,
       home: Scaffold(
           appBar: AppBar(
@@ -252,19 +252,21 @@ class Home extends StatelessWidget {
           ),
           body: HomeScreen(alarms: alarms),
           bottomNavigationBar: BottomAppBar(
-              color: Colors.white,
+              color: ThemeColors.darkData.primaryColorDark,
               child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeColors.darkData.primaryColorLight,
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.add,
                         size: 50,
+                        color: ThemeColors.darkData.primaryColorDark
                       ),
                       onPressed: () {
                         runApp(const CreateAlarm());

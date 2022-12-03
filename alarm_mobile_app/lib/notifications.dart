@@ -11,7 +11,7 @@ void createNotification(Alarm alarm) {
         content: NotificationContent(
             id: int.parse(alarm.id),
             channelKey: "PalouseAlarm",
-            title: "Reminder take: " + alarm.nameOfDrug,
+            title: "Reminder: " + alarm.nameOfDrug,
             body: alarm.description,
             wakeUpScreen: true,
             notificationLayout: NotificationLayout.BigText,
