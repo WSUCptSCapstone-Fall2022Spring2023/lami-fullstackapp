@@ -248,7 +248,7 @@ class LogInFormState extends State<LogInForm> {
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);
                       await writeToSharedPreferences(newuser, pref);
-                      runApp(const Home(alarms: []));
+                      runApp(Home(alarms: []));
                     }
                   } else {
                     //error - user does not exist - display error email/ password is invalid

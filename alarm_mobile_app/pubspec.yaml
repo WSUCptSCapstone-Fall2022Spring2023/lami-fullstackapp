@@ -52,10 +52,15 @@ dependencies:
   # fakers
   mockito: 5.1.0
   firebase_auth_mocks: ^0.8.1
+<<<<<<< HEAD
   fake_cloud_firestore: ^1.1.3 
   weekday_selector: ^1.1.0
   flutter_horizontal_divider: ^1.0.0
 
+=======
+  fake_cloud_firestore: ^1.1.3
+  flutter_advanced_switch: ^3.0.1
+>>>>>>> main_user_alarm_page
 
 
 
@@ -110,3 +115,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+

@@ -15,9 +15,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 abstract class ThemeColors {
   static ThemeData darkData = ThemeData(
       brightness: Brightness.dark,
-      primaryColorDark: const Color.fromARGB(255, 0, 34, 89),
+      primaryColorDark: const Color.fromRGBO(7, 42, 64, 1),
+      primaryColorLight: const Color.fromRGBO(24, 183, 190, 1),
+      scaffoldBackgroundColor: const Color.fromRGBO(7, 42, 64, 1),
+      bottomAppBarColor: const Color.fromRGBO(24, 183, 190, 1),
+      disabledColor: const Color.fromRGBO(246, 244, 232, 1),
       appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Colors.blue));
+          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Color.fromRGBO(24, 183, 190, 1)));
   static ThemeData lightData = ThemeData(
       brightness: Brightness.light,
       primaryColor: Colors.blue,

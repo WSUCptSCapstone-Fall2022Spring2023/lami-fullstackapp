@@ -7,6 +7,7 @@
 import 'package:alarm_mobile_app/create_alarm.dart';
 import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';
@@ -15,143 +16,214 @@ import 'utils.dart';
 import 'notifications.dart';
 import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 
 class AlarmItem extends StatelessWidget {
   AlarmItem({
     required this.alarm,
   }) : super(key: ObjectKey(alarm));
 
+  // late bool enabled = alarm.enabled;
   final Alarm alarm;
+
 
   @override
   Widget build(BuildContext context) {
-    String getText() {
-      if (alarm.enabled) {
-        createNotification(alarm);
-        return "On";
-      }
-      AwesomeNotifications().cancel(int.parse(alarm.id));
-      return "Off";
-    }
+    // String getText() {
+    //   if (alarm.enabled) {
+    //     createNotification(alarm);
+    //     return "On";
+    //   }
+    //   AwesomeNotifications().cancel(int.parse(alarm.id));
+    //   return "Off";
+    // }
 
-    Color getColor() {
-      if (alarm.enabled) {
-        return Colors.lightGreen;
-      }
-      return Colors.red;
-    }
-
+    // Color getColor() {
+    //   if (alarm.enabled) {
+    //     return Colors.lightGreen;
+    //   }
+    //   return Colors.red;
+    // }
+    // var enabled = alarm.enabled;
+    // ValueNotifier<bool> _controller = enabled as ValueNotifier<bool>;
     // represents a single alarm in the home screen
+    ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
+    enabledController.addListener(() async {
+      if (enabledController.value == true){
+        alarm.enabled = true;
+      }
+      else
+      {
+        alarm.enabled = false;
+      }
+      SharedPreferences pref =
+      await SharedPreferences.getInstance();
+      FirebaseFirestore inst = FirebaseFirestore.instance;
+      // gets the current user from the local shared preferences
+      Users currentUser = getCurrentUserLocal(pref);
+      CollectionReference users = inst.collection('/users');
+      DocumentSnapshot<Object?> snap =
+      await users.doc(currentUser.id).get();
+      if (snap.exists) {
+        Map<String, dynamic> data =
+        snap.data() as Map<String, dynamic>;
+        String id = alarm.id;
+        // creating a new alarm from the given information
+        Alarm newAlarm = Alarm(
+            id: id,
+            time: alarm.time,
+            nameOfDrug: alarm.nameOfDrug,
+            description: alarm.description,
+            enabled: alarm.enabled);
+        newAlarm.repeatduration = alarm.repeatduration;
+        newAlarm.repeattimes = alarm.repeattimes;
+        // updating the alarm that was changed
+        for (int i = 0;
+        i < (data['alarms'] as List<dynamic>).length;
+        i++) {
+          if (data['alarms'][i]['id'] == newAlarm.id) {
+            data['alarms'][i] = newAlarm.toMap();
+            break;
+          }
+        }
+        // updates the alarm information
+        await users.doc(currentUser.id).update(data);
+      }
+    });
+
     return ListTile(
-      title: Column(children: [
-        Row(children: [
-          Expanded(
-              child: Text(
-            alarm.nameOfDrug,
-            textScaleFactor: 1.25,
-          )),
-          Expanded(
-              child: Row(children: [
-            const Text(
-              "Enabled: ",
-              textScaleFactor: 1.25,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: getColor(), shape: const CircleBorder()),
-                onPressed: () {},
-                child: Text(getText()))
-          ]))
-        ]),
-        const Divider(
-          thickness: 3.0,
-        ),
-        Row(
-          children: [
+        contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
+        title: Column(children: [
+          const SizedBox(height: 10),
+          Row(children: [
             Expanded(
                 child: Text(
-              "Time: " + alarm.time.format(context),
-              textScaleFactor: 1.2,
-            )),
-            Expanded(
-                child: Text(
-              "Desc: " + alarm.description,
-              textScaleFactor: 1.2,
+              alarm.nameOfDrug,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              textScaleFactor: 1.7,
             ))
-          ],
-        )
-      ]),
-      onLongPress: () async {
-        FirebaseFirestore instance = FirebaseFirestore.instance;
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        return showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                  title: const Text(
-                    "Change Alarm",
-                    textScaleFactor: 1,
+            // Expanded(
+            //     child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.end,
+            //
+            //         children: [
+            //   // const Text(
+            //   //   "Enabled: ",
+            //   //   textScaleFactor: 1.25,
+            //   // ),
+            //   // ElevatedButton(
+            //   //     style: ElevatedButton.styleFrom(
+            //   //         primary: getColor(), shape: const CircleBorder()),
+            //   //     onPressed: () {},
+            //   //     child: Text(getText())),
+            // ])),
+          ]),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text("Time:  " + alarm.time.format(context),
+                    textScaleFactor: 1.2),
+              ),
+              // Expanded(
+              //     child: Text(
+              //   "Desc: " + alarm.description,
+              //   textScaleFactor: 1.2,
+              // )),
+              // const SizedBox(width: 70),
+              AdvancedSwitch(
+                  controller: enabledController,
+                  width: 80,
+                  activeColor: ThemeColors.darkData.primaryColorLight,
+                  inactiveColor: ThemeColors.darkData.disabledColor,
+                  activeChild: const Text('ON',
+                      textScaleFactor: 1.3,
+                      style:
+                          TextStyle(color: Color.fromRGBO(246, 244, 232, 1))),
+                  inactiveChild: Text('OFF',
+                      textScaleFactor: 1.3,
+                      style:
+                          TextStyle(color: ThemeColors.darkData.primaryColorDark))),
+              const SizedBox(width: 35),
+            ],
+          ),
+          const SizedBox(height: 17),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight,
+                      minimumSize: const Size(120, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                  onPressed: () {
+                    runApp(EditAlarm(alarm: alarm));
+                  },
+                  child: const Text(
+                    "Edit",
+                    textScaleFactor: 1.3,
+                  )),
+              const SizedBox(width: 30),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight,
+                      minimumSize: const Size(120, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                  child: const Text(
+                    "Delete",
+                    textScaleFactor: 1.3,
                   ),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          runApp(EditAlarm(alarm: alarm));
-                        },
-                        child: const Text(
-                          "Edit Alarm",
-                          textScaleFactor: 1.2,
-                        )),
-                    TextButton(
-                        child: const Text(
-                          "Delete Alarm",
-                          textScaleFactor: 1.2,
-                        ),
-                        onPressed: () {
-                          // secondary confirmation dialog for deleting an alarm
-                          Navigator.of(context).pop();
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                    title: const Text("Are you sure?"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            await deleteAlarm(
-                                                alarm.id, instance);
-                                            runApp(Home(
-                                                alarms: await getAlarms(
-                                                    prefs.getString("id") ?? '',
-                                                    instance)));
-                                          },
-                                          child: const Text(
-                                            "Yes",
-                                            textScaleFactor: 1.2,
-                                          )),
-                                      TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text(
-                                            "No",
-                                            textScaleFactor: 1.2,
-                                          )),
-                                    ]);
-                              });
-                        })
-                  ]);
-            });
-      },
-    );
+                  onPressed: () async {
+                    FirebaseFirestore instance = FirebaseFirestore.instance;
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    // secondary confirmation dialog for deleting an alarm
+                    Navigator.of(context).pop();
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: const Text("Are you sure?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      await deleteAlarm(alarm.id, instance);
+                                      runApp(Home(
+                                          alarms: await getAlarms(
+                                              prefs.getString("id") ?? '',
+                                              instance)));
+                                    },
+                                    child: const Text(
+                                      "Yes",
+                                      textScaleFactor: 1.2,
+                                    )),
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      "No",
+                                      textScaleFactor: 1.2,
+                                    )),
+                              ]);
+                        });
+                  })
+            ],
+          ),
+        ]));
   }
 }
 
 class Home extends StatelessWidget {
   const Home({required this.alarms, Key? key}) : super(key: key);
   final List<Alarm> alarms;
+
+  @override
   @override
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
@@ -160,7 +232,7 @@ class Home extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
+      theme: ThemeColors.darkData,
       themeMode: ThemeMode.system,
       home: Scaffold(
           appBar: AppBar(
@@ -179,16 +251,42 @@ class Home extends StatelessWidget {
             ],
           ),
           body: HomeScreen(alarms: alarms),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              runApp(const CreateAlarm());
-            },
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            backgroundColor: Colors.blue,
-          )),
+          bottomNavigationBar: BottomAppBar(
+              color: ThemeColors.darkData.primaryColorDark,
+              child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeColors.darkData.primaryColorLight,
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        size: 50,
+                        color: ThemeColors.darkData.primaryColorDark
+                      ),
+                      onPressed: () {
+                        runApp(const CreateAlarm());
+                      },
+                    )
+                  ])),
+          // floatingActionButtonLocation:
+          //     FloatingActionButtonLocation.centerDocked,
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () {
+          //     runApp(const CreateAlarm());
+          //   },
+          //   child: const Icon(
+          //     Icons.add,
+          //     color: Colors.white,
+          //     size: 45,
+          //   ),
+          //   backgroundColor: Colors.blue,
+          // )
+      ),
     );
   }
 }
@@ -197,6 +295,7 @@ class Home extends StatelessWidget {
 class HomeScreen extends StatefulWidget {
   const HomeScreen({required this.alarms, Key? key}) : super(key: key);
   final List<Alarm> alarms;
+
   @override
   HomeScreenState createState() {
     return HomeScreenState();
@@ -214,8 +313,9 @@ class HomeScreenState extends State<HomeScreen> {
           return AlarmItem(alarm: widget.alarms[index]);
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
-              thickness: 4.0,
-              color: Colors.black,
+              thickness: 3.0,
+              indent: 25,
+              endIndent: 25,
             ),
         itemCount: widget.alarms.length);
   }
