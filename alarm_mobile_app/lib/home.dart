@@ -22,30 +22,11 @@ class AlarmItem extends StatelessWidget {
   AlarmItem({
     required this.alarm,
   }) : super(key: ObjectKey(alarm));
-
-  // late bool enabled = alarm.enabled;
   final Alarm alarm;
 
 
   @override
   Widget build(BuildContext context) {
-    // String getText() {
-    //   if (alarm.enabled) {
-    //     createNotification(alarm);
-    //     return "On";
-    //   }
-    //   AwesomeNotifications().cancel(int.parse(alarm.id));
-    //   return "Off";
-    // }
-
-    // Color getColor() {
-    //   if (alarm.enabled) {
-    //     return Colors.lightGreen;
-    //   }
-    //   return Colors.red;
-    // }
-    // var enabled = alarm.enabled;
-    // ValueNotifier<bool> _controller = enabled as ValueNotifier<bool>;
     // represents a single alarm in the home screen
     ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
     enabledController.addListener(() async {
@@ -74,7 +55,8 @@ class AlarmItem extends StatelessWidget {
             time: alarm.time,
             nameOfDrug: alarm.nameOfDrug,
             description: alarm.description,
-            enabled: alarm.enabled);
+            enabled: alarm.enabled,
+            daysOfWeek: [true, true, true, true, true, true, true]);
         newAlarm.repeatduration = alarm.repeatduration;
         newAlarm.repeattimes = alarm.repeattimes;
         // updating the alarm that was changed
@@ -102,21 +84,6 @@ class AlarmItem extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
               textScaleFactor: 1.7,
             ))
-            // Expanded(
-            //     child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.end,
-            //
-            //         children: [
-            //   // const Text(
-            //   //   "Enabled: ",
-            //   //   textScaleFactor: 1.25,
-            //   // ),
-            //   // ElevatedButton(
-            //   //     style: ElevatedButton.styleFrom(
-            //   //         primary: getColor(), shape: const CircleBorder()),
-            //   //     onPressed: () {},
-            //   //     child: Text(getText())),
-            // ])),
           ]),
           const SizedBox(height: 6),
           Row(
@@ -126,12 +93,6 @@ class AlarmItem extends StatelessWidget {
                 child: Text("Time:  " + alarm.time.format(context),
                     textScaleFactor: 1.2),
               ),
-              // Expanded(
-              //     child: Text(
-              //   "Desc: " + alarm.description,
-              //   textScaleFactor: 1.2,
-              // )),
-              // const SizedBox(width: 70),
               AdvancedSwitch(
                   controller: enabledController,
                   width: 80,
@@ -273,19 +234,6 @@ class Home extends StatelessWidget {
                       },
                     )
                   ])),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerDocked,
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: () {
-          //     runApp(const CreateAlarm());
-          //   },
-          //   child: const Icon(
-          //     Icons.add,
-          //     color: Colors.white,
-          //     size: 45,
-          //   ),
-          //   backgroundColor: Colors.blue,
-          // )
       ),
     );
   }
