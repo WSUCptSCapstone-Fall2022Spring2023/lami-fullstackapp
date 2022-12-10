@@ -7,7 +7,6 @@
 import 'package:alarm_mobile_app/create_alarm.dart';
 import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/settings.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';

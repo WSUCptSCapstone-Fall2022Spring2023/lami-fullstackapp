@@ -24,7 +24,7 @@ class EditAlarm extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
+      theme: ThemeColors.darkData,
       themeMode: ThemeMode.system,
       home: Scaffold(
         appBar: AppBar(
@@ -138,6 +138,9 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                 Text(getStatefulTime(), style: const TextStyle(fontSize: 30.0)),
                 const Spacer(),
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(ThemeColors.darkData.primaryColorLight)
+                  ),
                   onPressed: () async {
                     final TimeOfDay? result = await showTimePicker(
                         context: context,
@@ -161,6 +164,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                   style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
             ]),
             WeekdaySelector(
+              selectedFillColor: ThemeColors.darkData.primaryColorLight,
+              disabledFillColor: ThemeColors.darkData.disabledColor,
               onChanged: (int day) {
                 setState(() {
                   // Use module % 7 as Sunday's index in the array is 0 and
@@ -192,6 +197,10 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                     style: const TextStyle(fontSize: 25.0)),
                 const Spacer(),
                 ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight, // button
+                      foregroundColor: Colors.white, // letter
+                    ),
                     onPressed: () async {
                       List? result = await showPickerNumber(context);
                       if (result == null) {
@@ -219,8 +228,8 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                       enabled = value;
                     });
                   },
-                  activeColor: Colors.blue,
-                  activeTrackColor: Colors.lightBlueAccent)
+                  activeColor: ThemeColors.darkData.primaryColorLight,
+                  activeTrackColor: ThemeColors.darkData.primaryColorLight)
             ]),
 
             //// Submit Button
@@ -228,7 +237,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               padding: const EdgeInsets.fromLTRB(0, 30, 0, 5),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // button
+                  backgroundColor: ThemeColors.darkData.primaryColorLight, // button
                   foregroundColor: Colors.white, // letter
                   fixedSize: const Size(200.0, 60.0),
                 ),
@@ -288,7 +297,7 @@ class EditAlarmFormState extends State<EditAlarmForm> {
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange, // button
+                  backgroundColor: ThemeColors.darkData.primaryColorLight, // button
                   foregroundColor: Colors.white, // letter
                   fixedSize: const Size(200.0, 60.0),
                 ),
