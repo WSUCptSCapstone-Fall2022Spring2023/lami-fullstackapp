@@ -11,6 +11,7 @@ class Users {
   final String firstname;
   final String lastname;
   late List<Alarm> alarms;
+  late DateTime dateOfBirth;
   // constructor for the values
   Users({
     required this.id,
@@ -23,7 +24,7 @@ class Users {
   // should be used only for testing purposes
   @override
   String toString() {
-    return 'User{id: $id, email: $email,usertype: $usertype, firstname: $firstname, lastname: $lastname)\nAlarms{$alarms} ';
+    return 'User{id: $id, email: $email, usertype: $usertype, firstname: $firstname, lastname: $lastname, dateOfBirth: $dateOfBirth)\nAlarms{$alarms} ';
   }
 
   // maps the value from the database to the values present in the user class
@@ -34,6 +35,7 @@ class Users {
       'email': email,
       'firstname': firstname,
       'lastname': lastname,
+      'dateOfBirth': dateOfBirth,
       'alarms': alarms,
     };
   }
@@ -48,6 +50,7 @@ class Users {
       lastname: data['lastname'] ?? "unknown lastname",
     );
     temp.alarms = [];
+    temp.dateOfBirth = DateTime.now();
     return temp;
   }
 

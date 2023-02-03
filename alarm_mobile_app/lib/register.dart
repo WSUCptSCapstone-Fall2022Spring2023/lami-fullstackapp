@@ -14,6 +14,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scroll_date_picker/scroll_date_picker.dart';
+
 
 class Register extends StatelessWidget {
   const Register({Key? key}) : super(key: key);
@@ -25,7 +27,7 @@ class Register extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
+      theme: ThemeColors.darkData,
       themeMode: ThemeMode.system,
       home: Scaffold(
         appBar: AppBar(
@@ -60,6 +62,7 @@ class RegisterFormState extends State<RegisterForm> {
   final passwordcontroller = TextEditingController();
   final firstnamecontroller = TextEditingController();
   final lastnamecontroller = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
   late FirebaseAuth auth;
   RegisterFormState() {
     auth = FirebaseAuth.instance;
@@ -73,6 +76,36 @@ class RegisterFormState extends State<RegisterForm> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: <Widget>[
+            TextFormField(
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'First name',
+              ),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your first name.';
+                }
+                return null;
+              },
+
+              controller: firstnamecontroller,
+            ),
+            // Last name
+            TextFormField(
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Last name',
+              ),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your last name.';
+                }
+                return null;
+              },
+              controller: lastnamecontroller,
+            ),
             // Add TextFormFields and ElevatedButton here.
             TextFormField(
               decoration: const InputDecoration(
@@ -92,82 +125,81 @@ class RegisterFormState extends State<RegisterForm> {
               controller: emailcontroller,
               keyboardType: TextInputType.emailAddress,
             ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              "Date of Birth",
+              style: TextStyle(
+                color: ThemeColors.darkData.disabledColor,
+
+                fontSize: 16
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  border: Border.all(color: ThemeColors.darkData.disabledColor)
+              ),
+              child: SizedBox(
+                height: 200,
+                child: ScrollDatePicker(
+                  selectedDate: DateUtils.dateOnly(_selectedDate),
+                  minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
+                  onDateTimeChanged: (DateTime value) {
+                    setState(() {
+                      _selectedDate = value;
+                    });
+                  },
+                ),
+              ),
+            ),
             // password
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Password',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password.';
-                }
-                return null;
-              },
-              controller: passwordcontroller,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            // password confirmation
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Password confirmation',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password again.';
-                }
-                if (value != passwordcontroller.text) {
-                  return 'Passwords must match!';
-                }
-                return null;
-              },
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            // First name
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'First name',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your first name.';
-                }
-                return null;
-              },
-              controller: firstnamecontroller,
-            ),
-            // Last name
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Last name',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your last name.';
-                }
-                return null;
-              },
-              controller: lastnamecontroller,
-            ),
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText: 'Password',
+            //   ),
+            //   // The validator receives the text that the user has entered.
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter your password.';
+            //     }
+            //     return null;
+            //   },
+            //   controller: passwordcontroller,
+            //   obscureText: true,
+            //   enableSuggestions: false,
+            //   autocorrect: false,
+            // ),
+            // // password confirmation
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText: 'Password confirmation',
+            //   ),
+            //   // The validator receives the text that the user has entered.
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter your password again.';
+            //     }
+            //     if (value != passwordcontroller.text) {
+            //       return 'Passwords must match!';
+            //     }
+            //     return null;
+            //   },
+            //   obscureText: true,
+            //   enableSuggestions: false,
+            //   autocorrect: false,
+            // ),
+            // // First name
 
             // Submit
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 80.0),
+              padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.yellow[700], // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,// letter
                   shape: const CircleBorder(),
                   fixedSize: const Size.fromRadius(60),
                 ),
@@ -181,13 +213,13 @@ class RegisterFormState extends State<RegisterForm> {
                     try {
                       user = (await auth.createUserWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: passwordcontroller.text))
+                              password: "placeholderPassword"))
                           .user;
                     } on FirebaseAuthException catch (e) {
-                      if (e.code == 'weak-password') {
-                        Fluttertoast.showToast(
-                            msg: "The password provided is too weak");
-                      } else if (e.code == 'email-already-in-use') {
+                      // if (e.code == 'weak-password') {
+                      //   Fluttertoast.showToast(
+                      //       msg: "The password provided is too weak");
+                      if (e.code == 'email-already-in-use') {
                         Fluttertoast.showToast(
                             msg: "The email provided is already in use");
                       }
@@ -201,7 +233,9 @@ class RegisterFormState extends State<RegisterForm> {
                           id: user.uid.toString(),
                           usertype: "reg",
                           firstname: firstnamecontroller.text,
-                          lastname: lastnamecontroller.text);
+                          lastname: lastnamecontroller.text,
+                      );
+                      newuser.dateOfBirth = _selectedDate;
                       newuser.alarms = [];
                       await writeToSharedPreferences(newuser, pref);
                       // adds the user to the database
