@@ -1,7 +1,7 @@
 # Sprint 4 Report (1/7/23 - 2/2/2023)
 
 ## What's New (User Facing)
- * birthday sign in
+ * birthday sign in (demo video https://drive.google.com/file/d/1IHo1eJo6zLB3WV98_ui8pVcLu9xHfOzt/view?usp=share_link)
  * Reward system started
 
 ## Work Summary (Developer Facing)
