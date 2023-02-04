@@ -62,7 +62,7 @@ class RegisterFormState extends State<RegisterForm> {
   final passwordcontroller = TextEditingController();
   final firstnamecontroller = TextEditingController();
   final lastnamecontroller = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
   late FirebaseAuth auth;
   RegisterFormState() {
     auth = FirebaseAuth.instance;
@@ -146,9 +146,10 @@ class RegisterFormState extends State<RegisterForm> {
                 child: ScrollDatePicker(
                   selectedDate: DateUtils.dateOnly(_selectedDate),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
+                  maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
                   onDateTimeChanged: (DateTime value) {
                     setState(() {
-                      _selectedDate = value;
+                      _selectedDate = DateUtils.dateOnly(value);
                     });
                   },
                 ),
@@ -213,7 +214,7 @@ class RegisterFormState extends State<RegisterForm> {
                     try {
                       user = (await auth.createUserWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: "placeholderPassword"))
+                              password: _selectedDate.toString()))
                           .user;
                     } on FirebaseAuthException catch (e) {
                       // if (e.code == 'weak-password') {
