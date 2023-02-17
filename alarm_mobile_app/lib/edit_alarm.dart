@@ -11,19 +11,20 @@ import 'users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:weekday_selector/weekday_selector.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 
 class EditAlarm extends StatelessWidget {
   final Alarm alarm;
   const EditAlarm({Key? key, required this.alarm}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     const appTitle = "Alliance House Medication Reminder";
-
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
+      theme: ThemeColors.darkData,
       themeMode: ThemeMode.system,
       home: Scaffold(
         appBar: AppBar(
@@ -39,7 +40,6 @@ class EditAlarm extends StatelessWidget {
 class EditAlarmForm extends StatefulWidget {
   final Alarm alarm;
   const EditAlarmForm({Key? key, required this.alarm}) : super(key: key);
-
   @override
   EditAlarmFormState createState() {
     return EditAlarmFormState();
@@ -55,42 +55,45 @@ class EditAlarmFormState extends State<EditAlarmForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   EditAlarmFormState();
+
   final _formKey = GlobalKey<FormState>();
-  final medicationcontroller = TextEditingController();
-  final descriptioncontroller = TextEditingController();
+  final medicationController = TextEditingController();
+  final descriptionController = TextEditingController();
   late TimeOfDay time = alarm.time;
   late bool enabled = alarm.enabled;
+  late List<bool> repeatDays = alarm.daysOfWeek;
   late Alarm alarm = widget.alarm;
-  final timecontroller = TextEditingController();
-  final repeattimescontroller = TextEditingController();
-  final repeatdurationcontroller = TextEditingController();
-  late int durationvalue = 24;
+  // final daysController = TextEditingController();
+  final timeController = TextEditingController();
+  final repeatTimeController = TextEditingController();
+  final repeatDurationController = TextEditingController();
+  late int durationValue = 24;
+
   @override
   Widget build(BuildContext context) {
-    if (medicationcontroller.text == "") {
-      medicationcontroller.text = alarm.nameOfDrug;
-      descriptioncontroller.text = alarm.description;
-      repeattimescontroller.text = alarm.repeattimes.toString();
-      repeatdurationcontroller.text = alarm.repeatduration.inHours.toString();
-      durationvalue = alarm.repeatduration.inHours;
+    if (medicationController.text == "") {
+      medicationController.text = alarm.nameOfDrug;
+      descriptionController.text = alarm.description;
+      repeatTimeController.text = alarm.repeattimes.toString();
+      repeatDurationController.text = alarm.repeatduration.inHours.toString();
+      durationValue = alarm.repeatduration.inHours;
     }
 
-    // Build a Form widget using the _formKey created above.
+    //// Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: <Widget>[
-            // Add TextFormFields and ElevatedButton here.
-
-            // Medication name
+            //// Medication name
             TextFormField(
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
                 hintText: "Enter the name of your medication.",
-                labelText: 'Medication',
-                labelStyle: TextStyle(fontSize: 20),
+                labelText: 'Medication:',
+                labelStyle:
+                    TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
               ),
               // The validator receives the text that the user has entered.
               validator: (value) {
@@ -99,111 +102,121 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                 }
                 return null;
               },
-              controller: medicationcontroller,
+              controller: medicationController,
             ),
+            const SizedBox(height: 5),
 
-            // input the time for medication
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue, // button
-                  onPrimary: Colors.white, // letter
-                  fixedSize: const Size(200.0, 60.0),
-                ),
-                onPressed: () async {
-                  final TimeOfDay? result = await showTimePicker(
-                      context: context,
-                      initialTime: time,
-                      initialEntryMode: TimePickerEntryMode.input);
-                  if (result != null) {
-                    time = result;
-                  }
-                },
-                child: const Text(
-                  'Set Time',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ),
-            ),
-            // Description for medication
+            //// Medication Description
             TextFormField(
               decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Description',
-                  labelStyle: TextStyle(fontSize: 20),
+                  labelText: 'Description:',
+                  labelStyle:
+                      TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
                   hintText:
-                      "Enter the description of your medication (if needed)."),
+                      "If needed, enter a short description for the medication."),
               // The validator receives the text that the user has entered.
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the description for your medicaiton.';
+                  return 'If needed, enter a short description for the medication.';
                 }
                 return null;
               },
-              controller: descriptioncontroller,
+              controller: descriptionController,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Repeat alarm',
-                labelStyle: TextStyle(fontSize: 20),
-                hintText: "Alarm will be repeated an amount of times per day",
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (int.tryParse(value ?? "1") == null) {
-                  return "Enter a valid number";
-                }
-                int duration = durationvalue;
-                int repeattimes = int.parse(value ?? "1");
-                if (repeattimes < 1) return "Value must be greater than 0";
-                if (duration * repeattimes > 24) {
-                  return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-                }
-                return null;
-              },
-              controller: repeattimescontroller,
-            ),
-            DropdownButtonFormField<int>(
-              value: durationvalue,
-              icon: const Icon(Icons.arrow_drop_down),
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: "Select repeat duration (hours): ",
-                labelStyle: TextStyle(fontSize: 20),
-              ),
-              onChanged: (int? newvalue) {
-                durationvalue = newvalue ?? 24;
-              },
-              validator: (newvalue) {
-                int duration = newvalue ?? 24;
-                int repeattimes = int.parse(repeattimescontroller.text);
-                if (repeattimes < 1) {
-                  return "Repeat times must be greater than 0";
-                }
-                if (duration * repeattimes > 24) {
-                  return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-                }
-                return null;
-              },
-              // values for list = 4, 8, 12, 24
-              items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
-                return DropdownMenuItem<int>(
-                  value: val,
-                  child: Text(
-                    val.toString(),
-                    style: const TextStyle(fontSize: 20),
+            //// Time
+            const SizedBox(height: 10),
+            Row(children: const [
+              Text(
+                "Time:",
+                style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start,
+              )
+            ]),
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(getStatefulTime(), style: const TextStyle(fontSize: 30.0)),
+                const Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(ThemeColors.darkData.primaryColorLight)
                   ),
-                );
-              }).toList(),
-            ),
+                  onPressed: () async {
+                    final TimeOfDay? result = await showTimePicker(
+                        context: context,
+                        initialTime: time,
+                        initialEntryMode: TimePickerEntryMode.input);
+                    if (result != null) {
+                      time = result;
+                      _setState(() => time = result);
+                    }
+                  },
+                  child: const Text('Edit', style: TextStyle(fontSize: 14.0)),
+                )
+              ]);
+            }),
+            const HorizontalDivider(thickness: 2),
 
+            //// Repeat Days
+            const SizedBox(height: 5),
+            Row(children: const [
+              Text("Repeat (Days):",
+                  style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
+            ]),
+            WeekdaySelector(
+              selectedFillColor: ThemeColors.darkData.primaryColorLight,
+              disabledFillColor: ThemeColors.darkData.disabledColor,
+              onChanged: (int day) {
+                setState(() {
+                  // Use module % 7 as Sunday's index in the array is 0 and
+                  // DateTime.sunday constant integer value is 7.
+                  final index = day % 7;
+                  // We "flip" the value in this example, but you may also
+                  // perform validation, a DB write, an HTTP call or anything
+                  // else before you actually flip the value,
+                  // it's up to your app's needs.
+                  repeatDays[index] = !repeatDays[index];
+                });
+              },
+              values: repeatDays,
+            ),
+            const HorizontalDivider(thickness: 2),
+
+            //// Repeat Hours
+            const SizedBox(height: 10),
+            Row(children: const [
+              Text(
+                "Repeat (Hours):",
+                style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start,
+              )
+            ]),
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(getRepeatDuration(),
+                    style: const TextStyle(fontSize: 25.0)),
+                const Spacer(),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeColors.darkData.primaryColorLight, // button
+                      foregroundColor: Colors.white, // letter
+                    ),
+                    onPressed: () async {
+                      List? result = await showPickerNumber(context);
+                      if (result == null) {
+                        return;
+                      }
+                      _setState(() => durationValue = result[0]);
+                    },
+                    child: const Text("Edit"))
+              ]);
+            }),
+            const HorizontalDivider(thickness: 2),
+
+            //// Alarm On/Off
             Row(children: [
               const Text(
-                "Enabled?",
+                "Alarm On/Off: ",
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -215,19 +228,17 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                       enabled = value;
                     });
                   },
-                  activeColor: Colors.blue,
-                  activeTrackColor: Colors.lightBlueAccent)
+                  activeColor: ThemeColors.darkData.primaryColorLight,
+                  activeTrackColor: ThemeColors.darkData.primaryColorLight)
             ]),
-            // Submit
+
+            //// Submit Button
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25.0),
+              padding: const EdgeInsets.fromLTRB(0, 30, 0, 5),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red, // button
-                  onPrimary: Colors.white, // letter
-                  // shape: CircleBorder(),
-                  // fixedSize: Size.fromRadius(60),
-                  // fixedSize: Size.fromHeight(50.0)),
+                  backgroundColor: ThemeColors.darkData.primaryColorLight, // button
+                  foregroundColor: Colors.white, // letter
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () async {
@@ -237,35 +248,36 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                         await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     // gets the current user from the local shared preferences
-                    Users currentuser = getCurrentUserLocal(pref);
+                    Users currentUser = getCurrentUserLocal(pref);
                     CollectionReference users = inst.collection('/users');
                     DocumentSnapshot<Object?> snap =
-                        await users.doc(currentuser.id).get();
+                        await users.doc(currentUser.id).get();
                     if (snap.exists) {
                       Map<String, dynamic> data =
                           snap.data() as Map<String, dynamic>;
                       String id = alarm.id;
                       // creating a new alarm from the given information
-                      Alarm newalarm = Alarm(
+                      Alarm newAlarm = Alarm(
                           id: id,
                           time: time,
-                          nameOfDrug: medicationcontroller.text,
-                          description: descriptioncontroller.text,
-                          enabled: enabled);
-                      newalarm.repeatduration = Duration(hours: durationvalue);
-                      newalarm.repeattimes =
-                          int.parse(repeattimescontroller.text);
+                          nameOfDrug: medicationController.text,
+                          description: descriptionController.text,
+                          enabled: enabled,
+                          daysOfWeek: repeatDays);
+                      newAlarm.repeatduration = Duration(hours: durationValue);
+                      newAlarm.repeattimes =
+                          int.parse(repeatTimeController.text);
                       // updating the alarm that was changed
                       for (int i = 0;
                           i < (data['alarms'] as List<dynamic>).length;
                           i++) {
-                        if (data['alarms'][i]['id'] == newalarm.id) {
-                          data['alarms'][i] = newalarm.toMap();
+                        if (data['alarms'][i]['id'] == newAlarm.id) {
+                          data['alarms'][i] = newAlarm.toMap();
                           break;
                         }
                       }
                       // updates the alarm information
-                      await users.doc(currentuser.id).update(data);
+                      await users.doc(currentUser.id).update(data);
                       runApp(
                           Home(alarms: convertMapAlarmsToList(data['alarms'])));
                     }
@@ -279,15 +291,14 @@ class EditAlarmFormState extends State<EditAlarmForm> {
                 ),
               ),
             ),
+
+            //// Cancel Button
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 80.0),
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.orange, // button
-                  onPrimary: Colors.white, // letter
-                  // shape: CircleBorder(),
-                  // fixedSize: Size.fromRadius(60),
-                  // fixedSize: Size.fromHeight(50.0)),
+                  backgroundColor: ThemeColors.darkData.primaryColorLight, // button
+                  foregroundColor: Colors.white, // letter
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () {
@@ -312,4 +323,39 @@ class EditAlarmFormState extends State<EditAlarmForm> {
       ),
     );
   }
+
+  showPickerNumber(BuildContext context) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 23),
+        ]),
+        hideHeader: true,
+        title: const Text("Please Select a Value\n\t(0 to Disable)"),
+        onConfirm: (Picker picker, List value) {
+          // alarm.repeatduration = parseStringDuration(value[0].toString());
+          setState(() {
+            durationValue = value[0] ?? 24;
+          });
+        }).showDialog(context);
+  }
+  getRepeatDuration() {
+    if (durationValue == 0) {
+      return "Press Edit to enable";
+    } else if (durationValue == 1) {
+      return "Repeat every hour";
+    } else {
+      return "Repeat every " + durationValue.toString() + " hours";
+    }
+  }
+
+  getStatefulTime(){
+    int hour = int.parse(time.toString().substring(10, 12));
+    int minutes = int.parse(time.toString().substring(13, 15));
+    if (hour > 12){
+      return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
+    }
+    return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+  }
+
 }
+

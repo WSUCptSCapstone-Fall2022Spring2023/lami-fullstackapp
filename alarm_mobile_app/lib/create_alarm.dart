@@ -13,6 +13,9 @@ import 'users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
 // maximum number used for random id generation (2^32 - 1)
 const int maxID = 2147483647;
@@ -58,18 +61,20 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  final medicationcontroller = TextEditingController();
-  final descriptioncontroller = TextEditingController();
-  final repeattimescontroller = TextEditingController();
+  final medicationController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final repeatTimesController = TextEditingController();
   late TimeOfDay time = TimeOfDay.now();
   late bool enabled = true;
-  late int durationvalue = 24;
+  late int durationValue = 24;
   // will have to change in the future - depends on type used to get time
-  final timecontroller = TextEditingController();
+  final timeController = TextEditingController();
+  late List<bool> repeatDays = List<bool>.filled(7, true);
+
   @override
   Widget build(BuildContext context) {
-    if (repeattimescontroller.text == "") {
-      repeattimescontroller.text = "1";
+    if (repeatTimesController.text == "") {
+      repeatTimesController.text = "1";
     }
     // Build a Form widget using the _formKey created above.
     return Form(
@@ -80,13 +85,14 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
           children: <Widget>[
             // Add TextFormFields and ElevatedButton here.
 
-            // Medication name
+            //// Medication name
             TextFormField(
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
                 hintText: "Enter the name of your medication.",
-                labelText: 'Medication',
-                labelStyle: TextStyle(fontSize: 20),
+                labelText: 'Medication:',
+                labelStyle:
+                TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
               ),
               // The validator receives the text that the user has entered.
               validator: (value) {
@@ -95,111 +101,108 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
                 }
                 return null;
               },
-              controller: medicationcontroller,
+              controller: medicationController,
             ),
+            const SizedBox(height: 5),
 
-            // input the time for medication
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue, // button
-                  onPrimary: Colors.white, // letter
-                  fixedSize: const Size(200.0, 60.0),
-                ),
-                onPressed: () async {
-                  final TimeOfDay? result = await showTimePicker(
-                      context: context,
-                      initialTime: time,
-                      initialEntryMode: TimePickerEntryMode.input);
-                  if (result != null) {
-                    setState(() {
-                      time = result;
-                    });
-                  }
-                },
-                child: const Text(
-                  'Set Time',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ),
-            ),
-            // Description for medication
+            //// Medication Description
             TextFormField(
               decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Description',
-                  labelStyle: TextStyle(fontSize: 20),
+                  labelText: 'Description:',
+                  labelStyle:
+                  TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
                   hintText:
-                      "Enter the description of your medication (if needed)."),
+                  "If needed, enter a short description for the medication."),
               // The validator receives the text that the user has entered.
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the description for your medicaiton.';
+                  return 'If needed, enter a short description for the medication.';
                 }
                 return null;
               },
-              controller: descriptioncontroller,
+              controller: descriptionController,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Repeat alarm',
-                labelStyle: TextStyle(fontSize: 20),
-                hintText: "Alarm will be repeated an amount of times per day",
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (int.tryParse(value ?? "1") == null) {
-                  return "Enter a valid number";
-                }
-                int duration = durationvalue;
-                int repeattimes = int.parse(value ?? "1");
-                if (repeattimes < 1) return "Value must be greater than 0";
-                if (duration * repeattimes > 24) {
-                  return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-                }
-                return null;
-              },
-              controller: repeattimescontroller,
-            ),
-            DropdownButtonFormField<int>(
-              value: durationvalue,
-              icon: const Icon(Icons.arrow_drop_down),
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: "Select repeat duration (hours): ",
-                labelStyle: TextStyle(fontSize: 20),
-              ),
-              onChanged: (int? newvalue) {
+
+            //// Time
+            const SizedBox(height: 10),
+            Row(children: const [
+              Text(
+                "Time:",
+                style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start,
+              )
+            ]),
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(getStatefulTime(), style: const TextStyle(fontSize: 30.0)),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () async {
+                    final TimeOfDay? result = await showTimePicker(
+                        context: context,
+                        initialTime: time,
+                        initialEntryMode: TimePickerEntryMode.input);
+                    if (result != null) {
+                      time = result;
+                      _setState(() => time = result);
+                    }
+                  },
+                  child: const Text('Edit', style: TextStyle(fontSize: 14.0)),
+                )
+              ]);
+            }),
+            const HorizontalDivider(thickness: 2),
+
+            //// Repeat Days
+            const SizedBox(height: 5),
+            Row(children: const [
+              Text("Repeat (Days):",
+                  style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
+            ]),
+            WeekdaySelector(
+              onChanged: (int day) {
                 setState(() {
-                  durationvalue = newvalue ?? 24;
+                  // Use module % 7 as Sunday's index in the array is 0 and
+                  // DateTime.sunday constant integer value is 7.
+                  final index = day % 7;
+                  // We "flip" the value in this example, but you may also
+                  // perform validation, a DB write, an HTTP call or anything
+                  // else before you actually flip the value,
+                  // it's up to your app's needs.
+                  repeatDays[index] = !repeatDays[index];
                 });
               },
-              validator: (newvalue) {
-                int duration = newvalue ?? 24;
-                int repeattimes = int.parse(repeattimescontroller.text);
-                if (repeattimes < 1) {
-                  return "Repeat times must be greater than 0";
-                }
-                if (duration * repeattimes > 24) {
-                  return "Reduce either the repeat times or duration of alarm (cannot total more than 24 hours)";
-                }
-                return null;
-              },
-              // values for list = 4, 8, 12, 24
-              items: <int>[4, 8, 12, 24].map<DropdownMenuItem<int>>((int val) {
-                return DropdownMenuItem<int>(
-                  value: val,
-                  child: Text(
-                    val.toString(),
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                );
-              }).toList(),
+              values: repeatDays,
             ),
+            const HorizontalDivider(thickness: 2),
+
+            //// Repeat Hours
+            const SizedBox(height: 10),
+            Row(children: const [
+              Text(
+                "Repeat (Hours):",
+                style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start,
+              )
+            ]),
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(getRepeatDuration(),
+                    style: const TextStyle(fontSize: 25.0)),
+                const Spacer(),
+                ElevatedButton(
+                    onPressed: () async {
+                      List? result = await showPickerNumber(context);
+                      if (result == null) {
+                        return;
+                      }
+                      _setState(() => durationValue = result[0]);
+                    },
+                    child: const Text("Edit"))
+              ]);
+            }),
+            const HorizontalDivider(thickness: 2),
 
             Row(children: [
               const Text(
@@ -254,12 +257,13 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
                       Alarm newalarm = Alarm(
                           id: id,
                           time: time,
-                          nameOfDrug: medicationcontroller.text,
-                          description: descriptioncontroller.text,
-                          enabled: enabled);
-                      newalarm.repeatduration = Duration(hours: durationvalue);
+                          nameOfDrug: medicationController.text,
+                          description: descriptionController.text,
+                          enabled: enabled,
+                      daysOfWeek: repeatDays);
+                      newalarm.repeatduration = Duration(hours: durationValue);
                       newalarm.repeattimes =
-                          int.parse(repeattimescontroller.text);
+                          int.parse(repeatTimesController.text);
                       data['alarms'].add(newalarm.toMap());
                       // adds a new alarm to the users document as a subcollection
                       await users.doc(currentuser.id).update(data);
@@ -309,4 +313,37 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
       ),
     );
   }
+  showPickerNumber(BuildContext context) {
+    Picker(
+        adapter: NumberPickerAdapter(data: [
+          const NumberPickerColumn(begin: 0, end: 23),
+        ]),
+        hideHeader: true,
+        title: const Text("Please Select a Value\n\t(0 to Disable)"),
+        onConfirm: (Picker picker, List value) {
+          // alarm.repeatduration = parseStringDuration(value[0].toString());
+          setState(() {
+            durationValue = value[0] ?? 24;
+          });
+        }).showDialog(context);
+  }
+  getRepeatDuration() {
+    if (durationValue == 0) {
+      return "Press Edit to enable";
+    } else if (durationValue == 1) {
+      return "Repeat every hour";
+    } else {
+      return "Repeat every " + durationValue.toString() + " hours";
+    }
+  }
+
+  getStatefulTime(){
+    int hour = int.parse(time.toString().substring(10, 12));
+    int minutes = int.parse(time.toString().substring(13, 15));
+    if (hour > 12){
+      return (hour - 12).toString() + ':' +time.toString().substring(13, 15) + " PM";
+    }
+    return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+  }
+
 }

@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
-        theme: ThemeColors.lightData,
+        theme: ThemeColors.darkData,
         themeMode: ThemeMode.system,
         home: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -205,8 +205,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.blue, // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,  // letter
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () async {
@@ -262,8 +261,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.orange, // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () async {
@@ -295,8 +293,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red, // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () async {
