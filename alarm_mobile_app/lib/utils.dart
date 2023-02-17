@@ -15,9 +15,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 abstract class ThemeColors {
   static ThemeData darkData = ThemeData(
       brightness: Brightness.dark,
-      primaryColorDark: const Color.fromARGB(255, 0, 34, 89),
+      primaryColorDark: const Color.fromRGBO(7, 42, 64, 1),
+      primaryColorLight: const Color.fromRGBO(24, 183, 190, 1),
+      scaffoldBackgroundColor: const Color.fromRGBO(7, 42, 64, 1),
+      bottomAppBarColor: const Color.fromRGBO(24, 183, 190, 1),
+      disabledColor: const Color.fromRGBO(246, 244, 232, 1),
       appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Colors.blue));
+          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Color.fromRGBO(24, 183, 190, 1)));
   static ThemeData lightData = ThemeData(
       brightness: Brightness.light,
       primaryColor: Colors.blue,
@@ -97,6 +101,26 @@ TimeOfDay parseTimeOfDayString(String time) {
   return TimeOfDay(
       hour: int.parse(time.split(":")[0]),
       minute: int.parse(time.split(":")[1]));
+}
+
+parseDaysOfWeekList(List days){
+}
+
+List<bool> parseDaysOfWeekString(String days){
+  var parseList = days.substring(1, days.length-1).split(', ');
+  var returnList = List.filled(7, true);
+  for (int i = 0; i < 7; i++)
+    {
+      if (parseList[i] == 'true')
+        {
+          returnList[i] = true;
+        }
+      else
+        {
+          returnList[i] = false;
+        }
+    }
+  return returnList;
 }
 
 /// deletes the given alarmid from the users collection and returns true if it exists, false otherwise
@@ -224,3 +248,5 @@ Duration parseStringDuration(String dur) {
   List<String> values = dur.split(":");
   return Duration(hours: int.parse(values[0]));
 }
+
+

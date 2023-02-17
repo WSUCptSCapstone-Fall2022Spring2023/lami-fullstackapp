@@ -17,6 +17,7 @@ class Alarm {
   // default values for repeating x times per day every x amount of times
   late int repeattimes = 1;
   late Duration repeatduration = const Duration(days: 1);
+  late List<bool> daysOfWeek = List.filled(7, true);
 
   // constructor for the values
   Alarm({
@@ -25,11 +26,12 @@ class Alarm {
     required this.nameOfDrug,
     required this.description,
     required this.enabled,
+    required this.daysOfWeek
   });
 
   @override
   String toString() {
-    return 'Alarm{id: $id, time: $time, nameOfDrug: $nameOfDrug, description: $description, enabled: $enabled)';
+    return 'Alarm{id: $id, time: $time, nameOfDrug: $nameOfDrug, description: $description, enabled: $enabled, daysOfWeek: $daysOfWeek)';
   }
 
   // maps the value from the database to the values present in the alarm class
@@ -42,6 +44,7 @@ class Alarm {
       'enabled': enabled,
       'repeatduration': repeatduration.toString(),
       'repeattimes': repeattimes,
+      'daysOfWeek': daysOfWeek.toString()
     };
   }
 
@@ -55,6 +58,7 @@ class Alarm {
       'enabled': enabled.toString(),
       'repeatduration': repeatduration.toString(),
       'repeattimes': repeattimes.toString(),
+      'daysOfWeek': daysOfWeek.toString()
     };
   }
 
@@ -66,6 +70,7 @@ class Alarm {
       nameOfDrug: data['nameOfDrug'],
       description: data['description'],
       enabled: data['enabled'],
+      daysOfWeek: parseDaysOfWeekString(data['daysOfWeek'])
     );
     if (!data.containsKey('repeatduration')) {
       temp.repeatduration = const Duration(days: 1);
@@ -93,7 +98,9 @@ class Alarm {
         time: parseTimeOfDayString(data['time'] ?? ""),
         nameOfDrug: data['nameOfDrug'] ?? "",
         description: data['description'] ?? "",
-        enabled: val);
+        enabled: val,
+        daysOfWeek: parseDaysOfWeekString(data['daysOfWeek'] ?? "")
+    );
     temp.repeattimes = int.parse(data['repeattimes'] ?? "1");
     temp.repeatduration = parseStringDuration(
         data['repeatduration'] ?? const Duration(days: 1).toString());

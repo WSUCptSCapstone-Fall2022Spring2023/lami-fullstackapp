@@ -33,7 +33,7 @@ class LogIn extends StatelessWidget {
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
-        theme: ThemeColors.lightData,
+        theme: ThemeColors.darkData,
         themeMode: ThemeMode.system,
         home: Builder(builder: (BuildContext context) {
           return Scaffold(
@@ -160,8 +160,7 @@ class LogInFormState extends State<LogInForm> {
               padding: const EdgeInsets.symmetric(vertical: 30.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red, // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight, // button
                 ),
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
@@ -175,8 +174,7 @@ class LogInFormState extends State<LogInForm> {
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.yellow[700], // button
-                  onPrimary: Colors.white, // letter
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,  // button
                 ),
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
@@ -190,6 +188,7 @@ class LogInFormState extends State<LogInForm> {
               padding: const EdgeInsets.symmetric(vertical: 80.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
                   shape: const CircleBorder(),
                   // fixedSize: Size(200, 150,),
                   fixedSize: const Size.fromRadius(50),
@@ -248,7 +247,7 @@ class LogInFormState extends State<LogInForm> {
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);
                       await writeToSharedPreferences(newuser, pref);
-                      runApp(const Home(alarms: []));
+                      runApp(Home(alarms: []));
                     }
                   } else {
                     //error - user does not exist - display error email/ password is invalid

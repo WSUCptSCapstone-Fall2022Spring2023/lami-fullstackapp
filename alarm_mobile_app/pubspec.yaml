@@ -30,6 +30,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_picker:
+    git: https://github.com/yangyxd/flutter_picker.git
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -49,7 +52,10 @@ dependencies:
   # fakers
   mockito: 5.1.0
   firebase_auth_mocks: ^0.8.1
-  fake_cloud_firestore: ^1.1.3 
+  weekday_selector: ^1.1.0
+  flutter_horizontal_divider: ^1.0.0
+  fake_cloud_firestore: ^1.1.3
+  flutter_advanced_switch: ^3.0.1
 
 
 
@@ -104,3 +110,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
