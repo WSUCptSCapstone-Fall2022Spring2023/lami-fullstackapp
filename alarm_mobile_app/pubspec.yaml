@@ -56,6 +56,7 @@ dependencies:
   flutter_horizontal_divider: ^1.0.0
   fake_cloud_firestore: ^1.1.3
   flutter_advanced_switch: ^3.0.1
+  scroll_date_picker: ^3.6.1
 
 
 

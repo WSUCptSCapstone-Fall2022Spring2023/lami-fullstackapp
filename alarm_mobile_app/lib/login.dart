@@ -16,6 +16,7 @@ import 'home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:scroll_date_picker/scroll_date_picker.dart';
 
 class LogIn extends StatelessWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -100,8 +101,9 @@ class LogInFormState extends State<LogInForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
-  final passwordcontroller = TextEditingController();
+  //final passwordcontroller = TextEditingController();
   late FirebaseAuth auth;
+  DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
 
   LogInFormState() {
     auth = FirebaseAuth.instance;
@@ -109,7 +111,7 @@ class LogInFormState extends State<LogInForm> {
   @override
   void dispose() {
     emailcontroller.dispose();
-    passwordcontroller.dispose();
+    //passwordcontroller.dispose();
     super.dispose();
   }
 
@@ -138,23 +140,52 @@ class LogInFormState extends State<LogInForm> {
               controller: emailcontroller,
               keyboardType: TextInputType.emailAddress,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Password',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your password.';
-                }
-                return null;
-              },
-              controller: passwordcontroller,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
+            const SizedBox(
+              height: 30,
             ),
+            Text(
+              "Date of Birth",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black)
+              ),
+              child: SizedBox(
+                height: 200,
+                child: ScrollDatePicker(
+                  selectedDate: DateUtils.dateOnly(_selectedDate),
+                  minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
+                  maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
+                  onDateTimeChanged: (DateTime value) {
+                    setState(() {
+                      _selectedDate = DateUtils.dateOnly(value);
+                    });
+                  },
+                ),
+              ),
+            ),
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText: 'Password',
+            //   ),
+              // The validator receives the text that the user has entered.
+              // validator: (value) {
+              //   if (value == null || value.isEmpty) {
+              //     return 'Please enter your password.';
+              //   }
+              //   return null;
+              // },
+            //   controller: passwordcontroller,
+            //   obscureText: true,
+            //   enableSuggestions: false,
+            //   autocorrect: false,
+            // ),
             // Forgot password?
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -185,7 +216,7 @@ class LogInFormState extends State<LogInForm> {
             ),
             // Submit
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 80.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ThemeColors.darkData.primaryColorLight,
@@ -202,7 +233,7 @@ class LogInFormState extends State<LogInForm> {
                       UserCredential credential =
                           await auth.signInWithEmailAndPassword(
                               email: emailcontroller.text.trim(),
-                              password: passwordcontroller.text);
+                              password: _selectedDate.toString());
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
