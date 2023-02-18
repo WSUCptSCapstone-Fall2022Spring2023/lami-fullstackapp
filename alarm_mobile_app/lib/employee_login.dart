@@ -6,7 +6,7 @@
 
 import 'package:alarm_mobile_app/admin.dart';
 import 'package:alarm_mobile_app/passwordreset.dart';
-import 'package:alarm_mobile_app/employee_login.dart';
+import 'package:alarm_mobile_app/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,15 +19,15 @@ import 'utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
-class LogIn extends StatelessWidget {
-  const LogIn({Key? key}) : super(key: key);
+class EmployeeLogIn extends StatelessWidget {
+  const EmployeeLogIn({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     const appTitle = "Alliance House Medication Reminder";
     // temporary URL - will replace w/ video once that is recorded
     final Uri _url =
-        Uri.parse('https://www.youtube.com/channel/UCwEi93Tw9U6z8u4KKXxJJ1g');
+    Uri.parse('https://www.youtube.com/channel/UCwEi93Tw9U6z8u4KKXxJJ1g');
     void _launchURL() async {
       if (!await launchUrl(_url)) throw 'Could not launch $_url';
     }
@@ -102,9 +102,8 @@ class LogInFormState extends State<LogInForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
-  //final passwordcontroller = TextEditingController();
+  final passwordcontroller = TextEditingController();
   late FirebaseAuth auth;
-  DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
 
   LogInFormState() {
     auth = FirebaseAuth.instance;
@@ -112,7 +111,7 @@ class LogInFormState extends State<LogInForm> {
   @override
   void dispose() {
     emailcontroller.dispose();
-    //passwordcontroller.dispose();
+    passwordcontroller.dispose();
     super.dispose();
   }
 
@@ -144,49 +143,23 @@ class LogInFormState extends State<LogInForm> {
             const SizedBox(
               height: 30,
             ),
-            Text(
-              "Date of Birth",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16
+            TextFormField(
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Password',
               ),
+            // The validator receives the text that the user has entered.
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password.';
+              }
+              return null;
+            },
+              controller: passwordcontroller,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
             ),
-            Container(
-              margin: const EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white)
-              ),
-              child: SizedBox(
-                height: 200,
-                child: ScrollDatePicker(
-                  selectedDate: DateUtils.dateOnly(_selectedDate),
-                  minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
-                  maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
-                  onDateTimeChanged: (DateTime value) {
-                    setState(() {
-                      _selectedDate = DateUtils.dateOnly(value);
-                    });
-                  },
-                ),
-              ),
-            ),
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password',
-            //   ),
-              // The validator receives the text that the user has entered.
-              // validator: (value) {
-              //   if (value == null || value.isEmpty) {
-              //     return 'Please enter your password.';
-              //   }
-              //   return null;
-              // },
-            //   controller: passwordcontroller,
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
             // Forgot password?
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -196,9 +169,9 @@ class LogInFormState extends State<LogInForm> {
                 ),
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
-                  runApp(const EmployeeLogIn());
+                  runApp(const LogIn());
                 },
-                child: const Text('Employee Login'),
+                child: const Text('Resident Login'),
               ),
             ),
             // Sign up
@@ -232,9 +205,9 @@ class LogInFormState extends State<LogInForm> {
                     User? user;
                     try {
                       UserCredential credential =
-                          await auth.signInWithEmailAndPassword(
-                              email: emailcontroller.text.trim(),
-                              password: _selectedDate.toString());
+                      await auth.signInWithEmailAndPassword(
+                          email: emailcontroller.text.trim(),
+                          password: passwordcontroller.toString());
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
@@ -254,7 +227,7 @@ class LogInFormState extends State<LogInForm> {
 
                     // valid user - get user variable from db
                     SharedPreferences pref =
-                        await SharedPreferences.getInstance();
+                    await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     if (user != null) {
                       Users currentuser = await getCurrentUser(user.uid);
