@@ -9,6 +9,7 @@ import 'package:alarm_mobile_app/admin.dart';
 import 'package:alarm_mobile_app/alarm.dart';
 import 'package:alarm_mobile_app/home.dart';
 import 'package:alarm_mobile_app/login.dart';
+import 'package:alarm_mobile_app/medication.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 
 class SettingsPage extends StatelessWidget {
   final Users user;
@@ -234,11 +236,11 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                                 await SharedPreferences.getInstance())
                             .usertype ==
                         'reg') {
-                      getAlarms(FirebaseAuth.instance.currentUser?.uid,
+                      getMedications(FirebaseAuth.instance.currentUser?.uid,
                               FirebaseFirestore.instance)
-                          .then((List<Alarm> value) {
-                        return runApp(Home(
-                          alarms: value,
+                          .then((List<Medication> value) {
+                        return runApp(MedicationPage(
+                          medications: value,
                         ));
                       });
                     } else {
@@ -268,11 +270,11 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                   if (getCurrentUserLocal(await SharedPreferences.getInstance())
                           .usertype ==
                       'reg') {
-                    getAlarms(FirebaseAuth.instance.currentUser?.uid,
+                    getMedications(FirebaseAuth.instance.currentUser?.uid,
                             FirebaseFirestore.instance)
-                        .then((List<Alarm> value) {
-                      return runApp(Home(
-                        alarms: value,
+                        .then((List<Medication> value) {
+                      return runApp(MedicationPage(
+                        medications: value,
                       ));
                     });
                   } else {

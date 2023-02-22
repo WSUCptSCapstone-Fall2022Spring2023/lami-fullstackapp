@@ -12,7 +12,7 @@ class Medication {
   final String id;
   final String nameOfDrug;
   late String description;
-  final RepeatOption repeatOption;
+  late RepeatOption repeatOption;
   late List<bool> daysOfWeek = List.filled(7, true);
   late Duration repeatDuration = const Duration(days: 1);
   // default values for repeating x times per day every x amount of times
@@ -24,9 +24,7 @@ class Medication {
   Medication({
     required this.id,
     required this.nameOfDrug,
-    required this.repeatOption,
     required this.enabled,
-    required this.daysOfWeek
   });
 
   @override
@@ -78,19 +76,37 @@ class Medication {
     Medication temp = Medication(
         id: data['id'],
         nameOfDrug: data['nameOfDrug'],
-        repeatOption: data['repeatOption'],
-        enabled: data['enabled'],
-        daysOfWeek: parseDaysOfWeekString(data['daysOfWeek'])
+        enabled: data['enabled']
     );
+    temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
     if (!data.containsKey('repeatDuration')) {
       temp.repeatDuration = const Duration(days: 1);
-    } else {
+    }
+    else {
       temp.repeatDuration = parseStringDuration(data['repeatDuration']);
     }
     if (!data.containsKey('repeatTimes')) {
       temp.repeatTimes = 1;
     } else {
       temp.repeatTimes = data['repeatTimes'];
+    }
+
+    RepeatOption tempRepeatOption;
+    if (data['repeatOption'] == 'RepeatOption.daily')
+    {
+      tempRepeatOption = RepeatOption.daily;
+    }
+    else if (data['repeatOption'] == 'RepeatOption.daysInterval')
+    {
+      tempRepeatOption = RepeatOption.daysInterval;
+    }
+    else if (data['repeatOption'] == 'RepeatOption.specificDays')
+    {
+      tempRepeatOption = RepeatOption.specificDays;
+    }
+    else
+    {
+      tempRepeatOption = RepeatOption.asNeeded;
     }
     return temp;
   }
@@ -125,13 +141,12 @@ class Medication {
     Medication temp = Medication(
         id: data['id'] ?? "",
         nameOfDrug: data['nameOfDrug'] ?? "",
-        enabled: val,
-        daysOfWeek: parseDaysOfWeekString(data['daysOfWeek'] ?? ""),
-        repeatOption: tempRepeatOption,
+        enabled: val
     );
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
     temp.repeatDuration = parseStringDuration(
         data['repeatDuration'] ?? const Duration(days: 1).toString());
+    temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek'] ?? "");
     return temp;
   }
 }

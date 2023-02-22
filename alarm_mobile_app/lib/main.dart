@@ -4,6 +4,8 @@
 // represents the initialization + starting point of the app - redirects users to the appropriate screen
 
 import 'package:alarm_mobile_app/home.dart';
+import 'medication.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -106,10 +108,10 @@ class _AppState extends State<App> {
               // regular user
               if (u.usertype == 'reg') {
                 // gets all their alarms and goes to the home screen
-                getAlarms(auth.currentUser?.uid, FirebaseFirestore.instance)
-                    .then((List<Alarm> value) {
-                  return runApp(Home(
-                    alarms: value,
+                getMedications(auth.currentUser?.uid, FirebaseFirestore.instance)
+                    .then((List<Medication> value) {
+                  return runApp(MedicationPage(
+                    medications: value,
                   ));
                 }, onError: (e) {
                   Fluttertoast.showToast(

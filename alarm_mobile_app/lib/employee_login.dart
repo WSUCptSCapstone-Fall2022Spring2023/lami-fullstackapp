@@ -18,6 +18,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 
 class EmployeeLogIn extends StatelessWidget {
   const EmployeeLogIn({Key? key}) : super(key: key);
@@ -236,7 +237,7 @@ class LogInFormState extends State<LogInForm> {
                         return runApp(Admin(users: await getAllUsers(inst)));
                       }
                       return runApp(
-                          Home(alarms: await getAlarms(currentuser.id, inst)));
+                          MedicationPage(medications: await getMedications(currentuser.id, inst)));
                       // go to home screen w/ current user
                     } else {
                       //user exists in firebase auth but not in firestore - add to firestore
@@ -247,7 +248,7 @@ class LogInFormState extends State<LogInForm> {
                           usertype: "reg",
                           firstname: '',
                           lastname: '');
-                      newuser.alarms = [];
+                      newuser.medications = [];
                       Map<String, dynamic> data = newuser.toMap();
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);

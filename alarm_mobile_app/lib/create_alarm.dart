@@ -7,6 +7,7 @@
 import 'dart:math';
 import 'package:alarm_mobile_app/alarm.dart';
 import 'package:alarm_mobile_app/home.dart';
+import 'package:alarm_mobile_app/medication.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'users.dart';
@@ -16,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 
 // maximum number used for random id generation (2^32 - 1)
 const int maxID = 2147483647;
@@ -292,11 +294,11 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
                   fixedSize: const Size(200.0, 60.0),
                 ),
                 onPressed: () {
-                  getAlarms(FirebaseAuth.instance.currentUser?.uid,
+                  getMedications(FirebaseAuth.instance.currentUser?.uid,
                           FirebaseFirestore.instance)
-                      .then((List<Alarm> value) {
-                    runApp(Home(
-                      alarms: value,
+                      .then((List<Medication> value) {
+                    runApp(MedicationPage(
+                      medications: value,
                     ));
                   });
                 },

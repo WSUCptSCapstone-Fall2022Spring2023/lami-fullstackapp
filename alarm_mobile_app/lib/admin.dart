@@ -4,6 +4,7 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:alarm_mobile_app/medication.dart';
 import 'package:flutter/material.dart';
 import 'alarm.dart';
 import 'utils.dart';
@@ -11,24 +12,24 @@ import 'users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'settings.dart';
 
-class AlarmItem extends StatelessWidget {
-  AlarmItem({
-    required this.alarm,
-  }) : super(key: ObjectKey(alarm));
+class MedicationItem extends StatelessWidget {
+  MedicationItem({
+    required this.medication,
+  }) : super(key: ObjectKey(medication));
 
-  final Alarm alarm;
+  final Medication medication;
 
   @override
   Widget build(BuildContext context) {
     String getText() {
-      if (alarm.enabled) {
+      if (medication.enabled) {
         return "On";
       }
       return "Off";
     }
 
     Color getColor() {
-      if (alarm.enabled) {
+      if (medication.enabled) {
         return Colors.lightGreen;
       }
       return Colors.red;
@@ -39,7 +40,7 @@ class AlarmItem extends StatelessWidget {
         Row(children: [
           Expanded(
               child: Text(
-            alarm.nameOfDrug,
+                medication.nameOfDrug,
             textScaleFactor: 1.25,
           )),
           Expanded(
@@ -63,12 +64,13 @@ class AlarmItem extends StatelessWidget {
           children: [
             Expanded(
                 child: Text(
-              "Time: " + alarm.time.format(context),
-              textScaleFactor: 1.2,
+              "Time: "
+                  //+ medication.time.format(context),
+              //textScaleFactor: 1.2,
             )),
             Expanded(
                 child: Text(
-              "Desc: " + alarm.description,
+              "Desc: " + medication.description,
               textScaleFactor: 1.2,
             ))
           ],
@@ -98,14 +100,14 @@ class UserItem extends StatelessWidget {
                 child: ListView.separated(
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
-                      return AlarmItem(alarm: users.alarms[index]);
+                      return MedicationItem(medication: users.medications[index]);
                     },
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(
                           thickness: 4.0,
                           color: Colors.black,
                         ),
-                    itemCount: users.alarms.length))
+                    itemCount: users.medications.length))
           ])
         ]);
   }

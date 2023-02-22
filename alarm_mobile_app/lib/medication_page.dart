@@ -48,9 +48,10 @@ class MedicationItem extends StatelessWidget {
         Medication newMedication = Medication(
             id: id,
             nameOfDrug: medication.nameOfDrug,
-            enabled: medication.enabled,
-            daysOfWeek: [true, true, true, true, true, true, true],
-            repeatOption: medication.repeatOption);
+            enabled: medication.enabled
+        );
+        newMedication.daysOfWeek = medication.daysOfWeek;
+        newMedication.repeatOption = medication.repeatOption;
         newMedication.repeatDuration = medication.repeatDuration;
         newMedication.repeatTimes = medication.repeatTimes;
         newMedication.description = medication.description;
@@ -178,8 +179,8 @@ class MedicationItem extends StatelessWidget {
 }
 
 class MedicationPage extends StatelessWidget {
-  const MedicationPage({required this.alarms, Key? key}) : super(key: key);
-  final List<Alarm> alarms;
+  const MedicationPage({required this.medications, Key? key}) : super(key: key);
+  final List<Medication> medications;
 
   @override
   @override
@@ -208,7 +209,7 @@ class MedicationPage extends StatelessWidget {
                 }),
           ],
         ),
-        body: MedicationScreen(medication: alarms),
+        body: MedicationScreen(medications: medications),
         bottomNavigationBar: BottomAppBar(
             color: ThemeColors.darkData.primaryColorDark,
             child: Row(

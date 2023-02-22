@@ -119,7 +119,7 @@ class AlarmItem extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
                   onPressed: () {
-                    runApp(EditAlarm(alarm: alarm));
+                    //runApp(EditAlarm(alarm: alarm));
                   },
                   child: const Text(
                     "Edit",
@@ -153,10 +153,10 @@ class AlarmItem extends StatelessWidget {
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                       await deleteAlarm(alarm.id, instance);
-                                      runApp(Home(
-                                          alarms: await getAlarms(
-                                              prefs.getString("id") ?? '',
-                                              instance)));
+                                      // runApp(Home(
+                                      //     alarms: await getMedications(
+                                      //         prefs.getString("id") ?? '',
+                                      //         instance)));
                                     },
                                     child: const Text(
                                       "Yes",
@@ -202,11 +202,11 @@ class Home extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.settings, color: Colors.black),
                   onPressed: () async {
-                    Users user = getCurrentUserLocal(
-                        await SharedPreferences.getInstance());
-                    user.alarms =
-                        await getAlarms(user.id, FirebaseFirestore.instance);
-                    runApp(SettingsPage(user: user));
+                    // Users user = getCurrentUserLocal(
+                    //     await SharedPreferences.getInstance());
+                    // user.alarms =
+                    //     await getAlarms(user.id, FirebaseFirestore.instance);
+                    // runApp(SettingsPage(user: user));
                   }),
             ],
           ),

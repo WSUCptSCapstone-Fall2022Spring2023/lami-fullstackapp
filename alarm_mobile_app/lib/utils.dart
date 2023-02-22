@@ -53,7 +53,7 @@ Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance)
         data['medications'] = [];
       }
       List<Medication> medications = [];
-      for (var element in data['alarms']) {
+      for (var element in data['medications']) {
         medications.add(Medication.fromMap(element));
       }
       return medications;
@@ -74,6 +74,16 @@ Future<Users> getCurrentUser(String uid) async {
     Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
     return Users.fromMap(data, uid);
   }
+  // FirebaseFirestore.instance
+  //     .collection('users')
+  //     .doc(uid)
+  //     .get()
+  //     .then((DocumentSnapshot documentSnapshot) {
+  //   if (documentSnapshot.exists) {
+  //     Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+  //       return Users.fromMap(data, uid);
+  //   }
+  // });
   throw Exception("ERROR USER DOES NOT EXIST");
 }
 
@@ -204,13 +214,13 @@ Future<List<Users>> getAllUsers(FirebaseFirestore instance) async {
     for (var element in reguserslist) {
       Map<String, dynamic> user = element.data() as Map<String, dynamic>;
       Users temp = Users.fromMap(user, user["id"]);
-      List<Alarm> alarms = [];
+      List<Medication> alarms = [];
       if (!user.containsKey('alarms')) {
         // initializing the alarm collection if it does not exist
         user['alarms'] = [];
       }
       for (var element in user['alarms']) {
-        alarms.add(Alarm.fromMap(element));
+        alarms.add(Medication.fromMap(element));
       }
       temp.medications = alarms;
       allusers.add(temp);

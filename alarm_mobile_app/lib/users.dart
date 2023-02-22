@@ -51,7 +51,7 @@ class Users {
       firstname: data['firstname'] ?? "unknown firstname",
       lastname: data['lastname'] ?? "unknown lastname",
     );
-    temp.medications = [];
+    temp.medications = [Medication(id: id, nameOfDrug: "name Of Drug", enabled: true)];
     temp.dateOfBirth = DateTime.now();
     return temp;
   }
