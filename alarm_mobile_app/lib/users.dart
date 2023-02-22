@@ -53,7 +53,7 @@ class Users {
       lastname: data['lastname'] ?? "unknown lastname",
     );
     temp.medications = medicationListFromMap(data['medications']);
-    temp.dateOfBirth = DateTime.fromMillisecondsSinceEpoch(data['dateOfBirth'] * 1000);
+    temp.dateOfBirth = DateTime.fromMillisecondsSinceEpoch(data['dateOfBirth'].seconds * 1000);
     return temp;
   }
 
