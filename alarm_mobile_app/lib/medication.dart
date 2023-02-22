@@ -18,7 +18,7 @@ class Medication {
   // default values for repeating x times per day every x amount of times
   late int repeatTimes = 1;
   late List<TimeOfDay> time;
-  final bool enabled;
+  late bool enabled;
 
   // constructor for the values
   Medication({

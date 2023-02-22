@@ -9,6 +9,15 @@ import 'users.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'medication.dart';
+
+
+enum RepeatOption {
+  asNeeded,
+  daily,
+  specificDays,
+  daysInterval
+}
 
 // represents the theming info for light, dark, high-contrast, and dark high-contrast themes
 // should never be instantiated
@@ -33,21 +42,21 @@ abstract class ThemeColors {
 ///@returns the list of alarms if it is found [] if not
 ///This function is async and returns a future to allow for non-asynchrous functions to use this method
 ///Throws an exception if the user was not found or the userid is null
-Future<List<Alarm>> getAlarms(String? uid, FirebaseFirestore instance) async {
+Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance) async {
   if (uid != null) {
     CollectionReference users = FirebaseFirestore.instance.collection('/users');
     DocumentSnapshot<Object?> snap = await users.doc(uid).get();
     if (snap.exists) {
       Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-      if (!data.containsKey('alarms')) {
+      if (!data.containsKey('medications')) {
         // initializing the alarm collection if it does not exist
-        data['alarms'] = [];
+        data['medications'] = [];
       }
-      List<Alarm> alarms = [];
+      List<Medication> medications = [];
       for (var element in data['alarms']) {
-        alarms.add(Alarm.fromMap(element));
+        medications.add(Medication.fromMap(element));
       }
-      return alarms;
+      return medications;
     }
   }
   throw Exception("User does not exist in the database!");
@@ -203,7 +212,7 @@ Future<List<Users>> getAllUsers(FirebaseFirestore instance) async {
       for (var element in user['alarms']) {
         alarms.add(Alarm.fromMap(element));
       }
-      temp.alarms = alarms;
+      temp.medications = alarms;
       allusers.add(temp);
     }
     // ignore: control_flow_in_finally
