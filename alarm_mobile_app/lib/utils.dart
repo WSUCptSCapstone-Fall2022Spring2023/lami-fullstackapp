@@ -70,20 +70,11 @@ Future<Users> getCurrentUser(String uid) async {
   FirebaseFirestore inst = FirebaseFirestore.instance;
   CollectionReference users = inst.collection('users');
   DocumentSnapshot<Object?> snap = await users.doc(uid).get();
+
   if (snap.exists) {
     Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
     return Users.fromMap(data, uid);
   }
-  // FirebaseFirestore.instance
-  //     .collection('users')
-  //     .doc(uid)
-  //     .get()
-  //     .then((DocumentSnapshot documentSnapshot) {
-  //   if (documentSnapshot.exists) {
-  //     Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-  //       return Users.fromMap(data, uid);
-  //   }
-  // });
   throw Exception("ERROR USER DOES NOT EXIST");
 }
 
@@ -116,13 +107,10 @@ Future<void> writeToSharedPreferences(
 ///@param time must be in format TimeOfDay(hr:min)
 ///@return returns a timeofday object
 TimeOfDay parseTimeOfDayString(String time) {
-  time = time.substring(time.indexOf("(") + 1, time.length - 1);
+  time = time.substring(time.indexOf("(") + 1, time.indexOf(")") - 1);
   return TimeOfDay(
       hour: int.parse(time.split(":")[0]),
       minute: int.parse(time.split(":")[1]));
-}
-
-parseDaysOfWeekList(List days){
 }
 
 List<bool> parseDaysOfWeekString(String days){
@@ -171,11 +159,11 @@ Future<bool> deleteAlarm(String id, FirebaseFirestore instance) async {
 /// converts the list of Map<String,dynamic> alarms to a List<Alarm> - used due to how firestore data is stored
 /// @param alarms: List<String,dynamic> with all the alarms
 /// @return returns the converted List with the Alarm type
-List<Alarm> convertMapAlarmsToList(List<dynamic> alarms) {
-  List<Alarm> temp = [];
-  for (var v in alarms) {
-    Map<String, dynamic> tempval = v as Map<String, dynamic>;
-    temp.add(Alarm.fromMap(tempval));
+List<Medication> convertMapMedicationsToList(List<dynamic> medications) {
+  List<Medication> temp = [];
+  for (var v in medications) {
+    Map<String, dynamic> tempMedication = v as Map<String, dynamic>;
+    temp.add(Medication.fromMap(tempMedication));
   }
   return temp;
 }
@@ -268,4 +256,61 @@ Duration parseStringDuration(String dur) {
   return Duration(hours: int.parse(values[0]));
 }
 
+
+RepeatOption stringToRepeatOption(String? data)
+{
+  RepeatOption tempRepeatOption;
+  if (data == RepeatOption.daily.toString())
+  {
+    tempRepeatOption = RepeatOption.daily;
+  }
+  else if (data == RepeatOption.daysInterval.toString())
+  {
+    tempRepeatOption = RepeatOption.daysInterval;
+  }
+  else if (data == RepeatOption.specificDays.toString())
+  {
+    tempRepeatOption = RepeatOption.specificDays;
+  }
+  else
+  {
+    tempRepeatOption = RepeatOption.asNeeded;
+  }
+  return tempRepeatOption;
+}
+
+List<Medication> medicationListFromMap(List<dynamic> data)
+{
+  List<Medication> medications = [];
+  Medication tempMedication;
+  for (int i = 0; i < data.length; i++)
+  {
+    Medication tempMedication = Medication(id: data[i]["id"], nameOfDrug: data[i]["nameOfDrug"]);
+    tempMedication.description = data[i]["description"];
+    tempMedication.repeatOption = stringToRepeatOption(data[i]["repeatOption"]);
+    tempMedication.daysOfWeek = parseDaysOfWeekString(data[i]["daysOfWeek"]);
+    tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
+    tempMedication.repeatTimes = data[i]["repeatTimes"];
+
+    tempMedication.time = timeOfDayStringsToList(data[i]["time"]);
+    tempMedication.enabled = data[i]["enabled"];
+    medications.add(tempMedication);
+  }
+  return medications;
+}
+
+List<TimeOfDay> timeOfDayStringsToList(String? data)
+{
+  List<TimeOfDay> list = [];
+  if (data == null)
+  {
+    return list;
+  }
+  var timeStrings = data.split(',');
+  for (int i = 0; i < timeStrings.length; i++)
+  {
+    list.add(parseTimeOfDayString(timeStrings[i]));
+  }
+  return list;
+}
 

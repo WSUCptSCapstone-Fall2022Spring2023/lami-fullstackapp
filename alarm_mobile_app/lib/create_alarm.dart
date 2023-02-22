@@ -242,35 +242,36 @@ class CreateAlarmFormState extends State<CreateAlarmForm> {
                         await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     // gets the current user from the local shared preferences
-                    Users currentuser = getCurrentUserLocal(pref);
+                    Users currentUser = getCurrentUserLocal(pref);
                     CollectionReference users = inst.collection('/users');
                     DocumentSnapshot<Object?> snap =
-                        await users.doc(currentuser.id).get();
+                        await users.doc(currentUser.id).get();
                     if (snap.exists) {
                       Map<String, dynamic> data =
                           snap.data() as Map<String, dynamic>;
-                      if (!data.containsKey('alarms')) {
+                      if (!data.containsKey('medications')) {
                         // initializing the alarm collection if it does not exist
-                        data['alarms'] = [];
+                        data['medications'] = [];
                       }
                       // id is randomly generated - have to do it this way due to being able to delete alarms
                       String id = Random().nextInt(maxID).toString();
                       // creating a new alarm from the given information
-                      Alarm newalarm = Alarm(
+                      Medication newMedication = Medication(
                           id: id,
-                          time: time,
                           nameOfDrug: medicationController.text,
-                          description: descriptionController.text,
-                          enabled: enabled,
-                      daysOfWeek: repeatDays);
-                      newalarm.repeatduration = Duration(hours: durationValue);
-                      newalarm.repeattimes =
-                          int.parse(repeatTimesController.text);
-                      data['alarms'].add(newalarm.toMap());
+                      );
+                      newMedication.enabled = enabled;
+                      newMedication.time = [time];
+                      newMedication.description = descriptionController.text;
+                      newMedication.daysOfWeek = repeatDays;
+                      newMedication.repeatOption = RepeatOption.daily;
+                      newMedication.repeatDuration = Duration(hours: durationValue);
+                      newMedication.repeatTimes = int.parse(repeatTimesController.text);
+                      data['medications'].add(newMedication.toMap());
                       // adds a new alarm to the users document as a subcollection
-                      await users.doc(currentuser.id).update(data);
+                      await users.doc(currentUser.id).update(data);
                       runApp(
-                          Home(alarms: convertMapAlarmsToList(data['alarms'])));
+                          MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
                     }
                   }
                 },

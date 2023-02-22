@@ -32,8 +32,7 @@ class MedicationItem extends StatelessWidget {
       else {
         medication.enabled = false;
       }
-      SharedPreferences pref =
-      await SharedPreferences.getInstance();
+      SharedPreferences pref = await SharedPreferences.getInstance();
       FirebaseFirestore inst = FirebaseFirestore.instance;
       // gets the current user from the local shared preferences
       Users currentUser = getCurrentUserLocal(pref);
@@ -48,8 +47,9 @@ class MedicationItem extends StatelessWidget {
         Medication newMedication = Medication(
             id: id,
             nameOfDrug: medication.nameOfDrug,
-            enabled: medication.enabled
+
         );
+        newMedication.enabled = medication.enabled;
         newMedication.daysOfWeek = medication.daysOfWeek;
         newMedication.repeatOption = medication.repeatOption;
         newMedication.repeatDuration = medication.repeatDuration;

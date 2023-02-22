@@ -214,7 +214,7 @@ class RegisterFormState extends State<RegisterForm> {
                     try {
                       user = (await auth.createUserWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: _selectedDate.toString()))
+                              password: "1Resident&Account9LAMI*"))
                           .user;
                     } on FirebaseAuthException catch (e) {
                       // if (e.code == 'weak-password') {

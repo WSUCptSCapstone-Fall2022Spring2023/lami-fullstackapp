@@ -24,7 +24,6 @@ class Medication {
   Medication({
     required this.id,
     required this.nameOfDrug,
-    required this.enabled,
   });
 
   @override
@@ -47,7 +46,7 @@ class Medication {
       'id': id,
       'nameOfDrug': nameOfDrug,
       'description': description,
-      'repeatOption': repeatOption,
+      'repeatOption': repeatOption.toString(),
       'daysOfWeek': daysOfWeek.toString(),
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
@@ -75,9 +74,9 @@ class Medication {
   static Medication fromMap(Map<String, dynamic> data) {
     Medication temp = Medication(
         id: data['id'],
-        nameOfDrug: data['nameOfDrug'],
-        enabled: data['enabled']
+        nameOfDrug: data['nameOfDrug']
     );
+    temp.enabled = data["enabled"];
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
     if (!data.containsKey('repeatDuration')) {
       temp.repeatDuration = const Duration(days: 1);
@@ -113,40 +112,27 @@ class Medication {
 
   // same function as above just different types
   static Medication fromStringMap(Map<String, String> data) {
-    bool val;
-    if (data['enabled'] == 'true') {
-      val = true;
-    } else {
-      val = false;
-    }
-
-    RepeatOption tempRepeatOption;
-    if (data['repeatOption'] == 'RepeatOption.daily')
-    {
-      tempRepeatOption = RepeatOption.daily;
-    }
-    else if (data['repeatOption'] == 'RepeatOption.daysInterval')
-    {
-      tempRepeatOption = RepeatOption.daysInterval;
-    }
-    else if (data['repeatOption'] == 'RepeatOption.specificDays')
-    {
-      tempRepeatOption = RepeatOption.specificDays;
-    }
-    else
-    {
-      tempRepeatOption = RepeatOption.asNeeded;
-    }
-
     Medication temp = Medication(
-        id: data['id'] ?? "",
-        nameOfDrug: data['nameOfDrug'] ?? "",
-        enabled: val
+      id: data['id'] ?? "",
+      nameOfDrug: data['nameOfDrug'] ?? "",
     );
-    temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
-    temp.repeatDuration = parseStringDuration(
-        data['repeatDuration'] ?? const Duration(days: 1).toString());
+
+    bool enabled;
+    if (data['enabled'] == 'true') {
+      enabled = true;
+    }
+    else {
+      enabled = false;
+    }
+
+    List<TimeOfDay> time = [];
+    temp.description = data["description"] ?? "";
+    temp.repeatOption = stringToRepeatOption(data["repeatOption"]);
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek'] ?? "");
+    temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
+    temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
+    temp.time = timeOfDayStringsToList(data["time"]);
+    temp.enabled = enabled;
     return temp;
   }
 }

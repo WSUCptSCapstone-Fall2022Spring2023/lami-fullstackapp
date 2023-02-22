@@ -1,4 +1,5 @@
 import 'package:alarm_mobile_app/medication.dart';
+import 'package:alarm_mobile_app/utils.dart';
 
 import 'alarm.dart';
 
@@ -51,8 +52,8 @@ class Users {
       firstname: data['firstname'] ?? "unknown firstname",
       lastname: data['lastname'] ?? "unknown lastname",
     );
-    temp.medications = [Medication(id: id, nameOfDrug: "name Of Drug", enabled: true)];
-    temp.dateOfBirth = DateTime.now();
+    temp.medications = medicationListFromMap(data['medications']);
+    temp.dateOfBirth = DateTime.fromMillisecondsSinceEpoch(data['dateOfBirth'] * 1000);
     return temp;
   }
 
