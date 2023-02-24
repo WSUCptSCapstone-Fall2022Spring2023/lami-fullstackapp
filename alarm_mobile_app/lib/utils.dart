@@ -336,9 +336,43 @@ class ColumnBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: new List.generate(this.itemCount,
-              (index) => this.itemBuilder(context, index)).toList(),
+    return Column(
+      children: List.generate(itemCount,
+              (index) => itemBuilder(context, index)).toList(),
     );
   }
+}
+
+String repeatOptionToString(RepeatOption repeatOption) {
+  if (repeatOption == RepeatOption.daily) {
+    return "Every Day";
+  } else if (repeatOption == RepeatOption.specificDays) {
+    return "Specific Days";
+  } else if (repeatOption == RepeatOption.daysInterval) {
+    return "Days Interval";
+  } else {
+    return "As Needed";
+  }
+}
+
+RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
+  if (pickerRepeatOption == 0) {
+    return RepeatOption.daily;
+  } else if (pickerRepeatOption == 1) {
+    return RepeatOption.specificDays;
+  } else if (pickerRepeatOption == 2) {
+    return RepeatOption.daysInterval;
+  } else {
+    return RepeatOption.asNeeded;
+  }
+}
+
+String getStatefulTime(){
+  // int hour = int.parse(time.toString().substring(10, 12));
+  // int minutes = int.parse(time.toString().substring(13, 15));
+  // if (hour > 12){
+  //   return (hour - 12).toString() + ':' + time.toString().substring(13, 15) + " PM";
+  // }
+  // return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+  return TimeOfDay.now().toString();
 }
