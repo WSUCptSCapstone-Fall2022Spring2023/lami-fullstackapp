@@ -27,7 +27,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = "Alliance House Medication Reminder";
+    const appTitle = "Profile";
     // temporary URL - will replace w/ video once that is recorded
     final Uri _url =
         Uri.parse('https://www.youtube.com/channel/UCwEi93Tw9U6z8u4KKXxJJ1g');
@@ -102,10 +102,8 @@ class SettingsPage extends StatelessWidget {
                             color: ThemeColors.darkData.primaryColorDark
                         ),
                         onPressed: () async {
-                          Users user = getCurrentUserLocal(
-                              await SharedPreferences.getInstance());
-                          user.medications =
-                          await getMedications(user.id, FirebaseFirestore.instance);
+                          Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                          user.medications = await getMedications(user.id, FirebaseFirestore.instance);
                           runApp(TodaysMedications(medications: user.medications));
                         },
                       ),
@@ -122,10 +120,8 @@ class SettingsPage extends StatelessWidget {
                             color: ThemeColors.darkData.primaryColorDark
                         ),
                           onPressed: () async {
-                            Users user = getCurrentUserLocal(
-                                await SharedPreferences.getInstance());
-                            user.medications =
-                            await getMedications(user.id, FirebaseFirestore.instance);
+                            Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                            user.medications = await getMedications(user.id, FirebaseFirestore.instance);
                             runApp(MedicationPage(medications: user.medications));
                           },
                       ),

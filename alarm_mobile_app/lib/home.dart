@@ -4,7 +4,7 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:alarm_mobile_app/create_alarm.dart';
+import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/settings.dart';
 import 'package:flutter/material.dart';
@@ -229,7 +229,7 @@ class Home extends StatelessWidget {
                         color: ThemeColors.darkData.primaryColorDark
                       ),
                       onPressed: () {
-                        runApp(const CreateAlarm());
+                        runApp(const AddMedication());
                       },
                     )
                   ])),

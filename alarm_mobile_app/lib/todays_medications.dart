@@ -4,7 +4,7 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:alarm_mobile_app/create_alarm.dart';
+import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
@@ -190,7 +190,7 @@ class TodaysMedications extends StatelessWidget {
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
     AwesomeNotifications().cancelAll().then((value) {});
-    const appTitle = "Alliance House Medication Reminder";
+    const appTitle = "Today's Medications";
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -202,13 +202,11 @@ class TodaysMedications extends StatelessWidget {
           actions: [
             // settings button
             IconButton(
-                icon: const Icon(Icons.settings, color: Colors.black),
+                icon: const Icon(Icons.add, color: Colors.black, size: 35),
                 onPressed: () async {
-                  // Users user = getCurrentUserLocal(
-                  //     await SharedPreferences.getInstance());
-                  // user.alarms =
-                  // await getAlarms(user.id, FirebaseFirestore.instance);
-                  // runApp(SettingsPage(user: user));
+                  Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                  user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                  runApp(const AddMedication());
                 }),
           ],
         ),
