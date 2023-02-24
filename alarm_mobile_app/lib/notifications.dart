@@ -4,7 +4,7 @@ import 'alarm.dart';
 void createNotification(Alarm alarm) {
   int hour = alarm.time.hour;
   int minute = alarm.time.minute;
-  for (int i = 0; i < alarm.repeattimes; i++) {
+  for (int i = 0; i < 1; i++) {
     if (hour >= 24) hour -= 24;
     Map<String, String> payload = alarm.toStringMap();
     AwesomeNotifications().createNotification(
@@ -12,7 +12,7 @@ void createNotification(Alarm alarm) {
             id: int.parse(alarm.id),
             channelKey: "PalouseAlarm",
             title: "Reminder: " + alarm.nameOfDrug,
-            body: alarm.description,
+            body: "alarm.description",
             wakeUpScreen: true,
             notificationLayout: NotificationLayout.BigText,
             category: NotificationCategory.Alarm,
@@ -32,7 +32,7 @@ void createNotification(Alarm alarm) {
               label: "Dismiss",
               buttonType: ActionButtonType.DisabledAction)
         ]);
-    hour += alarm.repeatduration.inHours;
+    hour += 1;
   }
 }
 
@@ -43,7 +43,7 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
           id: int.parse(alarm.id),
           channelKey: "PalouseAlarm",
           title: "Reminder take: " + alarm.nameOfDrug,
-          body: alarm.description,
+          body: "alarm.description",
           wakeUpScreen: true,
           notificationLayout: NotificationLayout.BigText,
           category: NotificationCategory.Alarm,

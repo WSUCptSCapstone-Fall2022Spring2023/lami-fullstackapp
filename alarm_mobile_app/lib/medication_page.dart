@@ -56,7 +56,7 @@ class MedicationItem extends StatelessWidget {
         newMedication.repeatDuration = medication.repeatDuration;
         newMedication.repeatTimes = medication.repeatTimes;
         newMedication.description = medication.description;
-        newMedication.time = medication.time;
+        newMedication.alarms = medication.alarms;
         // // updating the alarm that was changed
         // for (int i = 0;
         // i < (data['alarms'] as List<dynamic>).length;

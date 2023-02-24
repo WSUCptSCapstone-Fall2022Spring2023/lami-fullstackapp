@@ -292,16 +292,16 @@ List<Medication> medicationListFromMap(List<dynamic> data)
     tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
     tempMedication.repeatTimes = data[i]["repeatTimes"];
 
-    tempMedication.time = timeOfDayStringsToList(data[i]["time"]);
+    tempMedication.alarms = alarmsStringsToList(data[i]["time"]);
     tempMedication.enabled = data[i]["enabled"];
     medications.add(tempMedication);
   }
   return medications;
 }
 
-List<TimeOfDay> timeOfDayStringsToList(String? data)
+List<Alarm> alarmsStringsToList(String? data)
 {
-  List<TimeOfDay> list = [];
+  List<Alarm> list = [];
   if (data == null)
   {
     return list;
@@ -309,8 +309,36 @@ List<TimeOfDay> timeOfDayStringsToList(String? data)
   var timeStrings = data.split(',');
   for (int i = 0; i < timeStrings.length; i++)
   {
-    list.add(parseTimeOfDayString(timeStrings[i]));
+    //list.add(parseTimeOfDayString(timeStrings[i]));
   }
   return list;
 }
 
+class ColumnBuilder extends StatelessWidget {
+  final IndexedWidgetBuilder itemBuilder;
+  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisSize mainAxisSize;
+  final CrossAxisAlignment crossAxisAlignment;
+  final TextDirection textDirection;
+  final VerticalDirection verticalDirection;
+  final int itemCount;
+
+  const ColumnBuilder({
+    required Key key,
+    required this.itemBuilder,
+    required this.itemCount,
+    this.mainAxisAlignment: MainAxisAlignment.start,
+    this.mainAxisSize: MainAxisSize.max,
+    this.crossAxisAlignment: CrossAxisAlignment.center,
+    required this.textDirection,
+    this.verticalDirection: VerticalDirection.down,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Column(
+      children: new List.generate(this.itemCount,
+              (index) => this.itemBuilder(context, index)).toList(),
+    );
+  }
+}

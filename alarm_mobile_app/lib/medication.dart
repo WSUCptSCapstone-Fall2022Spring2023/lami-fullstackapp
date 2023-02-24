@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'utils.dart';
+import 'alarm.dart';
 
 class Medication {
   // fields for the table in the database
@@ -17,7 +18,7 @@ class Medication {
   late Duration repeatDuration = const Duration(days: 1);
   // default values for repeating x times per day every x amount of times
   late int repeatTimes = 1;
-  late List<TimeOfDay> time;
+  late List<Alarm> alarms;
   late bool enabled;
 
   // constructor for the values
@@ -36,7 +37,7 @@ class Medication {
         'daysOfWeek: $daysOfWeek,'
         'repeatDuration: $repeatDuration,'
         'repeatTimes: $repeatTimes,'
-        'time: $time,'
+        'alarms: $alarms,'
         'enabled: $enabled';
   }
 
@@ -50,7 +51,7 @@ class Medication {
       'daysOfWeek': daysOfWeek.toString(),
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
-      'time': time.toString(),
+      'alarms': alarms.toString(),
       'enabled': enabled,
     };
   }
@@ -65,7 +66,7 @@ class Medication {
       'daysOfWeek': daysOfWeek.toString(),
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes.toString(),
-      'time': time.toString(),
+      'alarms': alarms.toString(),
       'enabled': enabled.toString(),
     };
   }
@@ -131,7 +132,7 @@ class Medication {
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek'] ?? "");
     temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
-    temp.time = timeOfDayStringsToList(data["time"]);
+    temp.alarms = alarmsStringsToList(data["alarms"]);
     temp.enabled = enabled;
     return temp;
   }
