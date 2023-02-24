@@ -6,8 +6,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:alarm_mobile_app/admin.dart';
-import 'package:alarm_mobile_app/alarm.dart';
-import 'package:alarm_mobile_app/home.dart';
 import 'package:alarm_mobile_app/login.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -21,6 +19,7 @@ import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/todays_medications.dart';
 
 class SettingsPage extends StatelessWidget {
   final Users user;
@@ -35,6 +34,8 @@ class SettingsPage extends StatelessWidget {
     void _launchURL() async {
       if (!await launchUrl(_url)) throw 'Could not launch $_url';
     }
+    // Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+    // user.medications = await getMedications(user.id, FirebaseFirestore.instance);
 
     return MaterialApp(
         title: appTitle,
@@ -83,6 +84,69 @@ class SettingsPage extends StatelessWidget {
             body: SettingsPageForm(
               user: user,
             ),
+            bottomNavigationBar: BottomAppBar(
+                color: ThemeColors.darkData.primaryColorDark,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.calendar_view_day,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                        onPressed: () async {
+                          Users user = getCurrentUserLocal(
+                              await SharedPreferences.getInstance());
+                          user.medications =
+                          await getMedications(user.id, FirebaseFirestore.instance);
+                          runApp(TodaysMedications(medications: user.medications));
+                        },
+                      ),
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.medication,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                          onPressed: () async {
+                            Users user = getCurrentUserLocal(
+                                await SharedPreferences.getInstance());
+                            user.medications =
+                            await getMedications(user.id, FirebaseFirestore.instance);
+                            runApp(MedicationPage(medications: user.medications));
+                          },
+                      ),
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                        onPressed: () async {
+                          SharedPreferences pref = await SharedPreferences.getInstance();
+                          runApp(SettingsPage(user: getCurrentUserLocal(pref)));
+                        },
+                      )
+                    ])),
           );
         }));
   }
@@ -259,38 +323,38 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeColors.darkData.primaryColorLight,
-                  fixedSize: const Size(200.0, 60.0),
-                ),
-                onPressed: () async {
-                  if (getCurrentUserLocal(await SharedPreferences.getInstance())
-                          .usertype ==
-                      'reg') {
-                    getMedications(FirebaseAuth.instance.currentUser?.uid,
-                            FirebaseFirestore.instance)
-                        .then((List<Medication> value) {
-                      return runApp(MedicationPage(
-                        medications: value,
-                      ));
-                    });
-                  } else {
-                    return runApp(Admin(
-                        users: await getAllUsers(FirebaseFirestore.instance)));
-                  }
-                },
-                child: const Text(
-                  'Cancel',
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 40.0),
+            //   child: ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: ThemeColors.darkData.primaryColorLight,
+            //       fixedSize: const Size(200.0, 60.0),
+            //     ),
+            //     onPressed: () async {
+            //       if (getCurrentUserLocal(await SharedPreferences.getInstance())
+            //               .usertype ==
+            //           'reg') {
+            //         getMedications(FirebaseAuth.instance.currentUser?.uid,
+            //                 FirebaseFirestore.instance)
+            //             .then((List<Medication> value) {
+            //           return runApp(MedicationPage(
+            //             medications: value,
+            //           ));
+            //         });
+            //       } else {
+            //         return runApp(Admin(
+            //             users: await getAllUsers(FirebaseFirestore.instance)));
+            //       }
+            //     },
+            //     child: const Text(
+            //       'Cancel',
+            //       textDirection: TextDirection.ltr,
+            //       style: TextStyle(
+            //         fontSize: 20.0,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(

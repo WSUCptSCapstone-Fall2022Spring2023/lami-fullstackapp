@@ -15,7 +15,6 @@ import 'register.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'users.dart';
 import 'home.dart';
-import 'home2.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'utils.dart';
 import 'package:url_launcher/url_launcher.dart';

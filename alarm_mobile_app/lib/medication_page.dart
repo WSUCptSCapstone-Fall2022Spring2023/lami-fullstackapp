@@ -11,6 +11,7 @@ import 'notifications.dart';
 import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:alarm_mobile_app/todays_medications.dart';
 
 
 
@@ -223,15 +224,49 @@ class MedicationPage extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
                     ),
                     child: Icon(
-                        Icons.add,
+                        Icons.calendar_view_day,
                         size: 50,
                         color: ThemeColors.darkData.primaryColorDark
                     ),
                     onPressed: () {
-                      runApp(const CreateAlarm());
+                      runApp(TodaysMedications(medications: medications));
+                    },
+                  ),
+                  const SizedBox(width: 40),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeColors.darkData.primaryColorLight,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                    ),
+                    child: Icon(
+                        Icons.medication,
+                        size: 50,
+                        color: ThemeColors.darkData.primaryColorDark
+                    ),
+                    onPressed: () {
+                      runApp(MedicationPage(medications: medications));
+                    },
+                  ),
+                  const SizedBox(width: 40),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeColors.darkData.primaryColorLight,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                    ),
+                    child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: ThemeColors.darkData.primaryColorDark
+                    ),
+                    onPressed: () async {
+                      SharedPreferences pref = await SharedPreferences.getInstance();
+                      runApp(SettingsPage(user: getCurrentUserLocal(pref)));
                     },
                   )
-                ])),
+                ])
+        ),
       ),
     );
   }
