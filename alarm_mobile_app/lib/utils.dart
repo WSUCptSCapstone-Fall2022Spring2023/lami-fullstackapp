@@ -363,12 +363,12 @@ RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
   }
 }
 
-String getStatefulTime(){
-  // int hour = int.parse(time.toString().substring(10, 12));
-  // int minutes = int.parse(time.toString().substring(13, 15));
-  // if (hour > 12){
-  //   return (hour - 12).toString() + ':' + time.toString().substring(13, 15) + " PM";
-  // }
-  // return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
-  return TimeOfDay.now().toString();
+String getStatefulTime(time){
+  int hour = int.parse(time.toString().substring(10, 12));
+  int minutes = int.parse(time.toString().substring(13, 15));
+  if (hour > 12){
+    return (hour - 12).toString() + ':' + time.toString().substring(13, 15) + " PM";
+  }
+  return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
+  // return TimeOfDay.now().toString();
 }
