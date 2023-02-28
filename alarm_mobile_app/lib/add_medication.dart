@@ -256,17 +256,14 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             //     style: const TextStyle(fontSize: 25.0)),
             const Spacer(),
             ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (newMedication.alarms.isEmpty && timesPerDay != 0) {
-                      newMedication.alarms = populateAlarms();
+                      alarms = populateAlarms();
                   }
                   else if (newMedication.alarms.length != timesPerDay) {
-                    newMedication.alarms = populateAlarms();
+                    alarms = populateAlarms();
                   }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditAlarms(alarms: newMedication.alarms)),
-                  );
+                  await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))
           ]);
@@ -293,27 +290,16 @@ class AddMedicationFormState extends State<AddMedicationForm> {
     return list;
   }
 
-  Widget _buildPopupDialog(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Popup example'),
-      content: WeekdaySelector(
-        onChanged: (int day) {
-          setState(() {
-            final index = day % 7;
-            repeatDays[index] = !repeatDays[index];
-          });
-        },
-        values: repeatDays,
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Close'),
-        ),
-      ],
+  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => EditAlarms(alarms: alarms)),
     );
+    alarms = result as List<Alarm>;
+    var teahgo = 8;
   }
 
   Widget saveMedication() {
@@ -329,6 +315,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
           fixedSize: const Size(200.0, 60.0),
         ),
         onPressed: () async {
+          var tmkeoam = alarms;
           // Validate returns true if the form is valid, or false otherwise.
           if (_formKey.currentState!.validate()) {
             SharedPreferences pref =

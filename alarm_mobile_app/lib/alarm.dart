@@ -10,9 +10,9 @@ class Alarm {
   // https://api.flutter.dev/flutter/material/showTimePicker.html
   // https://api.flutter.dev/flutter/material/TimeOfDay-class.html
   final String id;
-  late final TimeOfDay time;
   final String nameOfDrug;
   final String dayOfWeek;
+  late TimeOfDay time;
 
   // constructor for the values
   Alarm({

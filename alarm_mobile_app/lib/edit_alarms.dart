@@ -24,56 +24,8 @@ class AlarmItem extends StatelessWidget {
   }) : super(key: ObjectKey(alarm));
   final Alarm alarm;
 
-  late TimeOfDay time = alarm.time;
-
   @override
   Widget build(BuildContext context) {
-    // represents a single alarm in the home screen
-    // ValueNotifier<bool> enabledController = ValueNotifier(true);
-    // enabledController.addListener(() async {
-    // if (enabledController.value == true){
-    //   alarm.enabled = true;
-    // }
-    // else
-    // {
-    //   alarm.enabled = false;
-    // }
-    // SharedPreferences pref =
-    // await SharedPreferences.getInstance();
-    // FirebaseFirestore inst = FirebaseFirestore.instance;
-    // // gets the current user from the local shared preferences
-    // Users currentUser = getCurrentUserLocal(pref);
-    // CollectionReference users = inst.collection('/users');
-    // DocumentSnapshot<Object?> snap =
-    // await users.doc(currentUser.id).get();
-    // if (snap.exists) {
-    //   Map<String, dynamic> data =
-    //   snap.data() as Map<String, dynamic>;
-    //   String id = alarm.id;
-    //   // creating a new alarm from the given information
-    //   Alarm newAlarm = Alarm(
-    //       id: id,
-    //       time: alarm.time,
-    //       nameOfDrug: alarm.nameOfDrug,
-    //       description: alarm.description,
-    //       enabled: alarm.enabled
-    //   );
-    //   newAlarm.repeatduration = alarm.repeatduration;
-    //   newAlarm.repeattimes = alarm.repeattimes;
-    //   // updating the alarm that was changed
-    //   for (int i = 0;
-    //   i < (data['alarms'] as List<dynamic>).length;
-    //   i++) {
-    //     if (data['alarms'][i]['id'] == newAlarm.id) {
-    //       data['alarms'][i] = newAlarm.toMap();
-    //       break;
-    //     }
-    //   }
-    //   // updates the alarm information
-    //   await users.doc(currentUser.id).update(data);
-    // }
-    // });
-
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
         title:
@@ -83,7 +35,7 @@ class AlarmItem extends StatelessWidget {
             Expanded(child:
             StatefulBuilder(builder: (context, _setState) {
               return Row(children: [
-                Text(getStatefulTime(time), style: const TextStyle(fontSize: 20.0)),
+                Text(alarm.time.toString(), style: const TextStyle(fontSize: 20.0)),
                 const Spacer(),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -92,10 +44,10 @@ class AlarmItem extends StatelessWidget {
                   onPressed: () async {
                     final TimeOfDay? result = await showTimePicker(
                         context: context,
-                        initialTime: time,
+                        initialTime: alarm.time,
                         initialEntryMode: TimePickerEntryMode.input);
                     if (result != null) {
-                      _setState(() => time = result);
+                      _setState(() => alarm.time = result);
                     }
                   },
                   child: const Text('Edit', style: TextStyle(fontSize: 14.0)),
@@ -133,7 +85,7 @@ class EditAlarms extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.exit_to_app, color: Colors.black, size: 35),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, alarms);
                   }),
             ],
           ),
@@ -141,7 +93,6 @@ class EditAlarms extends StatelessWidget {
           Column(
               children: [
                 Expanded(child: EditAlarmsScreen(alarms: alarms)),
-
               ]
           ),
           bottomNavigationBar:
@@ -161,7 +112,7 @@ class EditAlarms extends StatelessWidget {
                       "Save"
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, alarms);
                   },
                 ),
                 const SizedBox(height: 75.0,width: 1.0,)
@@ -194,7 +145,8 @@ class EditAlarmsState extends State<EditAlarmsScreen> {
     // Build a Form widget using the _formKey created above.
     return ListView.separated(
         itemBuilder: (BuildContext context, int index) {
-          return AlarmItem(alarm: widget.alarms[index]);
+          return AlarmItem(alarm: widget.alarms[index]
+          );
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
           thickness: 3.0,
