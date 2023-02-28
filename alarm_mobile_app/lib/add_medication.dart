@@ -6,6 +6,7 @@
 // found in the LICENSE file.
 import 'dart:collection';
 import 'dart:math';
+import 'package:alarm_mobile_app/edit_alarms.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
@@ -49,7 +50,6 @@ class AddMedication extends StatelessWidget {
                   Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
                   user.medications = await getMedications(user.id, FirebaseFirestore.instance);
                   runApp(MedicationPage(medications: user.medications));
-
                 }),
           ],
         ),
@@ -85,14 +85,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
   final descriptionController = TextEditingController();
   late RepeatOption repeatOption = RepeatOption.daily;
   late List<bool> repeatDays = List<bool>.filled(7, true);
-  late int timesPerDay = 3;
-  late List<Alarm> alarms = [
-    Alarm(id: "id", time: TimeOfDay.now(), nameOfDrug: "nameOfDrug", dayOfWeek: "dayOfWeek"),
-    Alarm(id: "id", time: TimeOfDay.now(), nameOfDrug: "nameOfDrug", dayOfWeek: "dayOfWeek"),
-    Alarm(id: "id", time: TimeOfDay.now(), nameOfDrug: "nameOfDrug", dayOfWeek: "dayOfWeek"),
-    Alarm(id: "id", time: TimeOfDay.now(), nameOfDrug: "nameOfDrug", dayOfWeek: "dayOfWeek"),
-    Alarm(id: "id", time: TimeOfDay.now(), nameOfDrug: "nameOfDrug", dayOfWeek: "dayOfWeek")
-  ];
+  late int timesPerDay = 1;
+  late List<Alarm> alarms = [];
 
   // will have to change in the future - depends on type used to get time
   //final timeController = TextEditingController();
@@ -115,15 +109,15 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             body: ListView(
               padding: const EdgeInsets.all(25),
               children: [
-                basicMedicationInformation(),
-                MedicationAlarms(key: _formKey, alarms: newMedication.alarms),
+                basicMedicationInformation(newMedication),
+                //MedicationAlarms(key: _formKey, alarms: newMedication.alarms),
                 saveMedication()
               ],
             )
     );
   }
 
-  Widget basicMedicationInformation() {
+  Widget basicMedicationInformation(Medication newMedication) {
     return Column(
       children: <Widget>[
         //// Medication name
@@ -247,21 +241,53 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         const SizedBox(height: 5),
         const HorizontalDivider(thickness: 2),
         //// Add Medication
-
+        const SizedBox(height: 10),
+        //// Times Per Day
+        Row(children: const [
+          Text(
+            "View/Edit Alarms",
+            style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
+            textAlign: TextAlign.start,
+          )
+        ]),
+        StatefulBuilder(builder: (context, _setState) {
+          return Row(children: [
+            // Text(timesPerDay.toString(),
+            //     style: const TextStyle(fontSize: 25.0)),
+            const Spacer(),
+            ElevatedButton(
+                onPressed: () {
+                  if (newMedication.alarms.isEmpty && timesPerDay != 0) {
+                      newMedication.alarms = populateAlarms();
+                  }
+                  else if (newMedication.alarms.length != timesPerDay) {
+                    newMedication.alarms = populateAlarms();
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditAlarms(alarms: newMedication.alarms)),
+                  );
+                },
+                child: const Text("View/Edit Alarms"))
+          ]);
+        }),
+        const SizedBox(height: 5),
         //// Cancel
       ],
     );
   }
 
   List<Alarm> populateAlarms(){
-    List<Alarm> list = [];
-    list.length = timesPerDay;
-    for (int i = 0; i < list.length; i++){
-      list[i] = Alarm(
-          id: id,
-          time: TimeOfDay(hour: i, minute: i),
-          nameOfDrug: medicationController.text,
-          dayOfWeek: 'Monday'
+    List<Alarm> list = List<Alarm>.empty(growable: true);
+    // list.length = timesPerDay;
+    for (int i = 0; i < timesPerDay; i++){
+      list.add(
+          Alarm(
+            id: id,
+            time: TimeOfDay(hour: i, minute: i),
+            nameOfDrug: medicationController.text,
+            dayOfWeek: 'Monday'
+          )
       );
     }
     return list;

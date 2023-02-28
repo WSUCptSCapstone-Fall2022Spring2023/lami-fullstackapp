@@ -256,9 +256,7 @@ Duration parseStringDuration(String dur) {
   return Duration(hours: int.parse(values[0]));
 }
 
-
-RepeatOption stringToRepeatOption(String? data)
-{
+RepeatOption stringToRepeatOption(String? data) {
   RepeatOption tempRepeatOption;
   if (data == RepeatOption.daily.toString())
   {
@@ -279,8 +277,7 @@ RepeatOption stringToRepeatOption(String? data)
   return tempRepeatOption;
 }
 
-List<Medication> medicationListFromMap(List<dynamic> data)
-{
+List<Medication> medicationListFromMap(List<dynamic> data) {
   List<Medication> medications = [];
   Medication tempMedication;
   for (int i = 0; i < data.length; i++)
@@ -299,8 +296,7 @@ List<Medication> medicationListFromMap(List<dynamic> data)
   return medications;
 }
 
-List<Alarm> alarmsStringsToList(String? data)
-{
+List<Alarm> alarmsStringsToList(String? data) {
   List<Alarm> list = [];
   if (data == null)
   {
