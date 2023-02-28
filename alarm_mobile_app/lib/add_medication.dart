@@ -263,7 +263,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                   else if (newMedication.alarms.length != timesPerDay) {
                     alarms = populateAlarms();
                   }
-                  await _navigateAndDisplaySelection(context);
+                  newMedication.alarms = await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))
           ]);
@@ -290,7 +290,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
     return list;
   }
 
-  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+  Future<List<Alarm>> _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
@@ -298,8 +298,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
       // Create the SelectionScreen in the next step.
       MaterialPageRoute(builder: (context) => EditAlarms(alarms: alarms)),
     );
-    alarms = result as List<Alarm>;
-    var teahgo = 8;
+    return result as List<Alarm>;
   }
 
   Widget saveMedication() {
