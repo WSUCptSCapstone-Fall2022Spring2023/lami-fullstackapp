@@ -87,29 +87,32 @@ class AddMedicationFormState extends State<AddMedicationForm> {
   late List<bool> repeatDays = List<bool>.filled(7, true);
   late int timesPerDay = 1;
   late List<Alarm> alarms = [];
+  String id = Random().nextInt(maxID).toString();
+
+
 
   // will have to change in the future - depends on type used to get time
   //final timeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    String id = Random().nextInt(maxID).toString();
-    // creating a new alarm from the given information
-    Medication newMedication = Medication(
-      id: id,
-      nameOfDrug: medicationController.text,
-    );
-    newMedication.description = descriptionController.text;
-    newMedication.repeatOption = repeatOption;
-    newMedication.alarms = alarms;
-    newMedication.daysOfWeek = repeatDays;
-    // newMedication.repeatDuration = Duration(hours: durationValue);
-    newMedication.repeatTimes = timesPerDay;
+
+    // creating a new medication from the given information
+    // Medication newMedication = Medication(
+    //   id: id,
+    //   nameOfDrug: medicationController.text,
+    // );
+    // newMedication.description = descriptionController.text;
+    // newMedication.repeatOption = repeatOption;
+    // newMedication.alarms = alarms;
+    // newMedication.daysOfWeek = repeatDays;
+    // // newMedication.repeatDuration = Duration(hours: durationValue);
+    // newMedication.repeatTimes = timesPerDay;
     // Build a Form widget using the _formKey created above.
     return Scaffold(
             body: ListView(
               padding: const EdgeInsets.all(25),
               children: [
-                basicMedicationInformation(newMedication),
+                basicMedicationInformation(),
                 //MedicationAlarms(key: _formKey, alarms: newMedication.alarms),
                 saveMedication()
               ],
@@ -117,7 +120,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
     );
   }
 
-  Widget basicMedicationInformation(Medication newMedication) {
+  Widget basicMedicationInformation() {
     return Column(
       children: <Widget>[
         //// Medication name
@@ -257,13 +260,13 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
-                  if (newMedication.alarms.isEmpty && timesPerDay != 0) {
+                  if (alarms.isEmpty && timesPerDay != 0) {
                       alarms = populateAlarms();
                   }
-                  else if (newMedication.alarms.length != timesPerDay) {
+                  else if (alarms.length != timesPerDay) {
                     alarms = populateAlarms();
                   }
-                  newMedication.alarms = await _navigateAndDisplaySelection(context);
+                  alarms = await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))
           ]);
@@ -280,8 +283,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
     for (int i = 0; i < timesPerDay; i++){
       list.add(
           Alarm(
-            id: id,
-            time: TimeOfDay(hour: i, minute: i),
+            alarmID: Random().nextInt(maxID).toString(),
+            time: TimeOfDay(hour: i+8, minute: i),
             nameOfDrug: medicationController.text,
             dayOfWeek: 'Monday'
           )
@@ -314,9 +317,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
           fixedSize: const Size(200.0, 60.0),
         ),
         onPressed: () async {
-          var tmkeoam = alarms;
           // Validate returns true if the form is valid, or false otherwise.
-          if (_formKey.currentState!.validate()) {
+          if (medicationController.text.trim() != "") {
             SharedPreferences pref =
             await SharedPreferences.getInstance();
             FirebaseFirestore inst = FirebaseFirestore.instance;
@@ -326,30 +328,28 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             DocumentSnapshot<Object?> snap =
             await users.doc(currentUser.id).get();
             if (snap.exists) {
-              Map<String, dynamic> data =
-              snap.data() as Map<String, dynamic>;
+              Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
               if (!data.containsKey('medications')) {
                 // initializing the medications collection if it does not exist
                 data['medications'] = [];
               }
               // id is randomly generated - have to do it this way due to being able to delete alarms
               String id = Random().nextInt(maxID).toString();
-              // creating a new alarm from the given information
+              // creating a new medication from the given information
               Medication newMedication = Medication(
                 id: id,
                 nameOfDrug: medicationController.text,
               );
               newMedication.description = descriptionController.text;
               newMedication.repeatOption = repeatOption;
-              newMedication.alarms = alarms;
               newMedication.daysOfWeek = repeatDays;
-              // newMedication.repeatDuration = Duration(hours: durationValue);
+              newMedication.repeatDuration = const Duration(days: 1);
               newMedication.repeatTimes = timesPerDay;
+              newMedication.alarms = alarms;
               data['medications'].add(newMedication.toMap());
               // adds a new alarm to the users document as a subcollection
               await users.doc(currentUser.id).update(data);
-              runApp(
-                  MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
+              runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
             }
           }
         },

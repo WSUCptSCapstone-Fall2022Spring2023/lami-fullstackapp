@@ -9,7 +9,7 @@ void createNotification(Alarm alarm) {
     Map<String, String> payload = alarm.toStringMap();
     AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: int.parse(alarm.id),
+            id: int.parse(alarm.alarmID),
             channelKey: "PalouseAlarm",
             title: "Reminder: " + alarm.nameOfDrug,
             body: "alarm.description",
@@ -28,7 +28,7 @@ void createNotification(Alarm alarm) {
         ),
         actionButtons: [
           NotificationActionButton(
-              key: alarm.id,
+              key: alarm.alarmID,
               label: "Dismiss",
               buttonType: ActionButtonType.DisabledAction)
         ]);
@@ -40,7 +40,7 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
   Map<String, String> payload = alarm.toStringMap();
   AwesomeNotifications().createNotification(
       content: NotificationContent(
-          id: int.parse(alarm.id),
+          id: int.parse(alarm.alarmID),
           channelKey: "PalouseAlarm",
           title: "Reminder take: " + alarm.nameOfDrug,
           body: "alarm.description",
@@ -61,7 +61,7 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
           allowWhileIdle: true),
       actionButtons: [
         NotificationActionButton(
-            key: alarm.id,
+            key: alarm.alarmID,
             label: "Dismiss",
             buttonType: ActionButtonType.DisabledAction)
       ]);

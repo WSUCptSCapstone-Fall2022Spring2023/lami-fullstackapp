@@ -19,7 +19,6 @@ class Medication {
   // default values for repeating x times per day every x amount of times
   late int repeatTimes = 1;
   late List<Alarm> alarms;
-  late bool enabled;
 
   // constructor for the values
   Medication({
@@ -29,7 +28,7 @@ class Medication {
 
   @override
   String toString() {
-    return 'Alarm{'
+    return 'Medication{'
         'id: $id,'
         'nameOfDrug: $nameOfDrug,'
         'description: $description,'
@@ -37,8 +36,7 @@ class Medication {
         'daysOfWeek: $daysOfWeek,'
         'repeatDuration: $repeatDuration,'
         'repeatTimes: $repeatTimes,'
-        'alarms: $alarms,'
-        'enabled: $enabled';
+        'alarms: $alarms';
   }
 
   // maps the value from the database to the values present in the alarm class
@@ -52,7 +50,6 @@ class Medication {
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
       'alarms': alarms.toString(),
-      'enabled': enabled,
     };
   }
 
@@ -67,7 +64,6 @@ class Medication {
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes.toString(),
       'alarms': alarms.toString(),
-      'enabled': enabled.toString(),
     };
   }
 
@@ -77,7 +73,6 @@ class Medication {
         id: data['id'],
         nameOfDrug: data['nameOfDrug']
     );
-    temp.enabled = data["enabled"];
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
     if (!data.containsKey('repeatDuration')) {
       temp.repeatDuration = const Duration(days: 1);
@@ -117,15 +112,6 @@ class Medication {
       id: data['id'] ?? "",
       nameOfDrug: data['nameOfDrug'] ?? "",
     );
-
-    bool enabled;
-    if (data['enabled'] == 'true') {
-      enabled = true;
-    }
-    else {
-      enabled = false;
-    }
-
     List<TimeOfDay> time = [];
     temp.description = data["description"] ?? "";
     temp.repeatOption = stringToRepeatOption(data["repeatOption"]);
@@ -133,7 +119,6 @@ class Medication {
     temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
     temp.alarms = alarmsStringsToList(data["alarms"]);
-    temp.enabled = enabled;
     return temp;
   }
 }

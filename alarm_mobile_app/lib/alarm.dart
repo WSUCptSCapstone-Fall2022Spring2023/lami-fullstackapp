@@ -9,14 +9,14 @@ class Alarm {
   // fields for the table in the database
   // https://api.flutter.dev/flutter/material/showTimePicker.html
   // https://api.flutter.dev/flutter/material/TimeOfDay-class.html
-  final String id;
+  final String alarmID;
   final String nameOfDrug;
   final String dayOfWeek;
   late TimeOfDay time;
 
   // constructor for the values
   Alarm({
-    required this.id,
+    required this.alarmID,
     required this.time,
     required this.nameOfDrug,
     required this.dayOfWeek
@@ -24,13 +24,13 @@ class Alarm {
 
   @override
   String toString() {
-    return 'Alarm{id: $id, time: $time, nameOfDrug: $nameOfDrug)';
+    return 'Alarm{alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug)';
   }
 
   // maps the value from the database to the values present in the alarm class
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
       'dayOfWeek': dayOfWeek
@@ -40,7 +40,7 @@ class Alarm {
   // used for payload stuff
   Map<String, String> toStringMap() {
     return {
-      'id': id,
+      'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
       'dayOfWeek': dayOfWeek
@@ -50,7 +50,7 @@ class Alarm {
   // gets an alarm object from the given map
   static Alarm fromMap(Map<String, dynamic> data) {
     Alarm temp = Alarm(
-      id: data['id'],
+        alarmID: data['alarmID'],
       time: parseTimeOfDayString(data['time']),
       nameOfDrug: data['nameOfDrug'],
       dayOfWeek: data['dayOfWeek']
@@ -61,7 +61,7 @@ class Alarm {
   // same function as above just different types
   static Alarm fromStringMap(Map<String, String> data) {
     Alarm temp = Alarm(
-        id: data['id'] ?? "",
+      alarmID: data['alarmID'] ?? "",
         time: parseTimeOfDayString(data['time'] ?? ""),
         nameOfDrug: data['nameOfDrug'] ?? "",
         dayOfWeek: data['dayOfWeek'] ?? "",

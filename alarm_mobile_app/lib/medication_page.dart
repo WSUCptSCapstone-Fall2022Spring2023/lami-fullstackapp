@@ -25,51 +25,45 @@ class MedicationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // represents a single alarm in the home screen
-    ValueNotifier<bool> enabledController = ValueNotifier(medication.enabled);
-    enabledController.addListener(() async {
-      if (enabledController.value == true) {
-        medication.enabled = true;
-      }
-      else {
-        medication.enabled = false;
-      }
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      FirebaseFirestore inst = FirebaseFirestore.instance;
-      // gets the current user from the local shared preferences
-      Users currentUser = getCurrentUserLocal(pref);
-      CollectionReference users = inst.collection('/users');
-      DocumentSnapshot<Object?> snap =
-      await users.doc(currentUser.id).get();
-      if (snap.exists) {
-        Map<String, dynamic> data =
-        snap.data() as Map<String, dynamic>;
-        String id = medication.id;
-        // creating a new alarm from the given information
-        Medication newMedication = Medication(
-            id: id,
-            nameOfDrug: medication.nameOfDrug,
-
-        );
-        newMedication.enabled = medication.enabled;
-        newMedication.daysOfWeek = medication.daysOfWeek;
-        newMedication.repeatOption = medication.repeatOption;
-        newMedication.repeatDuration = medication.repeatDuration;
-        newMedication.repeatTimes = medication.repeatTimes;
-        newMedication.description = medication.description;
-        newMedication.alarms = medication.alarms;
-        // // updating the alarm that was changed
-        // for (int i = 0;
-        // i < (data['alarms'] as List<dynamic>).length;
-        // i++) {
-        //   if (data['alarms'][i]['id'] == medication.id) {
-        //     data['alarms'][i] = medication.toMap();
-        //     break;
-        //   }
-        // }
-        // updates the alarm information
-        await users.doc(currentUser.id).update(data);
-      }
-    });
+    // ValueNotifier<bool> enabledController = ValueNotifier(medication.enabled);
+    // enabledController.addListener(() async {
+    //
+    //   SharedPreferences pref = await SharedPreferences.getInstance();
+    //   FirebaseFirestore inst = FirebaseFirestore.instance;
+    //   // gets the current user from the local shared preferences
+    //   Users currentUser = getCurrentUserLocal(pref);
+    //   CollectionReference users = inst.collection('/users');
+    //   DocumentSnapshot<Object?> snap =
+    //   await users.doc(currentUser.id).get();
+    //   if (snap.exists) {
+    //     Map<String, dynamic> data =
+    //     snap.data() as Map<String, dynamic>;
+    //     String id = medication.id;
+    //     // creating a new alarm from the given information
+    //     Medication newMedication = Medication(
+    //         id: id,
+    //         nameOfDrug: medication.nameOfDrug,
+    //
+    //     );
+    //     newMedication.daysOfWeek = medication.daysOfWeek;
+    //     newMedication.repeatOption = medication.repeatOption;
+    //     newMedication.repeatDuration = medication.repeatDuration;
+    //     newMedication.repeatTimes = medication.repeatTimes;
+    //     newMedication.description = medication.description;
+    //     newMedication.alarms = medication.alarms;
+    //     // // updating the alarm that was changed
+    //     // for (int i = 0;
+    //     // i < (data['alarms'] as List<dynamic>).length;
+    //     // i++) {
+    //     //   if (data['alarms'][i]['id'] == medication.id) {
+    //     //     data['alarms'][i] = medication.toMap();
+    //     //     break;
+    //     //   }
+    //     // }
+    //     // updates the alarm information
+    //     await users.doc(currentUser.id).update(data);
+    //   }
+    // });
 
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),

@@ -290,7 +290,6 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
     tempMedication.repeatTimes = data[i]["repeatTimes"];
 
     tempMedication.alarms = alarmsStringsToList(data[i]["time"]);
-    tempMedication.enabled = data[i]["enabled"];
     medications.add(tempMedication);
   }
   return medications;

@@ -151,7 +151,7 @@ class AlarmItem extends StatelessWidget {
                                 TextButton(
                                     onPressed: () async {
                                       Navigator.of(context).pop();
-                                      await deleteAlarm(alarm.id, instance);
+                                      await deleteAlarm(alarm.alarmID, instance);
                                       // runApp(Home(
                                       //     alarms: await getMedications(
                                       //         prefs.getString("id") ?? '',

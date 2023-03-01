@@ -21,19 +21,6 @@ class MedicationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String getText() {
-      if (medication.enabled) {
-        return "On";
-      }
-      return "Off";
-    }
-
-    Color getColor() {
-      if (medication.enabled) {
-        return Colors.lightGreen;
-      }
-      return Colors.red;
-    }
 
     return ListTile(
       title: Column(children: [
@@ -50,10 +37,9 @@ class MedicationItem extends StatelessWidget {
               textScaleFactor: 1.25,
             ),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: getColor(), shape: const CircleBorder()),
+                style: ElevatedButton.styleFrom(shape: const CircleBorder()),
                 onPressed: () {},
-                child: Text(getText()))
+                child: Text("getText()"))
           ]))
         ]),
         const Divider(
