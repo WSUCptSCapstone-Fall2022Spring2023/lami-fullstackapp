@@ -180,17 +180,12 @@ class EditMedication extends StatelessWidget {
                       hideHeader: true,
                       title: const Text("Times Per Day"),
                       onConfirm: (Picker picker, List value) {
-                        alarms = populateAlarms();
                         //alarm.repeatduration = parseStringDuration(value[0].toString());
                         _setState(() {
+                          alarms = populateAlarms();
                           timesPerDay = value[0] + 1;
                         });
                       }).showDialog(context);
-                  // if (result == null) {
-                  //   return;
-                  // }
-                  // List<Alarm> alarms2 = populateAlarms();
-                  // _setState(() => timesPerDay = result[0] = alarms.length);
                 },
                 child: const Text("Edit"))
           ]);
@@ -214,13 +209,13 @@ class EditMedication extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
-                  // if (alarms.isEmpty && timesPerDay != 0) {
-                  //     alarms = populateAlarms();
-                  // }
-                  // else if (alarms.length != timesPerDay) {
-                  //   alarms = populateAlarms();
-                  // }
-                  //alarms = await _navigateAndDisplaySelection(context);
+                  if (alarms.isEmpty && timesPerDay != 0) {
+                      alarms = populateAlarms();
+                  }
+                  else if (alarms.length != timesPerDay) {
+                    alarms = populateAlarms();
+                  }
+                  alarms = await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))
           ]);
@@ -314,6 +309,16 @@ class EditMedication extends StatelessWidget {
     return list;
   }
 
+  Future<List<Alarm>> _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => EditAlarms(alarms: alarms)),
+    );
+    return result as List<Alarm>;
+  }
 }
 
 

@@ -247,12 +247,12 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
-                  // if (alarms.isEmpty && timesPerDay != 0) {
-                  //     alarms = populateAlarms();
-                  // }
-                  // else if (alarms.length != timesPerDay) {
-                  //   alarms = populateAlarms();
-                  // }
+                  if (alarms.isEmpty && timesPerDay != 0) {
+                      alarms = populateAlarms();
+                  }
+                  else if (alarms.length != timesPerDay) {
+                    alarms = populateAlarms();
+                  }
                   alarms = await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))
