@@ -95,25 +95,12 @@ class AddMedicationFormState extends State<AddMedicationForm> {
   //final timeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-
-    // creating a new medication from the given information
-    // Medication newMedication = Medication(
-    //   id: id,
-    //   nameOfDrug: medicationController.text,
-    // );
-    // newMedication.description = descriptionController.text;
-    // newMedication.repeatOption = repeatOption;
-    // newMedication.alarms = alarms;
-    // newMedication.daysOfWeek = repeatDays;
-    // // newMedication.repeatDuration = Duration(hours: durationValue);
-    // newMedication.repeatTimes = timesPerDay;
     // Build a Form widget using the _formKey created above.
     return Scaffold(
             body: ListView(
               padding: const EdgeInsets.all(25),
               children: [
                 basicMedicationInformation(),
-                //MedicationAlarms(key: _formKey, alarms: newMedication.alarms),
                 saveMedication()
               ],
             )
@@ -227,6 +214,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                       hideHeader: true,
                       title: const Text("Times Per Day"),
                       onConfirm: (Picker picker, List value) {
+                        alarms = populateAlarms();
                         //alarm.repeatduration = parseStringDuration(value[0].toString());
                         setState(() {
                           timesPerDay = value[0] + 1;
@@ -260,12 +248,12 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
-                  if (alarms.isEmpty && timesPerDay != 0) {
-                      alarms = populateAlarms();
-                  }
-                  else if (alarms.length != timesPerDay) {
-                    alarms = populateAlarms();
-                  }
+                  // if (alarms.isEmpty && timesPerDay != 0) {
+                  //     alarms = populateAlarms();
+                  // }
+                  // else if (alarms.length != timesPerDay) {
+                  //   alarms = populateAlarms();
+                  // }
                   alarms = await _navigateAndDisplaySelection(context);
                 },
                 child: const Text("View/Edit Alarms"))

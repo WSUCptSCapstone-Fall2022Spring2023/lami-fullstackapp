@@ -27,6 +27,7 @@ class AlarmItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool medicationTaken = false;
     // represents a single alarm in the home screen
     // ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
     // enabledController.addListener(() async {
@@ -74,28 +75,44 @@ class AlarmItem extends StatelessWidget {
     // });
 
     return ListTile(
-        contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
+        contentPadding: const EdgeInsets.fromLTRB(30, 15, 50, 10),
         title: Column(children: [
-          const SizedBox(height: 10),
-          Row(children: [
-            Expanded(
-                child: Text(
-                  "alarm.nameOfDrug",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  textScaleFactor: 1.7,
-                ))
-          ]),
-          const SizedBox(height: 6),
           Row(
-            children: [
-              const SizedBox(width: 10),
-              Text("Time:  " + "alarm.time.format(context)",
-                    textScaleFactor: 1.2
-              ),
-            ]
+              children: [
+
+                Text(alarm.time.format(context),
+                    textScaleFactor: 1.05
+                ),
+              ]
           ),
-        ]
-        )
+          const SizedBox(height: 5),
+          Row(
+              children: [
+                const SizedBox(width: 25),
+                Expanded(
+                    child: Text(
+                      alarm.nameOfDrug,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      textScaleFactor: 1.7,
+                    )
+                ),
+                const SizedBox(width: 25),
+                StatefulBuilder(builder: (context, _setState) {
+                  return Transform.scale(
+                    scale: 1.5,
+                    child: Checkbox(
+                      value: medicationTaken,
+                      onChanged: (bool? value) {
+                        _setState(() {
+                          medicationTaken = value!;
+                        });
+                      },
+                    ),
+                  );
+                })
+              ]
+          )
+        ])
     );
   }
 }
@@ -112,7 +129,7 @@ class TodaysMedications extends StatelessWidget {
     const appTitle = "Today's Medications";
     List<Alarm> allAlarms = [];
     for (int i = 0; i < medications.length; i++) {
-        allAlarms.addAll(medications[i].alarms);
+      allAlarms.addAll(medications[i].alarms);
     }
     return MaterialApp(
       title: appTitle,
