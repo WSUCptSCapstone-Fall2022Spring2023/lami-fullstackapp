@@ -24,7 +24,7 @@ class Alarm {
 
   @override
   String toString() {
-    return 'Alarm{alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug)';
+    return 'Alarm{alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug)}';
   }
 
   // maps the value from the database to the values present in the alarm class

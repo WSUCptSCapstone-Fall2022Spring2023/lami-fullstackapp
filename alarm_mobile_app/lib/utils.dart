@@ -289,22 +289,34 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
     tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
     tempMedication.repeatTimes = data[i]["repeatTimes"];
 
-    tempMedication.alarms = alarmsStringsToList(data[i]["time"]);
+    tempMedication.alarms = alarmsStringToList(data[i]["time"]);
     medications.add(tempMedication);
   }
   return medications;
 }
 
-List<Alarm> alarmsStringsToList(String? data) {
+List<Alarm> alarmsStringToList(String? data) {
   List<Alarm> list = [];
   if (data == null)
   {
     return list;
   }
-  var timeStrings = data.split(',');
-  for (int i = 0; i < timeStrings.length; i++)
+  var alarmStrings = data.substring(1, data.length - 1).split("Alarm");
+  for (int i = 1; i < alarmStrings.length; i++)
   {
-    //list.add(parseTimeOfDayString(timeStrings[i]));
+    List<String> singleAlarm = alarmStrings[i].substring(2, alarmStrings[i].length - 1).split(",");
+    String alarmID = singleAlarm[0].substring(8);
+    TimeOfDay time = parseTimeOfDayString(singleAlarm[1].substring(6));
+    String nameOfDrug = singleAlarm[2].split(")")[0].substring(13);
+    String dayOfWeek = "fdafda";
+    //String dayOfWeek = singleAlarm[3].substring(10);
+    Alarm alarm = Alarm(
+        alarmID: alarmID,
+        time: time,
+        nameOfDrug: nameOfDrug,
+        dayOfWeek: dayOfWeek
+    );
+    list.add(alarm);
   }
   return list;
 }
@@ -370,4 +382,23 @@ String getStatefulTime(time){
   }
   return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
   // return TimeOfDay.now().toString();
+}
+
+RepeatOption repeatOptionFromString(String string) {
+  if (string == 'RepeatOption.daily')
+  {
+    return RepeatOption.daily;
+  }
+  else if (string == 'RepeatOption.daysInterval')
+  {
+    return RepeatOption.daysInterval;
+  }
+  else if (string == 'RepeatOption.specificDays')
+  {
+    return RepeatOption.specificDays;
+  }
+  else
+  {
+    return RepeatOption.asNeeded;
+  }
 }

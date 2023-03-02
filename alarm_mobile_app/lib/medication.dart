@@ -69,41 +69,17 @@ class Medication {
 
   // gets an alarm object from the given map
   static Medication fromMap(Map<String, dynamic> data) {
-    Medication temp = Medication(
+    Medication medication = Medication(
         id: data['id'],
         nameOfDrug: data['nameOfDrug']
     );
-    temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
-    if (!data.containsKey('repeatDuration')) {
-      temp.repeatDuration = const Duration(days: 1);
-    }
-    else {
-      temp.repeatDuration = parseStringDuration(data['repeatDuration']);
-    }
-    if (!data.containsKey('repeatTimes')) {
-      temp.repeatTimes = 1;
-    } else {
-      temp.repeatTimes = data['repeatTimes'];
-    }
-
-    RepeatOption tempRepeatOption;
-    if (data['repeatOption'] == 'RepeatOption.daily')
-    {
-      tempRepeatOption = RepeatOption.daily;
-    }
-    else if (data['repeatOption'] == 'RepeatOption.daysInterval')
-    {
-      tempRepeatOption = RepeatOption.daysInterval;
-    }
-    else if (data['repeatOption'] == 'RepeatOption.specificDays')
-    {
-      tempRepeatOption = RepeatOption.specificDays;
-    }
-    else
-    {
-      tempRepeatOption = RepeatOption.asNeeded;
-    }
-    return temp;
+    medication.description = data['description'];
+    medication.repeatOption = repeatOptionFromString(data['repeatOption']);
+    medication.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
+    medication.repeatDuration = parseStringDuration(data['repeatDuration']);
+    medication.repeatTimes = data['repeatTimes'];
+    medication.alarms = alarmsStringToList(data['alarms']);
+    return medication;
   }
 
   // same function as above just different types
@@ -112,13 +88,12 @@ class Medication {
       id: data['id'] ?? "",
       nameOfDrug: data['nameOfDrug'] ?? "",
     );
-    List<TimeOfDay> time = [];
     temp.description = data["description"] ?? "";
     temp.repeatOption = stringToRepeatOption(data["repeatOption"]);
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek'] ?? "");
     temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
-    temp.alarms = alarmsStringsToList(data["alarms"]);
+    temp.alarms = alarmsStringToList(data["alarms"]);
     return temp;
   }
 }
