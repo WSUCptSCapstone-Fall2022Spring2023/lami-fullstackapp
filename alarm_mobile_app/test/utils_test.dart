@@ -24,16 +24,16 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   group('getCurrentUserLocal(SharedPreferences pref) tests', () {
-    Map<String, Object> testuser = <String, Object>{
+    Map<String, Object> mockUser = <String, Object>{
       "email": "example@wsu.edu",
       "id": "123456789",
       "usertype": "reg",
       "firstname": 'Pullman',
       "lastname": 'Moscow',
-      "alarms": []
+      "medications": []
     };
     test('Try to get the current user', () async {
-      SharedPreferences.setMockInitialValues(testuser);
+      SharedPreferences.setMockInitialValues(mockUser);
       final pref = await SharedPreferences.getInstance();
       Users user = getCurrentUserLocal(pref);
 
@@ -45,8 +45,7 @@ void main() {
     });
   });
 
-  group("writeToSharedPreferences(Users user, SharedPreferences pref) tests",
-      () {
+  group("writeToSharedPreferences(Users user, SharedPreferences pref) tests", () {
     Map<String, Object> testuser = <String, Object>{
       "email": "example@wsu.edu",
       "id": "123456789",
@@ -92,10 +91,11 @@ void main() {
   });
 
   group("parseTimeOfDayString(String time) tests", () {
-    test('Sends the string of the current time', () async {
-      TimeOfDay t = TimeOfDay.now();
+    test('Sends the string of the current time', () {
+      TimeOfDay expected = const TimeOfDay(hour: 12, minute: 33);
+      TimeOfDay result = parseTimeOfDayString(expected.toString());
       // Expects the function returns an object of TimeOfDay
-      expect(t, parseTimeOfDayString(t.toString()));
+      expect(expected, result);
     });
   });
 
@@ -122,4 +122,14 @@ void main() {
       expect(nt, convertFromTimeOfDay(t));
     });
   });
+
+  // parseDaysOfWeekString
+  // convertMapMedicationsToList
+  // convertFromTimeOfDay
+  // parseStringDuration
+  // stringToRepeatOption
+  // repeatOptionToString
+  // medicationListFromMap
+  // alarmsStringToList
+  // repeatOptionFromString
 }

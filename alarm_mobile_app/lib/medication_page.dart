@@ -12,6 +12,7 @@ import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:alarm_mobile_app/todays_medications.dart';
+import 'package:alarm_mobile_app/edit_medication.dart';
 
 
 
@@ -75,7 +76,67 @@ class MedicationItem extends StatelessWidget {
                   medication.nameOfDrug,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   textScaleFactor: 1.7,
-                ))
+                )),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeColors.darkData.primaryColorLight,
+                    minimumSize: const Size(120, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20))),
+                onPressed: () {
+                  runApp(EditMedication(medication: medication));
+                },
+                child: const Text(
+                  "Edit",
+                  textScaleFactor: 1.3,
+                )),
+            const SizedBox(width: 30),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeColors.darkData.primaryColorLight,
+                    minimumSize: const Size(120, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20))),
+                child: const Text(
+                  "Delete",
+                  textScaleFactor: 1.3,
+                ),
+                onPressed: () async {
+                  FirebaseFirestore instance = FirebaseFirestore.instance;
+                  SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+                  // secondary confirmation dialog for deleting an alarm
+                  showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                            title: const Text("Are you sure?"),
+                            actions: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    await deleteMedication(medication.id, instance);
+                                    runApp(MedicationPage(
+                                        medications: await getMedications(
+                                            prefs.getString("id") ?? '',
+                                            instance)));
+                                  },
+                                  child: const Text(
+                                    "Yes",
+                                    textScaleFactor: 1.2,
+                                  )),
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "No",
+                                    textScaleFactor: 1.2,
+                                  )),
+                            ]);
+                      });
+                })
           ]),
           // const SizedBox(height: 6),
           // Row(

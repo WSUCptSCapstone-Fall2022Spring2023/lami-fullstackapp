@@ -38,6 +38,35 @@ abstract class ThemeColors {
           systemOverlayStyle: SystemUiOverlayStyle.dark, color: Colors.blue));
 }
 
+class ColumnBuilder extends StatelessWidget {
+  final IndexedWidgetBuilder itemBuilder;
+  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisSize mainAxisSize;
+  final CrossAxisAlignment crossAxisAlignment;
+  final TextDirection textDirection;
+  final VerticalDirection verticalDirection;
+  final int itemCount;
+
+  const ColumnBuilder({
+    required Key key,
+    required this.itemBuilder,
+    required this.itemCount,
+    this.mainAxisAlignment: MainAxisAlignment.start,
+    this.mainAxisSize: MainAxisSize.max,
+    this.crossAxisAlignment: CrossAxisAlignment.center,
+    required this.textDirection,
+    this.verticalDirection: VerticalDirection.down,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(itemCount,
+              (index) => itemBuilder(context, index)).toList(),
+    );
+  }
+}
+
 ///Gets the list of alarms associated with the given userid
 ///@returns the list of alarms if it is found [] if not
 ///This function is async and returns a future to allow for non-asynchrous functions to use this method
@@ -61,7 +90,6 @@ Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance)
   }
   throw Exception("User does not exist in the database!");
 }
-
 ///gets the user associated with that uid
 ///@param uid: uid that is generated from firebaseauthentication
 ///@return returns the user object that is associated with that uid
@@ -77,7 +105,6 @@ Future<Users> getCurrentUser(String uid) async {
   }
   throw Exception("ERROR USER DOES NOT EXIST");
 }
-
 ///gets the current user object that is stored in the shared preferences
 ///@param pref - instance of sharedpreferences
 ///@return returns the user object - note that alarms is not stored in sharedpreferences
@@ -89,13 +116,11 @@ Users getCurrentUserLocal(SharedPreferences pref) {
       firstname: pref.getString("firstname") ?? '',
       lastname: pref.getString("lastname") ?? '');
 }
-
 /// writes the given user to the shared preferences
 /// @param user: user to be written
 /// @param pref: instance of shared preferences
 /// note: this function is async due to how sharedprefences writes data
-Future<void> writeToSharedPreferences(
-    Users user, SharedPreferences pref) async {
+Future<void> writeToSharedPreferences(Users user, SharedPreferences pref) async {
   await pref.setString("id", user.id);
   await pref.setString("firstname", user.firstname);
   await pref.setString("lastname", user.lastname);
@@ -107,12 +132,11 @@ Future<void> writeToSharedPreferences(
 ///@param time must be in format TimeOfDay(hr:min)
 ///@return returns a timeofday object
 TimeOfDay parseTimeOfDayString(String time) {
-  time = time.substring(time.indexOf("(") + 1, time.indexOf(")") - 1);
+  time = time.substring(time.indexOf("(") + 1, time.indexOf(")"));
   return TimeOfDay(
       hour: int.parse(time.split(":")[0]),
       minute: int.parse(time.split(":")[1]));
 }
-
 List<bool> parseDaysOfWeekString(String days){
   var parseList = days.substring(1, days.length-1).split(', ');
   var returnList = List.filled(7, true);
@@ -135,7 +159,7 @@ List<bool> parseDaysOfWeekString(String days){
 /// @param instance: instance of firebasefirestore
 /// @return returns true if the alarm exists in the users alarms collection, false otherwise
 /// note: this function is async due to how firestore works
-Future<bool> deleteAlarm(String id, FirebaseFirestore instance) async {
+Future<bool> deleteMedication(String id, FirebaseFirestore instance) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   String uid = pref.getString("id") ?? '';
   CollectionReference users = FirebaseFirestore.instance.collection('/users');
@@ -143,10 +167,10 @@ Future<bool> deleteAlarm(String id, FirebaseFirestore instance) async {
   if (snap.exists) {
     Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
     // looping through the collection of alarms - note it is a list
-    for (int i = 0; i < data['alarms'].length; i++) {
+    for (int i = 0; i < data['medications'].length; i++) {
       // checking to see if that specific alarm id exists
-      if (data['alarms'][i]['id'] == id) {
-        data['alarms'].removeAt(i);
+      if (data['medications'][i]['id'] == id) {
+        data['medications'].removeAt(i);
         break;
       }
     }
@@ -277,6 +301,18 @@ RepeatOption stringToRepeatOption(String? data) {
   return tempRepeatOption;
 }
 
+String repeatOptionToString(RepeatOption repeatOption) {
+  if (repeatOption == RepeatOption.daily) {
+    return "Every Day";
+  } else if (repeatOption == RepeatOption.specificDays) {
+    return "Specific Days";
+  } else if (repeatOption == RepeatOption.daysInterval) {
+    return "Days Interval";
+  } else {
+    return "As Needed";
+  }
+}
+
 List<Medication> medicationListFromMap(List<dynamic> data) {
   List<Medication> medications = [];
   Medication tempMedication;
@@ -321,47 +357,6 @@ List<Alarm> alarmsStringToList(String? data) {
   return list;
 }
 
-class ColumnBuilder extends StatelessWidget {
-  final IndexedWidgetBuilder itemBuilder;
-  final MainAxisAlignment mainAxisAlignment;
-  final MainAxisSize mainAxisSize;
-  final CrossAxisAlignment crossAxisAlignment;
-  final TextDirection textDirection;
-  final VerticalDirection verticalDirection;
-  final int itemCount;
-
-  const ColumnBuilder({
-    required Key key,
-    required this.itemBuilder,
-    required this.itemCount,
-    this.mainAxisAlignment: MainAxisAlignment.start,
-    this.mainAxisSize: MainAxisSize.max,
-    this.crossAxisAlignment: CrossAxisAlignment.center,
-    required this.textDirection,
-    this.verticalDirection: VerticalDirection.down,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(itemCount,
-              (index) => itemBuilder(context, index)).toList(),
-    );
-  }
-}
-
-String repeatOptionToString(RepeatOption repeatOption) {
-  if (repeatOption == RepeatOption.daily) {
-    return "Every Day";
-  } else if (repeatOption == RepeatOption.specificDays) {
-    return "Specific Days";
-  } else if (repeatOption == RepeatOption.daysInterval) {
-    return "Days Interval";
-  } else {
-    return "As Needed";
-  }
-}
-
 RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
   if (pickerRepeatOption == 0) {
     return RepeatOption.daily;
@@ -372,16 +367,6 @@ RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
   } else {
     return RepeatOption.asNeeded;
   }
-}
-
-String getStatefulTime(time){
-  int hour = int.parse(time.toString().substring(10, 12));
-  int minutes = int.parse(time.toString().substring(13, 15));
-  if (hour > 12){
-    return (hour - 12).toString() + ':' + time.toString().substring(13, 15) + " PM";
-  }
-  return hour.toString() + ':' + time.toString().substring(13, 15) + " AM";
-  // return TimeOfDay.now().toString();
 }
 
 RepeatOption repeatOptionFromString(String string) {
