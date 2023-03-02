@@ -208,7 +208,7 @@ class LogInFormState extends State<LogInForm> {
                       UserCredential credential =
                       await auth.signInWithEmailAndPassword(
                           email: emailcontroller.text.trim(),
-                          password: passwordcontroller.toString());
+                          password: passwordcontroller.text.trim());
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {

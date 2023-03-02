@@ -69,7 +69,7 @@ class EditMedication extends StatelessWidget {
               padding: const EdgeInsets.all(25),
               children: [
                 basicMedicationInformation(medication: medication),
-                saveMedication()
+                updateMedication()
               ],
             )
         ));
@@ -180,7 +180,6 @@ class EditMedication extends StatelessWidget {
                       hideHeader: true,
                       title: const Text("Times Per Day"),
                       onConfirm: (Picker picker, List value) {
-                        //alarm.repeatduration = parseStringDuration(value[0].toString());
                         _setState(() {
                           alarms = populateAlarms();
                           timesPerDay = value[0] + 1;
@@ -226,7 +225,7 @@ class EditMedication extends StatelessWidget {
     );
   }
 
-  Widget saveMedication() {
+  Widget updateMedication() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       child: ElevatedButton(
@@ -322,140 +321,3 @@ class EditMedication extends StatelessWidget {
 }
 
 
-//
-// // Create a Form widget.
-// class EditMedicationForm extends StatefulWidget {
-//   final Medication medication;
-//   const EditMedicationForm({Key? key, required this.medication}) : super(key: key);
-//   @override
-//   EditMedicationFormState createState() {
-//     return EditMedicationFormState();
-//   }
-// }
-//
-//
-//
-// // Define a corresponding State class.
-// // This class holds data related to the form.
-// class EditMedicationFormState extends State<EditMedicationForm> {
-//   String id = Random().nextInt(maxID).toString();
-//   @override
-//   Widget build(BuildContext context) {
-//     // Build a Form widget using the _formKey created above.
-//     return Scaffold(
-//         body: ListView(
-//           padding: const EdgeInsets.all(25),
-//           children: [
-//             //basicMedicationInformation(),
-//             saveMedication()
-//           ],
-//         )
-//     );
-//   }
-//
-//
-//
-//   Future<List<Alarm>> _navigateAndDisplaySelection(BuildContext context) async {
-//     // Navigator.push returns a Future that completes after calling
-//     // Navigator.pop on the Selection Screen.
-//     final result = await Navigator.push(
-//       context,
-//       // Create the SelectionScreen in the next step.
-//       MaterialPageRoute(builder: (context) => EditAlarms(alarms: alarms)),
-//     );
-//     return result as List<Alarm>;
-//   }
-// }
-//
-//
-//
-// class AlarmItem extends StatelessWidget {
-//   AlarmItem({
-//     required this.alarm,
-//   }) : super(key: ObjectKey(alarm));
-//   final Alarm alarm;
-//   @override
-//   Widget build(BuildContext context) {
-//     // represents a single alarm in the home screen
-//     ValueNotifier<bool> enabledController = ValueNotifier(true);
-//     enabledController.addListener(() async {});
-//     return ListTile(
-//         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
-//         title:
-//         Row(
-//           children: [
-//             const SizedBox(width: 10),
-//             const Expanded(
-//               child: Text("Time:  " + "alarm.time.format(context)",
-//                   textScaleFactor: 1.2),
-//             ),
-//             ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                     backgroundColor: ThemeColors.darkData.primaryColorLight,
-//                     minimumSize: const Size(120, 50),
-//                     shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(20))),
-//                 onPressed: () {
-//                   // runApp(EditAlarm(alarm: alarm));
-//                 },
-//                 child: const Text(
-//                   "Edit",
-//                   textScaleFactor: 1.3,
-//                 )
-//             )
-//           ],
-//         )
-//     );
-//   }
-// }
-//
-//
-//
-// // Create a Form widget.
-// class MedicationAlarms extends StatefulWidget {
-//   const MedicationAlarms({required this.alarms, Key? key}) : super(key: key);
-//   final List<Alarm> alarms;
-//
-//   @override
-//   MedicationAlarmsState createState() {
-//     return MedicationAlarmsState();
-//   }
-// }
-
-
-
-// // Define a corresponding State class.
-// // This class holds data related to the form.
-// class MedicationAlarmsState extends State<MedicationAlarms> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return ColumnBuilder(
-//       key: GlobalKey<FormState>(),
-//       itemBuilder: (BuildContext context, int index) {
-//         return AlarmItem(alarm: widget.alarms[index]);
-//       },
-//       itemCount: widget.alarms.length,
-//       textDirection: TextDirection.ltr,);
-//   }
-// }
-
-
-
-
-// Row(children: [
-//   const Text(
-//     "Enabled?",
-//     style: TextStyle(
-//       fontSize: 20.0,
-//     ),
-//   ),
-//   Switch(
-//       value: enabled,
-//       onChanged: (value) {
-//         setState(() {
-//           enabled = value;
-//         });
-//       },
-//       activeColor: Colors.blue,
-//       activeTrackColor: Colors.lightBlueAccent)
-// ]),

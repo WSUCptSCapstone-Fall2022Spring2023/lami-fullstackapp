@@ -243,9 +243,9 @@ class LogInFormState extends State<LogInForm> {
                     if (user != null) {
                       Users currentUser = await getCurrentUser(user.uid);
                       await writeToSharedPreferences(currentUser, pref);
-                      if (currentUser.usertype == 'admin') {
-                        return runApp(Admin(users: await getAllUsers(inst)));
-                      }
+                      // if (currentUser.usertype == 'admin') {
+                      //   return runApp(Admin(users: await getAllUsers(inst)));
+                      // }
                       return runApp(
                           MedicationPage(medications: await getMedications(currentUser.id, inst)));
                       // go to home screen w/ current user

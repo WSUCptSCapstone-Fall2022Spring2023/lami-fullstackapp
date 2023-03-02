@@ -422,24 +422,3 @@ class MedicationAlarmsState extends State<MedicationAlarms> {
         textDirection: TextDirection.ltr,);
   }
 }
-
-
-
-
-// Row(children: [
-//   const Text(
-//     "Enabled?",
-//     style: TextStyle(
-//       fontSize: 20.0,
-//     ),
-//   ),
-//   Switch(
-//       value: enabled,
-//       onChanged: (value) {
-//         setState(() {
-//           enabled = value;
-//         });
-//       },
-//       activeColor: Colors.blue,
-//       activeTrackColor: Colors.lightBlueAccent)
-// ]),
