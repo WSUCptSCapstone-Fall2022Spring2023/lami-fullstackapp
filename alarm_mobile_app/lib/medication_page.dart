@@ -84,7 +84,7 @@ class MedicationItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20))),
                 onPressed: () {
-                  runApp(EditMedication(medication: medication));
+                  runApp(EditMedication(key: key, medication: medication));
                 },
                 child: const Text(
                   "Edit",

@@ -40,7 +40,6 @@ class AddMedication extends StatelessWidget {
       themeMode: ThemeMode.system,
       home: Scaffold(
         appBar: AppBar(
-
           title: const Text(appTitle),
           actions: [
             // settings button

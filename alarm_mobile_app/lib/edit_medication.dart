@@ -1,85 +1,81 @@
-// represents the edit alarm screen for the app
-// is essentially the create alarm screen, but with the values filled in
+// represents the create alarm screen for the app
+// allows the user to create a new alarm with the given information
+// also allows the user to cancel that transaction
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:collection';
 import 'dart:math';
-
-import 'package:alarm_mobile_app/alarm.dart';
-import 'package:alarm_mobile_app/home.dart';
+import 'package:alarm_mobile_app/edit_alarms.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'add_medication.dart';
-import 'medication_page.dart';
 import 'users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:weekday_selector/weekday_selector.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
+import 'package:weekday_selector/weekday_selector.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
+import 'alarm.dart';
+
+// maximum number used for random id generation (2^32 - 1)
+const int maxID = 2147483647;
+
+final medicationController = TextEditingController();
+final descriptionController = TextEditingController();
+late RepeatOption repeatOption = RepeatOption.daily;
+late List<bool> repeatDays = List<bool>.filled(7, true);
+late int timesPerDay = 1;
+late List<Alarm> alarms = [];
+const appTitle = "New Medication";
+
 
 class EditMedication extends StatelessWidget {
   final Medication medication;
   const EditMedication({Key? key, required this.medication}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    const appTitle = "Alliance House Medication Reminder";
+    medicationController.text = medication.nameOfDrug;
+    descriptionController.text = medication.description;
+    repeatOption = medication.repeatOption;
+    timesPerDay = medication.repeatTimes;
+    alarms = medication.alarms;
+
     return MaterialApp(
-      title: appTitle,
-      darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.darkData,
-      themeMode: ThemeMode.system,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(appTitle),
-        ),
-        body: EditMedicationForm(medication: medication),
-      ),
-    );
+        title: appTitle,
+        darkTheme: ThemeColors.darkData,
+        theme: ThemeColors.lightData,
+        themeMode: ThemeMode.system,
+        home: Scaffold(
+            appBar: AppBar(
+              title: const Text(appTitle),
+              actions: [
+                // settings button
+                IconButton(
+                    icon: const Icon(Icons.exit_to_app, color: Colors.black, size: 35),
+                    onPressed: () async {
+                      Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                      user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                      runApp(MedicationPage(medications: user.medications));
+                    }),
+              ],
+            ),
+            body: ListView(
+              padding: const EdgeInsets.all(25),
+              children: [
+                basicMedicationInformation(medication: medication),
+                saveMedication()
+              ],
+            )
+        ));
   }
-}
 
-// Create a Form widget.
-class EditMedicationForm extends StatefulWidget {
-  final Medication medication;
-  const EditMedicationForm({Key? key, required this.medication}) : super(key: key);
-  @override
-  EditMedicationFormState createState() {
-    return EditMedicationFormState();
-  }
-}
-
-// Define a corresponding State class.
-// This class holds data related to the form.
-class EditMedicationFormState extends State<EditMedicationForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
-  EditMedicationFormState();
-
-  final _formKey = GlobalKey<FormState>();
-  final medicationController = TextEditingController();
-  final descriptionController = TextEditingController();
-  late RepeatOption repeatOption = RepeatOption.daily;
-  late List<bool> repeatDays = List<bool>.filled(7, true);
-  late int timesPerDay = 1;
-  late List<Alarm> alarms = [];
-
-  @override
-  Widget build(BuildContext context) {
-    // if (medicationController.text == "") {
-    //   medicationController.text = medi.
-    //   descriptionController.text = alarm.description;
-    //   repeatTimeController.text = alarm.repeattimes.toString();
-    //   repeatDurationController.text = alarm.repeatduration.inHours.toString();
-    //   durationValue = alarm.repeatduration.inHours;
-    // }
-
-    //// Build a Form widget using the _formKey created above.
+  Widget basicMedicationInformation({required Medication medication}) {
     return Column(
       children: <Widget>[
         //// Medication name
@@ -139,7 +135,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
                       hideHeader: true,
                       title: const Text("Frequency"),
                       onConfirm: (Picker picker, List value) {
-                        setState(() {
+                        _setState(() {
                           repeatOption = pickerToRepeatOption(value[0]);
                         });
                       }).showDialog(context);
@@ -155,10 +151,8 @@ class EditMedicationFormState extends State<EditMedicationForm> {
         ]),
         WeekdaySelector(
           onChanged: (int day) {
-            setState(() {
-              final index = day % 7;
-              repeatDays[index] = !repeatDays[index];
-            });
+            final index = day % 7;
+            repeatDays[index] = !repeatDays[index];
           },
           values: repeatDays,
         ),
@@ -187,7 +181,8 @@ class EditMedicationFormState extends State<EditMedicationForm> {
                       title: const Text("Times Per Day"),
                       onConfirm: (Picker picker, List value) {
                         alarms = populateAlarms();
-                        setState(() {
+                        //alarm.repeatduration = parseStringDuration(value[0].toString());
+                        _setState(() {
                           timesPerDay = value[0] + 1;
                         });
                       }).showDialog(context);
@@ -236,6 +231,72 @@ class EditMedicationFormState extends State<EditMedicationForm> {
     );
   }
 
+  Widget saveMedication() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.red, // button
+          onPrimary: Colors.white, // letter
+          // shape: CircleBorder(),
+          // fixedSize: Size.fromRadius(60),
+          // fixedSize: Size.fromHeight(50.0)),
+          fixedSize: const Size(200.0, 60.0),
+        ),
+        onPressed: () async {
+          // Validate returns true if the form is valid, or false otherwise.
+          if (medicationController.text.trim() != "") {
+            SharedPreferences pref =
+            await SharedPreferences.getInstance();
+            FirebaseFirestore inst = FirebaseFirestore.instance;
+            // gets the current user from the local shared preferences
+            Users currentUser = getCurrentUserLocal(pref);
+            CollectionReference users = inst.collection('/users');
+            DocumentSnapshot<Object?> snap =
+            await users.doc(currentUser.id).get();
+            if (snap.exists) {
+              Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+              if (!data.containsKey('medications')) {
+                // initializing the medications collection if it does not exist
+                data['medications'] = [];
+              }
+              // id is randomly generated - have to do it this way due to being able to delete alarms
+              String id = Random().nextInt(maxID).toString();
+              // creating a new medication from the given information
+              Medication updatedMedication = Medication(
+                id: medication.id,
+                nameOfDrug: medicationController.text,
+              );
+              updatedMedication.description = descriptionController.text;
+              updatedMedication.repeatOption = repeatOption;
+              updatedMedication.daysOfWeek = repeatDays;
+              updatedMedication.repeatDuration = const Duration(days: 1);
+              updatedMedication.repeatTimes = timesPerDay;
+              updatedMedication.alarms = alarms;
+              // adds a new alarm to the users document as a subcollection
+              for (int i = 0;
+              i < (data['medications'] as List<dynamic>).length;
+              i++) {
+                if (data['medications'][i]['id'] == updatedMedication.id) {
+                  data['medications'][i] = updatedMedication.toMap();
+                  break;
+                }
+              }
+              // updates the alarm information
+              await users.doc(currentUser.id).update(data);
+              runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
+            }
+          }
+        },
+        child: const Text(
+          'Save',
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
+        ),
+      ),
+    );
+  }
 
   List<Alarm> populateAlarms(){
     List<Alarm> list = List<Alarm>.empty(growable: true);
@@ -255,3 +316,141 @@ class EditMedicationFormState extends State<EditMedicationForm> {
 
 }
 
+
+//
+// // Create a Form widget.
+// class EditMedicationForm extends StatefulWidget {
+//   final Medication medication;
+//   const EditMedicationForm({Key? key, required this.medication}) : super(key: key);
+//   @override
+//   EditMedicationFormState createState() {
+//     return EditMedicationFormState();
+//   }
+// }
+//
+//
+//
+// // Define a corresponding State class.
+// // This class holds data related to the form.
+// class EditMedicationFormState extends State<EditMedicationForm> {
+//   String id = Random().nextInt(maxID).toString();
+//   @override
+//   Widget build(BuildContext context) {
+//     // Build a Form widget using the _formKey created above.
+//     return Scaffold(
+//         body: ListView(
+//           padding: const EdgeInsets.all(25),
+//           children: [
+//             //basicMedicationInformation(),
+//             saveMedication()
+//           ],
+//         )
+//     );
+//   }
+//
+//
+//
+//   Future<List<Alarm>> _navigateAndDisplaySelection(BuildContext context) async {
+//     // Navigator.push returns a Future that completes after calling
+//     // Navigator.pop on the Selection Screen.
+//     final result = await Navigator.push(
+//       context,
+//       // Create the SelectionScreen in the next step.
+//       MaterialPageRoute(builder: (context) => EditAlarms(alarms: alarms)),
+//     );
+//     return result as List<Alarm>;
+//   }
+// }
+//
+//
+//
+// class AlarmItem extends StatelessWidget {
+//   AlarmItem({
+//     required this.alarm,
+//   }) : super(key: ObjectKey(alarm));
+//   final Alarm alarm;
+//   @override
+//   Widget build(BuildContext context) {
+//     // represents a single alarm in the home screen
+//     ValueNotifier<bool> enabledController = ValueNotifier(true);
+//     enabledController.addListener(() async {});
+//     return ListTile(
+//         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
+//         title:
+//         Row(
+//           children: [
+//             const SizedBox(width: 10),
+//             const Expanded(
+//               child: Text("Time:  " + "alarm.time.format(context)",
+//                   textScaleFactor: 1.2),
+//             ),
+//             ElevatedButton(
+//                 style: ElevatedButton.styleFrom(
+//                     backgroundColor: ThemeColors.darkData.primaryColorLight,
+//                     minimumSize: const Size(120, 50),
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(20))),
+//                 onPressed: () {
+//                   // runApp(EditAlarm(alarm: alarm));
+//                 },
+//                 child: const Text(
+//                   "Edit",
+//                   textScaleFactor: 1.3,
+//                 )
+//             )
+//           ],
+//         )
+//     );
+//   }
+// }
+//
+//
+//
+// // Create a Form widget.
+// class MedicationAlarms extends StatefulWidget {
+//   const MedicationAlarms({required this.alarms, Key? key}) : super(key: key);
+//   final List<Alarm> alarms;
+//
+//   @override
+//   MedicationAlarmsState createState() {
+//     return MedicationAlarmsState();
+//   }
+// }
+
+
+
+// // Define a corresponding State class.
+// // This class holds data related to the form.
+// class MedicationAlarmsState extends State<MedicationAlarms> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return ColumnBuilder(
+//       key: GlobalKey<FormState>(),
+//       itemBuilder: (BuildContext context, int index) {
+//         return AlarmItem(alarm: widget.alarms[index]);
+//       },
+//       itemCount: widget.alarms.length,
+//       textDirection: TextDirection.ltr,);
+//   }
+// }
+
+
+
+
+// Row(children: [
+//   const Text(
+//     "Enabled?",
+//     style: TextStyle(
+//       fontSize: 20.0,
+//     ),
+//   ),
+//   Switch(
+//       value: enabled,
+//       onChanged: (value) {
+//         setState(() {
+//           enabled = value;
+//         });
+//       },
+//       activeColor: Colors.blue,
+//       activeTrackColor: Colors.lightBlueAccent)
+// ]),
