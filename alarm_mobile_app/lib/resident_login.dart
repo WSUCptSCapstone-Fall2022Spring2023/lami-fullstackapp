@@ -4,25 +4,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:alarm_mobile_app/admin.dart';
-import 'package:alarm_mobile_app/medication.dart';
-import 'package:alarm_mobile_app/passwordreset.dart';
 import 'package:alarm_mobile_app/employee_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'register.dart';
+import 'package:alarm_mobile_app/register.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'users.dart';
-import 'home.dart';
+import 'package:alarm_mobile_app/users.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'utils.dart';
+import 'package:alarm_mobile_app/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 
-class LogIn extends StatelessWidget {
-  const LogIn({Key? key}) : super(key: key);
+class ResidentLogIn extends StatelessWidget {
+  const ResidentLogIn({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,26 +81,25 @@ class LogIn extends StatelessWidget {
 }
 
 // Create a Form widget.
-class LogInForm extends StatefulWidget {
-  const LogInForm({Key? key}) : super(key: key);
+class ResidentLogInForm extends StatefulWidget {
+  const ResidentLogInForm({Key? key}) : super(key: key);
 
   @override
-  LogInFormState createState() {
-    return LogInFormState();
+  ResidentLogInFormState createState() {
+    return ResidentLogInFormState();
   }
 }
 
 // Define a corresponding State class.
 // This class holds data related to the form.
-class LogInFormState extends State<LogInForm> {
+class ResidentLogInFormState extends State<LogInForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  final emailcontroller = TextEditingController();
-  //final passwordcontroller = TextEditingController();
+  final emailController = TextEditingController();
   late FirebaseAuth auth;
   DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
 
@@ -113,8 +108,7 @@ class LogInFormState extends State<LogInForm> {
   }
   @override
   void dispose() {
-    emailcontroller.dispose();
-    //passwordcontroller.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
@@ -140,7 +134,7 @@ class LogInFormState extends State<LogInForm> {
                 }
                 return null;
               },
-              controller: emailcontroller,
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(
@@ -217,7 +211,7 @@ class LogInFormState extends State<LogInForm> {
                     try {
                       UserCredential credential =
                           await auth.signInWithEmailAndPassword(
-                              email: emailcontroller.text.trim(),
+                              email: emailController.text.trim(),
                               password: _selectedDate.toString() + "R3sident&AcCount*");
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
@@ -253,7 +247,7 @@ class LogInFormState extends State<LogInForm> {
                       //user exists in firebase auth but not in firestore - add to firestore
                       CollectionReference users = inst.collection('users');
                       Users newuser = Users(
-                          email: emailcontroller.text,
+                          email: emailController.text,
                           id: user?.uid.toString() ?? '',
                           usertype: "reg",
                           firstname: '',
@@ -263,7 +257,7 @@ class LogInFormState extends State<LogInForm> {
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);
                       await writeToSharedPreferences(newuser, pref);
-                      runApp(Home(alarms: []));
+                      runApp(const MedicationPage(medications: []));
                     }
                   } else {
                     //error - user does not exist - display error email/ password is invalid

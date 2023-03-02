@@ -1,5 +1,4 @@
 import 'package:alarm_mobile_app/add_medication.dart';
-import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/settings.dart';
 import 'package:flutter/material.dart';

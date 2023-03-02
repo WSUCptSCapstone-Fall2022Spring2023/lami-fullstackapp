@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 // represents the initialization + starting point of the app - redirects users to the appropriate screen
 
-import 'package:alarm_mobile_app/home.dart';
 import 'medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'alarm.dart';
@@ -98,7 +97,7 @@ class _AppState extends State<App> {
         if (snapshot.connectionState == ConnectionState.done) {
           FirebaseAuth auth = FirebaseAuth.instance;
           if (auth.currentUser == null) {
-            return const LogIn();
+            return const ResidentLogIn();
           } else {
             getCurrentUser(auth.currentUser!.uid).then((Users u) {
               var pref = SharedPreferences.getInstance();
@@ -117,7 +116,7 @@ class _AppState extends State<App> {
                   Fluttertoast.showToast(
                       msg:
                           "ERROR Occured - Please contact the house director - ERROR CODE: DB MISMATCH");
-                  return runApp(const LogIn());
+                  return runApp(const ResidentLogIn());
                 });
                 // if the current user is admin, run getAllUsers()
               } else if (u.usertype == 'admin') {
@@ -131,13 +130,13 @@ class _AppState extends State<App> {
                   Fluttertoast.showToast(
                       msg: // at least, this is reached.
                           "ERROR Occured on admin user - Please contact the house director - ERROR CODE: DB MISMATCH");
-                  return runApp(const LogIn());
+                  return runApp(const ResidentLogIn());
                 });
               } else {
                 Fluttertoast.showToast(
                     msg: // at least, this is reached.
                         "ERROR occured: invalid user type");
-                return runApp(const LogIn());
+                return runApp(const ResidentLogIn());
               }
             });
           }

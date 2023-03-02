@@ -9,11 +9,10 @@ import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:alarm_mobile_app/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'users.dart';
+import 'package:alarm_mobile_app/users.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 

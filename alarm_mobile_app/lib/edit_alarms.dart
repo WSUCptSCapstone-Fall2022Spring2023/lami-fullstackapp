@@ -5,7 +5,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:alarm_mobile_app/add_medication.dart';
-import 'package:alarm_mobile_app/edit_alarm.dart';
 import 'package:alarm_mobile_app/settings.dart';
 import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:flutter/material.dart';

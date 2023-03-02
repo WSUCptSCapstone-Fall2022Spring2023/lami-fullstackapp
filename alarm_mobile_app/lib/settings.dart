@@ -6,7 +6,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:alarm_mobile_app/admin.dart';
-import 'package:alarm_mobile_app/login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:email_validator/email_validator.dart';
@@ -374,7 +374,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                                 onPressed: () async {
                                   AwesomeNotifications().cancelAll();
                                   await instance.signOut();
-                                  runApp(const LogIn());
+                                  runApp(const ResidentLogIn());
                                 },
                                 child: const Text(
                                   "Confirm",

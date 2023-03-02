@@ -5,7 +5,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:alarm_mobile_app/login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +108,7 @@ class PasswordResetFormState extends State<PasswordResetForm> {
                     Fluttertoast.showToast(
                         msg:
                             "Please check your email for the password reset link.");
-                    runApp(const LogIn());
+                    runApp(const ResidentLogIn());
                   }
                 },
                 child: const Text('Submit'),
