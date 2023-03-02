@@ -237,7 +237,6 @@ class RegisterFormState extends State<RegisterForm> {
                           firstname: firstnamecontroller.text,
                           lastname: lastnamecontroller.text,
                       );
-                      newuser.dateOfBirth = _selectedDate;
                       newuser.medications = [];
                       await writeToSharedPreferences(newuser, pref);
                       // adds the user to the database

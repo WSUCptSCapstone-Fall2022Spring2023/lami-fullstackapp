@@ -14,7 +14,6 @@ class Users {
   final String firstname;
   final String lastname;
   late List<Medication> medications;
-  late DateTime dateOfBirth;
   // constructor for the values
   Users({
     required this.id,
@@ -27,7 +26,7 @@ class Users {
   // should be used only for testing purposes
   @override
   String toString() {
-    return 'User{id: $id, email: $email, usertype: $usertype, firstname: $firstname, lastname: $lastname, dateOfBirth: $dateOfBirth)\nMedications{$medications} ';
+    return 'User{id: $id, email: $email, usertype: $usertype, firstname: $firstname, lastname: $lastname)\nMedications{$medications} ';
   }
 
   // maps the value from the database to the values present in the user class
@@ -38,7 +37,6 @@ class Users {
       'email': email,
       'firstname': firstname,
       'lastname': lastname,
-      'dateOfBirth': dateOfBirth,
       'medications': medications,
     };
   }
@@ -53,7 +51,6 @@ class Users {
       lastname: data['lastname'] ?? "unknown lastname",
     );
     temp.medications = medicationListFromMap(data['medications']);
-    temp.dateOfBirth = DateTime.fromMillisecondsSinceEpoch(data['dateOfBirth'].seconds * 1000);
     return temp;
   }
 
