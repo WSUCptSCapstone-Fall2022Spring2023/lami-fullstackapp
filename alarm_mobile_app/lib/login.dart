@@ -161,8 +161,7 @@ class LogInFormState extends State<LogInForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
-                  // selectedDate: DateUtils.dateOnly(_selectedDate),
-                  selectedDate: DateTime(1999, 6, 27),
+                  selectedDate: DateUtils.dateOnly(_selectedDate),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
                   onDateTimeChanged: (DateTime value) {
@@ -219,15 +218,15 @@ class LogInFormState extends State<LogInForm> {
                       UserCredential credential =
                           await auth.signInWithEmailAndPassword(
                               email: emailcontroller.text.trim(),
-                              password: "1Resident&Account9LAMI*");
+                              password: _selectedDate.toString() + "R3sident&AcCount*");
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
                         Fluttertoast.showToast(
-                            msg: "Invalid username or password");
+                            msg: "Invalid email");
                       } else if (e.code == 'wrong-password') {
                         Fluttertoast.showToast(
-                            msg: "Invalid username or password");
+                            msg: "Invalid date of birth");
                       } else {
                         Fluttertoast.showToast(msg: e.code);
                       }

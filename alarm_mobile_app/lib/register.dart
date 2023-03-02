@@ -5,6 +5,7 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:alarm_mobile_app/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -214,7 +215,7 @@ class RegisterFormState extends State<RegisterForm> {
                     try {
                       user = (await auth.createUserWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: "1Resident&Account9LAMI*"))
+                              password: _selectedDate.toString() + "R3sident&AcCount*"))
                           .user;
                     } on FirebaseAuthException catch (e) {
                       // if (e.code == 'weak-password') {
@@ -244,7 +245,7 @@ class RegisterFormState extends State<RegisterForm> {
                           FirebaseFirestore.instance.collection('/users');
                       Map<String, dynamic> data = newuser.toMap();
                       users.doc(newuser.id.toString()).set(data);
-                      runApp(Home(alarms: []));
+                      runApp(const MedicationPage(medications: []));
                     }
                   }
                 },
