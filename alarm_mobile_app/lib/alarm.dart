@@ -11,7 +11,6 @@ class Alarm {
   // https://api.flutter.dev/flutter/material/TimeOfDay-class.html
   final String alarmID;
   final String nameOfDrug;
-  final String dayOfWeek;
   late TimeOfDay time;
 
   // constructor for the values
@@ -19,7 +18,6 @@ class Alarm {
     required this.alarmID,
     required this.time,
     required this.nameOfDrug,
-    required this.dayOfWeek
   });
 
   @override
@@ -33,7 +31,6 @@ class Alarm {
       'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
-      'dayOfWeek': dayOfWeek
     };
   }
 
@@ -43,7 +40,6 @@ class Alarm {
       'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
-      'dayOfWeek': dayOfWeek
     };
   }
 
@@ -51,9 +47,8 @@ class Alarm {
   static Alarm fromMap(Map<String, dynamic> data) {
     Alarm temp = Alarm(
         alarmID: data['alarmID'],
-      time: parseTimeOfDayString(data['time']),
-      nameOfDrug: data['nameOfDrug'],
-      dayOfWeek: data['dayOfWeek']
+        time: parseTimeOfDayString(data['time']),
+        nameOfDrug: data['nameOfDrug'],
     );
     return temp;
   }
@@ -62,9 +57,8 @@ class Alarm {
   static Alarm fromStringMap(Map<String, String> data) {
     Alarm temp = Alarm(
       alarmID: data['alarmID'] ?? "",
-        time: parseTimeOfDayString(data['time'] ?? ""),
-        nameOfDrug: data['nameOfDrug'] ?? "",
-        dayOfWeek: data['dayOfWeek'] ?? "",
+      time: parseTimeOfDayString(data['time'] ?? ""),
+      nameOfDrug: data['nameOfDrug'] ?? "",
     );
     return temp;
   }

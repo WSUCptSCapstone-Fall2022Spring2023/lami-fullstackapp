@@ -43,6 +43,7 @@ class EditMedication extends StatelessWidget {
     medicationController.text = medication.nameOfDrug;
     descriptionController.text = medication.description;
     repeatOption = medication.repeatOption;
+    repeatDays = medication.daysOfWeek;
     timesPerDay = medication.repeatTimes;
     alarms = medication.alarms;
 
@@ -68,14 +69,14 @@ class EditMedication extends StatelessWidget {
             body: ListView(
               padding: const EdgeInsets.all(25),
               children: [
-                basicMedicationInformation(medication: medication),
+                basicMedicationInformation(),
                 updateMedication()
               ],
             )
         ));
   }
 
-  Widget basicMedicationInformation({required Medication medication}) {
+  Widget basicMedicationInformation() {
     return Column(
       children: <Widget>[
         //// Medication name
@@ -149,15 +150,20 @@ class EditMedication extends StatelessWidget {
           Text("Repeat (Days):",
               style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
         ]),
-        WeekdaySelector(
-          onChanged: (int day) {
-            final index = day % 7;
-            repeatDays[index] = !repeatDays[index];
-          },
-          values: repeatDays,
-        ),
+        StatefulBuilder(builder: (context, _setState) {
+          return WeekdaySelector(
+            onChanged: (int day) {
+              _setState(() {
+                final index = (day % 7);
+                repeatDays[index] = !repeatDays[index];
+              });
+            },
+            values: repeatDays,
+          );
+        }),
+
         const HorizontalDivider(thickness: 2),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         //// Times Per Day
         Row(children: const [
           Text(
@@ -191,9 +197,8 @@ class EditMedication extends StatelessWidget {
         }),
         const SizedBox(height: 5),
         const HorizontalDivider(thickness: 2),
-        //// Add Medication
         const SizedBox(height: 10),
-        //// Times Per Day
+        //// View Alarms
         Row(children: const [
           Text(
             "View/Edit Alarms",
@@ -301,7 +306,6 @@ class EditMedication extends StatelessWidget {
               alarmID: Random().nextInt(maxID).toString(),
               time: TimeOfDay(hour: i+8, minute: i),
               nameOfDrug: medicationController.text,
-              dayOfWeek: 'Monday'
           )
       );
     }

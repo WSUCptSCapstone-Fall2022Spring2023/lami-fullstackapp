@@ -324,8 +324,7 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
     tempMedication.daysOfWeek = parseDaysOfWeekString(data[i]["daysOfWeek"]);
     tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
     tempMedication.repeatTimes = data[i]["repeatTimes"];
-
-    tempMedication.alarms = alarmsStringToList(data[i]["time"]);
+    tempMedication.alarms = alarmsStringToList(data[i]["alarms"]);
     medications.add(tempMedication);
   }
   return medications;
@@ -344,13 +343,10 @@ List<Alarm> alarmsStringToList(String? data) {
     String alarmID = singleAlarm[0].substring(8);
     TimeOfDay time = parseTimeOfDayString(singleAlarm[1].substring(6));
     String nameOfDrug = singleAlarm[2].split(")")[0].substring(13);
-    String dayOfWeek = "fdafda";
-    //String dayOfWeek = singleAlarm[3].substring(10);
     Alarm alarm = Alarm(
         alarmID: alarmID,
         time: time,
         nameOfDrug: nameOfDrug,
-        dayOfWeek: dayOfWeek
     );
     list.add(alarm);
   }
@@ -387,3 +383,12 @@ RepeatOption repeatOptionFromString(String string) {
     return RepeatOption.asNeeded;
   }
 }
+
+bool stringToBool(String string){
+  if (string.contains("false")){
+    return false;
+  }
+  return true;
+}
+
+double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0;

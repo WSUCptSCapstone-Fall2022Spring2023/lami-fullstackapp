@@ -74,7 +74,7 @@ class ResidentLogIn extends StatelessWidget {
                     icon: const Icon(Icons.help, color: Colors.black))
               ],
             ),
-            body: const LogInForm(),
+            body: const ResidentLogInForm(),
           );
         }));
   }
@@ -92,7 +92,7 @@ class ResidentLogInForm extends StatefulWidget {
 
 // Define a corresponding State class.
 // This class holds data related to the form.
-class ResidentLogInFormState extends State<LogInForm> {
+class ResidentLogInFormState extends State<ResidentLogInForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -103,7 +103,7 @@ class ResidentLogInFormState extends State<LogInForm> {
   late FirebaseAuth auth;
   DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
 
-  LogInFormState() {
+  ResidentLogInFormState() {
     auth = FirebaseAuth.instance;
   }
   @override

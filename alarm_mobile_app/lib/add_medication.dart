@@ -183,7 +183,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         WeekdaySelector(
           onChanged: (int day) {
             setState(() {
-              final index = day % 7;
+              final index = (day % 7);
               repeatDays[index] = !repeatDays[index];
             });
           },
@@ -272,8 +272,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
           Alarm(
             alarmID: Random().nextInt(maxID).toString(),
             time: TimeOfDay(hour: i+8, minute: i),
-            nameOfDrug: medicationController.text,
-            dayOfWeek: 'Monday'
+            nameOfDrug: medicationController.text
           )
       );
     }
@@ -306,8 +305,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         onPressed: () async {
           // Validate returns true if the form is valid, or false otherwise.
           if (medicationController.text.trim() != "") {
-            SharedPreferences pref =
-            await SharedPreferences.getInstance();
+            SharedPreferences pref = await SharedPreferences.getInstance();
             FirebaseFirestore inst = FirebaseFirestore.instance;
             // gets the current user from the local shared preferences
             Users currentUser = getCurrentUserLocal(pref);
@@ -333,9 +331,13 @@ class AddMedicationFormState extends State<AddMedicationForm> {
               newMedication.repeatDuration = const Duration(days: 1);
               newMedication.repeatTimes = timesPerDay;
               newMedication.alarms = alarms;
+              for (int i = 0; i < alarms.length; i++) {
+                pref.setBool(alarms[i].alarmID, false);
+              }
               data['medications'].add(newMedication.toMap());
               // adds a new alarm to the users document as a subcollection
               await users.doc(currentUser.id).update(data);
+
               runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
             }
           }

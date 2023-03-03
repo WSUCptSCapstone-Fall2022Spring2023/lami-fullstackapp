@@ -8,6 +8,7 @@ import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:alarm_mobile_app/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';
@@ -18,61 +19,18 @@ import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 
+int medicationsTaken = 0;
+
 class AlarmItem extends StatelessWidget {
+
   AlarmItem({
-    required this.alarm,
+    required this.alarm, required this.takenNotifier,
   }) : super(key: ObjectKey(alarm));
   final Alarm alarm;
+  final ValueNotifier<bool> takenNotifier;
 
   @override
   Widget build(BuildContext context) {
-    bool medicationTaken = false;
-    // represents a single alarm in the home screen
-    // ValueNotifier<bool> enabledController = ValueNotifier(alarm.enabled);
-    // enabledController.addListener(() async {
-    //   if (enabledController.value == true){
-    //     alarm.enabled = true;
-    //   }
-    //   else
-    //   {
-    //     alarm.enabled = false;
-    //   }
-    //   SharedPreferences pref =
-    //   await SharedPreferences.getInstance();
-    //   FirebaseFirestore inst = FirebaseFirestore.instance;
-    //   // gets the current user from the local shared preferences
-    //   Users currentUser = getCurrentUserLocal(pref);
-    //   CollectionReference users = inst.collection('/users');
-    //   DocumentSnapshot<Object?> snap =
-    //   await users.doc(currentUser.id).get();
-    //   if (snap.exists) {
-    //     Map<String, dynamic> data =
-    //     snap.data() as Map<String, dynamic>;
-    //     String id = alarm.id;
-    //     // creating a new alarm from the given information
-    //     Alarm newAlarm = Alarm(
-    //         id: id,
-    //         time: alarm.time,
-    //         nameOfDrug: alarm.nameOfDrug,
-    //         description: alarm.description,
-    //         enabled: alarm.enabled,
-    //         daysOfWeek: [true, true, true, true, true, true, true]);
-    //     newAlarm.repeatduration = alarm.repeatduration;
-    //     newAlarm.repeattimes = alarm.repeattimes;
-    //     // updating the alarm that was changed
-    //     for (int i = 0;
-    //     i < (data['alarms'] as List<dynamic>).length;
-    //     i++) {
-    //       if (data['alarms'][i]['id'] == newAlarm.id) {
-    //         data['alarms'][i] = newAlarm.toMap();
-    //         break;
-    //       }
-    //     }
-    //     // updates the alarm information
-    //     await users.doc(currentUser.id).update(data);
-    //   }
-    // });
-
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(30, 15, 50, 10),
         title: Column(children: [
@@ -100,10 +58,10 @@ class AlarmItem extends StatelessWidget {
                   return Transform.scale(
                     scale: 1.5,
                     child: Checkbox(
-                      value: medicationTaken,
+                      value: takenNotifier.value,
                       onChanged: (bool? value) {
                         _setState(() {
-                          medicationTaken = value!;
+                          takenNotifier.value = value!;
                         });
                       },
                     ),
@@ -127,9 +85,33 @@ class TodaysMedications extends StatelessWidget {
     AwesomeNotifications().cancelAll().then((value) {});
     const appTitle = "Today's Medications";
     List<Alarm> allAlarms = [];
-    for (int i = 0; i < medications.length; i++) {
-      allAlarms.addAll(medications[i].alarms);
+    int currentDayOfWeek;
+    if (DateTime.now().weekday == 7){
+      currentDayOfWeek = 0;
     }
+    else {
+      currentDayOfWeek = DateTime.now().weekday;
+    }
+    for (int i = 0; i < medications.length; i++){
+      if (medications[i].daysOfWeek[currentDayOfWeek] == true){
+        allAlarms.addAll(medications[i].alarms);
+      }
+    }
+    allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
+    List<ValueNotifier<bool>> medicationsTaken = List.filled(allAlarms.length, ValueNotifier<bool>(false));
+    for (int i = 0; i < medicationsTaken.length; i++){
+      medicationsTaken[i].addListener(() {
+        if (medicationsTaken[i].value == true){
+          // progress += 1;
+
+        }
+        else{
+          // progress -= 1;
+        }
+      });
+    }
+    // ValueNotifier<List<bool>> takenNotifier = ValueNotifier(medicationsTaken);
+
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -149,7 +131,33 @@ class TodaysMedications extends StatelessWidget {
                 }),
           ],
         ),
-        body: HomeScreen(alarms: allAlarms),
+        body:
+        Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("character"),
+                  const SizedBox(height: 130, width: 50),
+                  StatefulBuilder(builder: (context, _setState) {
+                    return Transform.scale(
+                      scale: 1.5,
+                      child:
+                      CircularProgressIndicator(
+                        value: 0.77,
+                        strokeWidth: 10,
+                      ),
+                    );
+
+                  }),
+                ],
+              ),
+              Expanded(
+                  child: HomeScreen(alarms: allAlarms, takenNotifiersList: medicationsTaken)
+              )
+            ]
+        ),
+
         bottomNavigationBar: BottomAppBar(
             color: ThemeColors.darkData.primaryColorDark,
             child: Row(
@@ -209,13 +217,22 @@ class TodaysMedications extends StatelessWidget {
       ),
     );
   }
+
+  void medicationTakenValueChanged(bool value){
+
+  }
+
+  getPrefValue(String alarmID) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(alarmID);
+  }
 }
 
 // Create a Form widget.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({required this.alarms, Key? key}) : super(key: key);
+  const HomeScreen({required this.alarms, Key? key, required this.takenNotifiersList}) : super(key: key);
   final List<Alarm> alarms;
-
+  final List<ValueNotifier<bool>> takenNotifiersList;
   @override
   HomeScreenState createState() {
     return HomeScreenState();
@@ -227,10 +244,11 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+
     // Build a Form widget using the _formKey created above.
     return ListView.separated(
         itemBuilder: (BuildContext context, int index) {
-          return AlarmItem(alarm: widget.alarms[index]);
+          return AlarmItem(alarm: widget.alarms[index], takenNotifier: widget.takenNotifiersList[index]);
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
           thickness: 3.0,

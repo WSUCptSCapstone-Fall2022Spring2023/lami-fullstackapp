@@ -233,34 +233,34 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               },
               controller: emailcontroller,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Password (no need for name and email address)',
-              ),
-              controller: passwordcontroller,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            // password confirmation
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText:
-                    'Password confirmation (no need for name and email address)',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value != passwordcontroller.text) {
-                  return 'Passwords must match!';
-                }
-                return null;
-              },
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText: 'Password (no need for name and email address)',
+            //   ),
+            //   controller: passwordcontroller,
+            //   obscureText: true,
+            //   enableSuggestions: false,
+            //   autocorrect: false,
+            // ),
+            // // password confirmation
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     border: UnderlineInputBorder(),
+            //     labelText:
+            //         'Password confirmation (no need for name and email address)',
+            //   ),
+            //   // The validator receives the text that the user has entered.
+            //   validator: (value) {
+            //     if (value != passwordcontroller.text) {
+            //       return 'Passwords must match!';
+            //     }
+            //     return null;
+            //   },
+            //   obscureText: true,
+            //   enableSuggestions: false,
+            //   autocorrect: false,
+            // ),
 
             // Submit
             Padding(
