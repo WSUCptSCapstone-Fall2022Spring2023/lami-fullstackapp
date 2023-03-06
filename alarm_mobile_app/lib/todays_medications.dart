@@ -19,98 +19,103 @@ import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 
-int medicationsTaken = 0;
-
 class AlarmItem extends StatelessWidget {
-
   AlarmItem({
-    required this.alarm, required this.takenNotifier,
+    required this.alarm,
+    required this.isCheckedList,
+    required this.index,
+    required this.onCheckedChanged,
   }) : super(key: ObjectKey(alarm));
+
   final Alarm alarm;
-  final ValueNotifier<bool> takenNotifier;
+  final List<bool> isCheckedList;
+  final int index;
+  final ValueChanged<bool> onCheckedChanged;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        contentPadding: const EdgeInsets.fromLTRB(30, 15, 50, 10),
-        title: Column(children: [
-          Row(
-              children: [
-
-                Text(alarm.time.format(context),
-                    textScaleFactor: 1.05
-                ),
-              ]
-          ),
-          const SizedBox(height: 5),
-          Row(
-              children: [
-                const SizedBox(width: 25),
-                Expanded(
-                    child: Text(
-                      alarm.nameOfDrug,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      textScaleFactor: 1.7,
-                    )
-                ),
-                const SizedBox(width: 25),
-                StatefulBuilder(builder: (context, _setState) {
-                  return Transform.scale(
-                    scale: 1.5,
-                    child: Checkbox(
-                      value: takenNotifier.value,
-                      onChanged: (bool? value) {
-                        _setState(() {
-                          takenNotifier.value = value!;
-                        });
-                      },
-                    ),
-                  );
-                })
-              ]
-          )
+      contentPadding: const EdgeInsets.fromLTRB(30, 15, 50, 10),
+      title: Column(children: [
+        Row(children: [
+          Text(alarm.time.format(context), textScaleFactor: 1.05),
+        ]),
+        const SizedBox(height: 5),
+        Row(children: [
+          const SizedBox(width: 25),
+          Expanded(
+              child: Text(
+                alarm.nameOfDrug,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                textScaleFactor: 1.7,
+              )),
+          const SizedBox(width: 25),
+          StatefulBuilder(builder: (context, _setState) {
+            return Transform.scale(
+              scale: 1.5,
+              child: Checkbox(
+                value: isCheckedList[index],
+                onChanged: (bool? value) {
+                  _setState(() {
+                    isCheckedList[index] = value!;
+                    onCheckedChanged(value!);
+                  });
+                },
+              ),
+            );
+          })
         ])
+      ]),
     );
   }
 }
 
-class TodaysMedications extends StatelessWidget {
-  const TodaysMedications({required this.medications, Key? key}) : super(key: key);
+class TodaysMedications extends StatefulWidget {
+  const TodaysMedications({required this.medications, Key? key})
+      : super(key: key);
+
   final List<Medication> medications;
 
   @override
+  _TodaysMedicationsState createState() => _TodaysMedicationsState();
+}
+
+class _TodaysMedicationsState extends State<TodaysMedications> {
+  late List<bool> _isCheckedList;
+  late int _checkedCount;
+  late List<Alarm> allAlarms = [];
+
   @override
-  Widget build(BuildContext context) {
-    // when the user enters the home screen, cancel all their notifications
-    AwesomeNotifications().cancelAll().then((value) {});
-    const appTitle = "Today's Medications";
-    List<Alarm> allAlarms = [];
+  void initState() {
+    super.initState();
+
+
     int currentDayOfWeek;
-    if (DateTime.now().weekday == 7){
+    if (DateTime.now().weekday == 7) {
       currentDayOfWeek = 0;
-    }
-    else {
+    } else {
       currentDayOfWeek = DateTime.now().weekday;
     }
-    for (int i = 0; i < medications.length; i++){
-      if (medications[i].daysOfWeek[currentDayOfWeek] == true){
-        allAlarms.addAll(medications[i].alarms);
+    for (int i = 0; i < widget.medications.length; i++) {
+      if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
+        allAlarms.addAll(widget.medications[i].alarms);
       }
     }
     allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
-    List<ValueNotifier<bool>> medicationsTaken = List.filled(allAlarms.length, ValueNotifier<bool>(false));
-    for (int i = 0; i < medicationsTaken.length; i++){
-      medicationsTaken[i].addListener(() {
-        if (medicationsTaken[i].value == true){
-          // progress += 1;
 
-        }
-        else{
-          // progress -= 1;
-        }
-      });
-    }
-    // ValueNotifier<List<bool>> takenNotifier = ValueNotifier(medicationsTaken);
+    _isCheckedList = List.generate(allAlarms.length, (index) => false);
+    _checkedCount = 0;
+  }
+
+  void _onCheckboxChanged(int index, bool value) {
+    setState(() {
+      _isCheckedList[index] = value;
+      _checkedCount = _isCheckedList.where((element) => element).length;
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    const appTitle = "Today's Medications";
 
     return MaterialApp(
       title: appTitle,
@@ -131,33 +136,44 @@ class TodaysMedications extends StatelessWidget {
                 }),
           ],
         ),
-        body:
-        Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text("character"),
-                  const SizedBox(height: 130, width: 50),
-                  StatefulBuilder(builder: (context, _setState) {
-                    return Transform.scale(
-                      scale: 1.5,
-                      child:
-                      CircularProgressIndicator(
-                        value: 0.77,
-                        strokeWidth: 10,
-                      ),
-                    );
-
-                  }),
-                ],
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("character"),
+                const SizedBox(height: 130, width: 50),
+                Transform.scale(
+                  scale: 1.5,
+                  child: CircularProgressIndicator(
+                    value: _checkedCount / _isCheckedList.length,
+                    strokeWidth: 10,
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (BuildContext context, int index) {
+                  return AlarmItem(
+                    alarm: allAlarms[index],
+                    isCheckedList: _isCheckedList,
+                    index: index,
+                    onCheckedChanged: (value) {
+                      _onCheckboxChanged(index, value);
+                    },
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => const Divider(
+                  thickness: 3.0,
+                  indent: 25,
+                  endIndent: 25,
+                ),
+                itemCount: allAlarms.length,
               ),
-              Expanded(
-                  child: HomeScreen(alarms: allAlarms, takenNotifiersList: medicationsTaken)
-              )
-            ]
+            ),
+          ],
         ),
-
         bottomNavigationBar: BottomAppBar(
             color: ThemeColors.darkData.primaryColorDark,
             child: Row(
@@ -176,7 +192,7 @@ class TodaysMedications extends StatelessWidget {
                         color: ThemeColors.darkData.primaryColorDark
                     ),
                     onPressed: () {
-                      runApp(TodaysMedications(medications: medications));
+                      runApp(TodaysMedications(medications: widget.medications));
                     },
                   ),
                   const SizedBox(width: 40),
@@ -192,7 +208,7 @@ class TodaysMedications extends StatelessWidget {
                         color: ThemeColors.darkData.primaryColorDark
                     ),
                     onPressed: () {
-                      runApp(MedicationPage(medications: medications));
+                      runApp(MedicationPage(medications: widget.medications));
                     },
                   ),
                   const SizedBox(width: 40),
@@ -216,45 +232,5 @@ class TodaysMedications extends StatelessWidget {
                 ])),
       ),
     );
-  }
-
-  void medicationTakenValueChanged(bool value){
-
-  }
-
-  getPrefValue(String alarmID) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(alarmID);
-  }
-}
-
-// Create a Form widget.
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({required this.alarms, Key? key, required this.takenNotifiersList}) : super(key: key);
-  final List<Alarm> alarms;
-  final List<ValueNotifier<bool>> takenNotifiersList;
-  @override
-  HomeScreenState createState() {
-    return HomeScreenState();
-  }
-}
-
-// Define a corresponding State class.
-// This class holds data related to the form.
-class HomeScreenState extends State<HomeScreen> {
-  @override
-  Widget build(BuildContext context) {
-
-    // Build a Form widget using the _formKey created above.
-    return ListView.separated(
-        itemBuilder: (BuildContext context, int index) {
-          return AlarmItem(alarm: widget.alarms[index], takenNotifier: widget.takenNotifiersList[index]);
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(
-          thickness: 3.0,
-          indent: 25,
-          endIndent: 25,
-        ),
-        itemCount: widget.alarms.length);
   }
 }

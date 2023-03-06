@@ -331,13 +331,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
               newMedication.repeatDuration = const Duration(days: 1);
               newMedication.repeatTimes = timesPerDay;
               newMedication.alarms = alarms;
-              for (int i = 0; i < alarms.length; i++) {
-                pref.setBool(alarms[i].alarmID, false);
-              }
               data['medications'].add(newMedication.toMap());
-              // adds a new alarm to the users document as a subcollection
               await users.doc(currentUser.id).update(data);
-
               runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
             }
           }

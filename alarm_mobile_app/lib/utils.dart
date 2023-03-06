@@ -330,6 +330,20 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
   return medications;
 }
 
+List<Alarm> alarmListFromMap(List<dynamic> data) {
+  List<Alarm> alarms = [];
+  for (int i = 0; i < data.length; i++)
+  {
+    Alarm tempAlarm = Alarm(
+        alarmID: data[i]["alarmID"],
+        nameOfDrug: data[i]["nameOfDrug"],
+        time: data[i]["time"]
+    );
+    alarms.add(tempAlarm);
+  }
+  return alarms;
+}
+
 List<Alarm> alarmsStringToList(String? data) {
   List<Alarm> list = [];
   if (data == null)

@@ -49,7 +49,7 @@ class Medication {
       'daysOfWeek': daysOfWeek.toString(),
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
-      'alarms': alarms.toString(),
+      'alarms': alarms.toString()
     };
   }
 
@@ -78,6 +78,7 @@ class Medication {
     medication.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
     medication.repeatDuration = parseStringDuration(data['repeatDuration']);
     medication.repeatTimes = data['repeatTimes'];
+    // medication.alarms = alarmsStringToList(data['alarms']);
     medication.alarms = alarmsStringToList(data['alarms']);
     return medication;
   }
