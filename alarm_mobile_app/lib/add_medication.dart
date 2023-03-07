@@ -322,12 +322,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
               newMedication.repeatDuration = const Duration(days: 1);
               newMedication.repeatTimes = timesPerDay;
               newMedication.alarms =  alarms;
-              // newMedication.alarms =  convertAlarmsToMap(alarms);
-              //newMedication.alarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
-              //newMedication.todaysMedicationsTaken = List.filled(alarms.length, false);
-              //inst.collection("/users").doc('medicaitons').set({"name": "Chicago"});
               data['medications'].add(newMedication.toMap());
-              // var temp = inst.collection('/users').doc(currentUser.id).collection('/alarms').doc('alarms').update(convertAlarmsToMap(alarms)[0]);
               await users.doc(currentUser.id).update(data);
               runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
             }

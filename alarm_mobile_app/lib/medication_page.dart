@@ -189,9 +189,9 @@ class MedicationPage extends StatelessWidget {
                         size: 50,
                         color: ThemeColors.darkData.primaryColorDark
                     ),
-                    onPressed: ()  {
-                      // Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                      runApp(TodaysMedications(medications: medications));
+                    onPressed: () async {
+                      Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                      runApp(TodaysMedications(medications: await getMedications(user.id, FirebaseFirestore.instance)));
                     },
                   ),
                   const SizedBox(width: 40),

@@ -103,21 +103,30 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
     _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = _isCheckedList.where((element) => element).length;
-    temp();
+    checkForNewDay();
+    checkForDivideByZero();
   }
 
-  void temp() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    String? lastOpened = pref.getString("lastOpened");
-    if (lastOpened != null)
-    {
-      if (DateTime.parse(lastOpened).day != DateTime.now().day){
-        for (int i = 0; i < allAlarms.length; i++){
-          _onCheckboxChanged(i, false);
+  void checkForNewDay() async {
+    if (allAlarms.isNotEmpty){
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      String? lastOpened = pref.getString("lastOpened");
+      if (lastOpened != null)
+      {
+        if (DateTime.parse(lastOpened).day != DateTime.now().day){
+          for (int i = 0; i < allAlarms.length; i++){
+            _onCheckboxChanged(i, false);
+          }
         }
       }
+      pref.setString("lastOpened", DateTime.now().toString());
     }
-    pref.setString("lastOpened", DateTime.now().toString());
+  }
+
+  void checkForDivideByZero() {
+    if (_isCheckedList.isEmpty){
+      _isCheckedList = [true];
+    }
   }
 
 
@@ -158,6 +167,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
       await users.doc(currentUser.id).update(data);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     const appTitle = "Today's Medications";

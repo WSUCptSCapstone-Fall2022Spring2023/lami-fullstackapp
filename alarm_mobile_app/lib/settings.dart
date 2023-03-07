@@ -103,8 +103,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                         onPressed: () async {
                           Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                          user.medications = await getMedications(user.id, FirebaseFirestore.instance);
-                          runApp(TodaysMedications(medications: user.medications));
+                          runApp(TodaysMedications(medications: await getMedications(user.id, FirebaseFirestore.instance)));
                         },
                       ),
                       const SizedBox(width: 40),
@@ -121,8 +120,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                           onPressed: () async {
                             Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                            user.medications = await getMedications(user.id, FirebaseFirestore.instance);
-                            runApp(MedicationPage(medications: user.medications));
+                            runApp(MedicationPage(medications: await getMedications(user.id, FirebaseFirestore.instance)));
                           },
                       ),
                       const SizedBox(width: 40),
