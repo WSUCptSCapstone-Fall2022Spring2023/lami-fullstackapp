@@ -101,7 +101,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
       }
     }
     allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
-    _isCheckedList = List.generate(allAlarms.length, (index) => false);
+    _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = 0;
   }
 

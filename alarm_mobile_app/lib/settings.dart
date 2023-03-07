@@ -303,6 +303,11 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                           medications: value,
                         ));
                       });
+                      //   return runApp(
+                      //       MedicationPage(
+                      //         medications: getMedications(FirebaseAuth.instance.currentUser?.uid, FirebaseFirestore.instance)
+                      //       )
+                      //   );
                     } else {
                       return runApp(Admin(
                           users:

@@ -53,20 +53,6 @@ class Medication {
     };
   }
 
-  // used for payload stuff
-  Map<String, String> toStringMap() {
-    return {
-      'id': id,
-      'nameOfDrug': nameOfDrug,
-      'description': description,
-      'repeatOption': repeatOption.toString(),
-      'daysOfWeek': daysOfWeek.toString(),
-      'repeatDuration': repeatDuration.toString(),
-      'repeatTimes': repeatTimes.toString(),
-      'alarms': alarms.toString(),
-      // 'todaysMedicationsTaken': todaysMedicationsTaken.toString()
-    };
-  }
 
   // gets an alarm object from the given map
   static Medication fromMap(Map<String, dynamic> data) {

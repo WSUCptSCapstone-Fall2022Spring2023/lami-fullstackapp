@@ -75,10 +75,6 @@ Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance)
     DocumentSnapshot<Object?> snap = await users.doc(uid).get();
     if (snap.exists) {
       Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-      if (!data.containsKey('medications')) {
-        // initializing the alarm collection if it does not exist
-        data['medications'] = [];
-      }
       List<Medication> medications = [];
       for (var element in data['medications']) {
         medications.add(Medication.fromMap(element));
