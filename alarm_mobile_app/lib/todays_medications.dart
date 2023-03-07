@@ -103,7 +103,23 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
     _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = _isCheckedList.where((element) => element).length;
+    temp();
   }
+
+  void temp() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String? lastOpened = pref.getString("lastOpened");
+    if (lastOpened != null)
+    {
+      if (DateTime.parse(lastOpened).day != DateTime.now().day){
+        for (int i = 0; i < allAlarms.length; i++){
+          _onCheckboxChanged(i, false);
+        }
+      }
+    }
+    pref.setString("lastOpened", DateTime.now().toString());
+  }
+
 
   void _onCheckboxChanged(int index, bool value) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -145,7 +161,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
   @override
   Widget build(BuildContext context) {
     const appTitle = "Today's Medications";
-
+    // temp();
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -236,8 +252,10 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
                         size: 50,
                         color: ThemeColors.darkData.primaryColorDark
                     ),
-                    onPressed: () {
-                      runApp(MedicationPage(medications: widget.medications));
+                    onPressed: () async {
+                      Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                      user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                      runApp(MedicationPage(medications: user.medications));
                     },
                   ),
                   const SizedBox(width: 40),
