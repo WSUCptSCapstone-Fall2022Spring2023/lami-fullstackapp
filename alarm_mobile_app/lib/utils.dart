@@ -13,8 +13,6 @@ import 'medication.dart';
 
 
 enum RepeatOption {
-  asNeeded,
-  daily,
   specificDays,
   daysInterval
 }
@@ -96,7 +94,7 @@ Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance)
 ///note: function has to be async due to get()
 Future<Users> getCurrentUser(String uid) async {
   FirebaseFirestore inst = FirebaseFirestore.instance;
-  CollectionReference users = inst.collection('users');
+  CollectionReference users = inst.collection('/users');
   DocumentSnapshot<Object?> snap = await users.doc(uid).get();
 
   if (snap.exists) {
@@ -282,34 +280,22 @@ Duration parseStringDuration(String dur) {
 
 RepeatOption stringToRepeatOption(String? data) {
   RepeatOption tempRepeatOption;
-  if (data == RepeatOption.daily.toString())
-  {
-    tempRepeatOption = RepeatOption.daily;
-  }
-  else if (data == RepeatOption.daysInterval.toString())
+  if (data == RepeatOption.daysInterval.toString())
   {
     tempRepeatOption = RepeatOption.daysInterval;
   }
-  else if (data == RepeatOption.specificDays.toString())
-  {
-    tempRepeatOption = RepeatOption.specificDays;
-  }
   else
   {
-    tempRepeatOption = RepeatOption.asNeeded;
+    tempRepeatOption = RepeatOption.specificDays;
   }
   return tempRepeatOption;
 }
 
 String repeatOptionToString(RepeatOption repeatOption) {
-  if (repeatOption == RepeatOption.daily) {
-    return "Every Day";
-  } else if (repeatOption == RepeatOption.specificDays) {
-    return "Specific Days";
-  } else if (repeatOption == RepeatOption.daysInterval) {
-    return "Days Interval";
+  if (repeatOption == RepeatOption.specificDays) {
+    return "Choose Days";
   } else {
-    return "As Needed";
+    return "Days Interval";
   }
 }
 
@@ -325,6 +311,7 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
     tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
     tempMedication.repeatTimes = data[i]["repeatTimes"];
     tempMedication.alarms = alarmsStringToList(data[i]["alarms"]);
+    // tempMedication.alarms = convertAlarmsToMap(alarmsStringToList(data[i]["alarms"]));
     medications.add(tempMedication);
   }
   return medications;
@@ -369,32 +356,21 @@ List<Alarm> alarmsStringToList(String? data) {
 
 RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
   if (pickerRepeatOption == 0) {
-    return RepeatOption.daily;
-  } else if (pickerRepeatOption == 1) {
     return RepeatOption.specificDays;
-  } else if (pickerRepeatOption == 2) {
+  }
+  else {
     return RepeatOption.daysInterval;
-  } else {
-    return RepeatOption.asNeeded;
   }
 }
 
 RepeatOption repeatOptionFromString(String string) {
-  if (string == 'RepeatOption.daily')
-  {
-    return RepeatOption.daily;
-  }
-  else if (string == 'RepeatOption.daysInterval')
+  if (string == 'RepeatOption.daysInterval')
   {
     return RepeatOption.daysInterval;
   }
-  else if (string == 'RepeatOption.specificDays')
-  {
-    return RepeatOption.specificDays;
-  }
   else
   {
-    return RepeatOption.asNeeded;
+    return RepeatOption.specificDays;
   }
 }
 
@@ -406,3 +382,30 @@ bool stringToBool(String string){
 }
 
 double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0;
+
+List<bool> todaysMedicationsTakenFromString(String? data){
+  List<bool> medicationsTaken = [];
+  if (data != null){
+    List<String> parsedString = data.split(',');
+    for (int i = 0; i < parsedString.length; i++) {
+      if (parsedString[i].contains('true')){
+        medicationsTaken[i] = true;
+      }
+      else {
+        medicationsTaken[i] = false;
+      }
+    }
+  }
+
+  return medicationsTaken;
+}
+
+
+List<Map> convertAlarmsToMap(List<Alarm> alarms) {
+List<Map> alarmsMap = [];
+alarms.forEach((Alarm alarm) {
+Map map = alarm.toMap();
+alarmsMap.add(map);
+});
+return alarmsMap;
+}

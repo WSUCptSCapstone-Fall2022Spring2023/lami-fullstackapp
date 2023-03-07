@@ -83,7 +83,7 @@ class MedicationItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20))),
                 onPressed: () {
-                  runApp(EditMedication(key: key, medication: medication));
+                  // runApp(EditMedication(key: key, medication: medication));
                 },
                 child: const Text(
                   "Edit",
@@ -137,97 +137,6 @@ class MedicationItem extends StatelessWidget {
                       });
                 })
           ]),
-          // const SizedBox(height: 6),
-          // Row(
-          //   children: [
-          //     const SizedBox(width: 10),
-          //     Expanded(
-          //       child: Text("Time:  " + meed.time.format(context),
-          //           textScaleFactor: 1.2),
-          //     ),
-          //     AdvancedSwitch(
-          //         controller: enabledController,
-          //         width: 80,
-          //         activeColor: ThemeColors.darkData.primaryColorLight,
-          //         inactiveColor: ThemeColors.darkData.disabledColor,
-          //         activeChild: const Text('ON',
-          //             textScaleFactor: 1.3,
-          //             style:
-          //             TextStyle(color: Color.fromRGBO(246, 244, 232, 1))),
-          //         inactiveChild: Text('OFF',
-          //             textScaleFactor: 1.3,
-          //             style:
-          //             TextStyle(color: ThemeColors.darkData.primaryColorDark))),
-          //     const SizedBox(width: 35),
-          //   ],
-          // ),
-          // const SizedBox(height: 17),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     ElevatedButton(
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: ThemeColors.darkData.primaryColorLight,
-          //             minimumSize: const Size(120, 50),
-          //             shape: RoundedRectangleBorder(
-          //                 borderRadius: BorderRadius.circular(20))),
-          //         onPressed: () {
-          //           runApp(EditAlarm(alarm: alarm));
-          //         },
-          //         child: const Text(
-          //           "Edit",
-          //           textScaleFactor: 1.3,
-          //         )),
-          //     const SizedBox(width: 30),
-          //     ElevatedButton(
-          //         style: ElevatedButton.styleFrom(
-          //             backgroundColor: ThemeColors.darkData.primaryColorLight,
-          //             minimumSize: const Size(120, 50),
-          //             shape: RoundedRectangleBorder(
-          //                 borderRadius: BorderRadius.circular(20))),
-          //         child: const Text(
-          //           "Delete",
-          //           textScaleFactor: 1.3,
-          //         ),
-          //         onPressed: () async {
-          //           FirebaseFirestore instance = FirebaseFirestore.instance;
-          //           SharedPreferences prefs =
-          //           await SharedPreferences.getInstance();
-          //           // secondary confirmation dialog for deleting an alarm
-          //           Navigator.of(context).pop();
-          //           showDialog(
-          //               context: context,
-          //               barrierDismissible: false,
-          //               builder: (BuildContext context) {
-          //                 return AlertDialog(
-          //                     title: const Text("Are you sure?"),
-          //                     actions: [
-          //                       TextButton(
-          //                           onPressed: () async {
-          //                             Navigator.of(context).pop();
-          //                             await deleteAlarm(alarm.id, instance);
-          //                             runApp(Home(
-          //                                 alarms: await getAlarms(
-          //                                     prefs.getString("id") ?? '',
-          //                                     instance)));
-          //                           },
-          //                           child: const Text(
-          //                             "Yes",
-          //                             textScaleFactor: 1.2,
-          //                           )),
-          //                       TextButton(
-          //                           onPressed: () async {
-          //                             Navigator.of(context).pop();
-          //                           },
-          //                           child: const Text(
-          //                             "No",
-          //                             textScaleFactor: 1.2,
-          //                           )),
-          //                     ]);
-          //               });
-          //         })
-          //   ],
-          // ),
         ])
     );
   }

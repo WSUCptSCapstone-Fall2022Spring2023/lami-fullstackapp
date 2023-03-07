@@ -50,7 +50,7 @@ class Users {
       firstname: data['firstname'] ?? "unknown firstname",
       lastname: data['lastname'] ?? "unknown lastname",
     );
-    temp.medications = medicationListFromMap(data['medications']);
+    temp.medications = convertMapMedicationsToList(data['medications']);
     return temp;
   }
 

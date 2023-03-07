@@ -82,7 +82,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
   final _formKey = GlobalKey<FormState>();
   final medicationController = TextEditingController();
   final descriptionController = TextEditingController();
-  late RepeatOption repeatOption = RepeatOption.daily;
+  late RepeatOption repeatOption = RepeatOption.specificDays;
   late List<bool> repeatDays = List<bool>.filled(7, true);
   late int timesPerDay = 1;
   late List<Alarm> alarms = [];
@@ -157,10 +157,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                   Picker(
                       adapter: PickerDataAdapter(
                           data: [
-                            PickerItem(text: const Text("Every Day")),
-                            PickerItem(text: const Text("Specific Days")),
-                            PickerItem(text: const Text("Days Interval")),
-                            PickerItem(text: const Text("As Needed"))
+                            PickerItem(text: const Text("Choose Days")),
+                            PickerItem(text: const Text("Days Interval"))
                           ]
                       ),
                       hideHeader: true,
@@ -214,16 +212,10 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                       title: const Text("Times Per Day"),
                       onConfirm: (Picker picker, List value) {
                         alarms = populateAlarms();
-                        //alarm.repeatduration = parseStringDuration(value[0].toString());
                         setState(() {
                           timesPerDay = value[0] + 1;
                         });
                       }).showDialog(context);
-                  // if (result == null) {
-                  //   return;
-                  // }
-                  // List<Alarm> alarms2 = populateAlarms();
-                  // _setState(() => timesPerDay = result[0] = alarms.length);
                 },
                 child: const Text("Edit"))
           ]);
@@ -242,8 +234,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         ]),
         StatefulBuilder(builder: (context, _setState) {
           return Row(children: [
-            // Text(timesPerDay.toString(),
-            //     style: const TextStyle(fontSize: 25.0)),
             const Spacer(),
             ElevatedButton(
                 onPressed: () async {
@@ -330,8 +320,13 @@ class AddMedicationFormState extends State<AddMedicationForm> {
               newMedication.daysOfWeek = repeatDays;
               newMedication.repeatDuration = const Duration(days: 1);
               newMedication.repeatTimes = timesPerDay;
-              newMedication.alarms = alarms;
+              newMedication.alarms =  alarms;
+              // newMedication.alarms =  convertAlarmsToMap(alarms);
+              //newMedication.alarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
+              //newMedication.todaysMedicationsTaken = List.filled(alarms.length, false);
+              //inst.collection("/users").doc('medicaitons').set({"name": "Chicago"});
               data['medications'].add(newMedication.toMap());
+              // var temp = inst.collection('/users').doc(currentUser.id).collection('/alarms').doc('alarms').update(convertAlarmsToMap(alarms)[0]);
               await users.doc(currentUser.id).update(data);
               runApp(MedicationPage(medications: convertMapMedicationsToList(data['medications'])));
             }

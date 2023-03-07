@@ -98,7 +98,8 @@ class _AppState extends State<App> {
           FirebaseAuth auth = FirebaseAuth.instance;
           if (auth.currentUser == null) {
             return const ResidentLogIn();
-          } else {
+          }
+          else {
             getCurrentUser(auth.currentUser!.uid).then((Users u) {
               var pref = SharedPreferences.getInstance();
               pref.then((value) {

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
 
@@ -22,7 +23,7 @@ class Alarm {
 
   @override
   String toString() {
-    return 'Alarm{alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug)}';
+    return 'alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug';
   }
 
   // maps the value from the database to the values present in the alarm class
@@ -61,5 +62,28 @@ class Alarm {
       nameOfDrug: data['nameOfDrug'] ?? "",
     );
     return temp;
+  }
+
+
+  factory Alarm.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options,
+      ) {
+    final data = snapshot.data();
+    return Alarm(
+      alarmID: data?['alarmID'],
+      nameOfDrug: data?['nameOfDrug'],
+      time: data?['time']
+
+
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      "alarmID": alarmID,
+      "nameOfDrug": nameOfDrug,
+      "time": time
+    };
   }
 }

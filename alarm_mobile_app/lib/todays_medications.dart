@@ -96,19 +96,19 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     } else {
       currentDayOfWeek = DateTime.now().weekday;
     }
-    for (int i = 0; i < widget.medications.length; i++) {
-      if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
-        allAlarms.addAll(widget.medications[i].alarms);
-      }
-    }
-    allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
+    // for (int i = 0; i < widget.medications.length; i++) {
+    //   if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
+    //     allAlarms.addAll(widget.medications[i].alarms);
+    //   }
+    // }
+    // allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
 
     _isCheckedList = List.generate(allAlarms.length, (index) => false);
     _checkedCount = 0;
   }
 
   void _onCheckboxChanged(int index, bool value) {
-    setState(() {
+    setState(() async {
       _isCheckedList[index] = value;
       _checkedCount = _isCheckedList.where((element) => element).length;
     });

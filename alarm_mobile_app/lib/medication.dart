@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:alarm_mobile_app/edit_medication.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'alarm.dart';
@@ -19,6 +20,7 @@ class Medication {
   // default values for repeating x times per day every x amount of times
   late int repeatTimes = 1;
   late List<Alarm> alarms;
+  //late List<bool> todaysMedicationsTaken;
 
   // constructor for the values
   Medication({
@@ -36,7 +38,9 @@ class Medication {
         'daysOfWeek: $daysOfWeek,'
         'repeatDuration: $repeatDuration,'
         'repeatTimes: $repeatTimes,'
-        'alarms: $alarms';
+        'alarms: $alarms'
+        // 'todaysMedicationsTaken: $todaysMedicationsTaken'
+    ;
   }
 
   // maps the value from the database to the values present in the alarm class
@@ -49,7 +53,8 @@ class Medication {
       'daysOfWeek': daysOfWeek.toString(),
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
-      'alarms': alarms.toString()
+      'alarms': alarms.map((i) => i.toMap()).toList(),
+      // 'todaysMedicationsTaken': todaysMedicationsTaken
     };
   }
 
@@ -64,6 +69,7 @@ class Medication {
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes.toString(),
       'alarms': alarms.toString(),
+      // 'todaysMedicationsTaken': todaysMedicationsTaken.toString()
     };
   }
 
@@ -78,8 +84,10 @@ class Medication {
     medication.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek']);
     medication.repeatDuration = parseStringDuration(data['repeatDuration']);
     medication.repeatTimes = data['repeatTimes'];
-    // medication.alarms = alarmsStringToList(data['alarms']);
-    medication.alarms = alarmsStringToList(data['alarms']);
+    medication.alarms = data['alarms'].map<Alarm>((mapString) =>
+        Alarm.fromMap(mapString)).toList();
+    // medication.alarms = convertAlarmsToMap(alarmsStringToList(data["alarms"]));
+    // medication.todaysMedicationsTaken = data['todaysMedicationsTaken'];
     return medication;
   }
 
@@ -95,6 +103,8 @@ class Medication {
     temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
     temp.alarms = alarmsStringToList(data["alarms"]);
+    // temp.alarms = convertAlarmsToMap(alarmsStringToList(data["alarms"]));
+    // temp.todaysMedicationsTaken = todaysMedicationsTakenFromString(data['todaysMedicationsTaken']);
     return temp;
   }
 }
