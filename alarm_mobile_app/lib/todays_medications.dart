@@ -122,6 +122,10 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
 
 
   void _onCheckboxChanged(int index, bool value) async {
+    setState(()  {
+      _isCheckedList[index] = value;
+      _checkedCount = _isCheckedList.where((element) => element).length;
+    });
     SharedPreferences pref = await SharedPreferences.getInstance();
     FirebaseFirestore inst = FirebaseFirestore.instance;
     // gets the current user from the local shared preferences
@@ -153,10 +157,6 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
       }
       await users.doc(currentUser.id).update(data);
     }
-    setState(()  {
-      _isCheckedList[index] = value;
-      _checkedCount = _isCheckedList.where((element) => element).length;
-    });
   }
   @override
   Widget build(BuildContext context) {
