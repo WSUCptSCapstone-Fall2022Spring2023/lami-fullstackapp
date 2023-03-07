@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:alarm_mobile_app/edit_medication.dart';
-import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'alarm.dart';
 
@@ -20,7 +18,6 @@ class Medication {
   // default values for repeating x times per day every x amount of times
   late int repeatTimes = 1;
   late List<Alarm> alarms;
-  //late List<bool> todaysMedicationsTaken;
 
   // constructor for the values
   Medication({
@@ -39,7 +36,6 @@ class Medication {
         'repeatDuration: $repeatDuration,'
         'repeatTimes: $repeatTimes,'
         'alarms: $alarms'
-        // 'todaysMedicationsTaken: $todaysMedicationsTaken'
     ;
   }
 
@@ -54,7 +50,6 @@ class Medication {
       'repeatDuration': repeatDuration.toString(),
       'repeatTimes': repeatTimes,
       'alarms': alarms.map((i) => i.toMap()).toList(),
-      // 'todaysMedicationsTaken': todaysMedicationsTaken
     };
   }
 
@@ -86,8 +81,6 @@ class Medication {
     medication.repeatTimes = data['repeatTimes'];
     medication.alarms = data['alarms'].map<Alarm>((mapString) =>
         Alarm.fromMap(mapString)).toList();
-    // medication.alarms = convertAlarmsToMap(alarmsStringToList(data["alarms"]));
-    // medication.todaysMedicationsTaken = data['todaysMedicationsTaken'];
     return medication;
   }
 
@@ -102,7 +95,7 @@ class Medication {
     temp.daysOfWeek = parseDaysOfWeekString(data['daysOfWeek'] ?? "");
     temp.repeatDuration = parseStringDuration(data['repeatDuration'] ?? const Duration(days: 1).toString());
     temp.repeatTimes = int.parse(data['repeatTimes'] ?? "1");
-    temp.alarms = alarmsStringToList(data["alarms"]);
+    //temp.alarms = alarmsStringToList(data["alarms"]);
     // temp.alarms = convertAlarmsToMap(alarmsStringToList(data["alarms"]));
     // temp.todaysMedicationsTaken = todaysMedicationsTakenFromString(data['todaysMedicationsTaken']);
     return temp;

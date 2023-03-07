@@ -262,7 +262,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
           Alarm(
             alarmID: Random().nextInt(maxID).toString(),
             time: TimeOfDay(hour: i+8, minute: i),
-            nameOfDrug: medicationController.text
+            nameOfDrug: medicationController.text,
+            takenToday: false
           )
       );
     }

@@ -89,28 +89,57 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
   void initState() {
     super.initState();
 
-
     int currentDayOfWeek;
     if (DateTime.now().weekday == 7) {
       currentDayOfWeek = 0;
     } else {
       currentDayOfWeek = DateTime.now().weekday;
     }
-    // for (int i = 0; i < widget.medications.length; i++) {
-    //   if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
-    //     allAlarms.addAll(widget.medications[i].alarms);
-    //   }
-    // }
-    // allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
-
+    for (int i = 0; i < widget.medications.length; i++) {
+      if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
+        allAlarms.addAll(widget.medications[i].alarms);
+      }
+    }
+    allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
     _isCheckedList = List.generate(allAlarms.length, (index) => false);
     _checkedCount = 0;
   }
 
-  void _onCheckboxChanged(int index, bool value) {
+  void _onCheckboxChanged(int index, bool value) async {
     setState(() async {
       _isCheckedList[index] = value;
       _checkedCount = _isCheckedList.where((element) => element).length;
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      FirebaseFirestore inst = FirebaseFirestore.instance;
+      // gets the current user from the local shared preferences
+      Users currentUser = getCurrentUserLocal(pref);
+      CollectionReference users = inst.collection('/users');
+      DocumentSnapshot<Object?> snap =
+      await users.doc(currentUser.id).get();
+      if (snap.exists) {
+        Map<String, dynamic> data =
+        snap.data() as Map<String, dynamic>;
+        String alarmID = allAlarms[index].alarmID;
+        // creating a new alarm from the given information
+        Alarm newAlarm = Alarm(
+            alarmID: allAlarms[index].alarmID,
+            time: allAlarms[index].time,
+            nameOfDrug: allAlarms[index].nameOfDrug,
+            takenToday: _isCheckedList[index]
+           );
+        // updating the alarm that was changed
+        for (int i = 0; i < (data['medications'] as List<dynamic>).length; i++) {
+          for (int j = 0; j < (data['medications'][i]['alarms'] as List<dynamic>).length; j++){
+            var checkAlarm = data['medications'][i]['alarms'][j]['alarmID'];
+            if (data['medications'][i]['alarms'][j]['alarmID'] == allAlarms[index].alarmID) {
+              data['medications'][i]['alarms'][j] = newAlarm.toMap();
+              break;
+            }
+          }
+        }
+        // updates the alarm information
+        await users.doc(currentUser.id).update(data);
+      }
     });
   }
   @override

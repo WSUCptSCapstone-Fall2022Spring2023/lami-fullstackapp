@@ -317,19 +317,20 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
   return medications;
 }
 
-List<Alarm> alarmListFromMap(List<dynamic> data) {
-  List<Alarm> alarms = [];
-  for (int i = 0; i < data.length; i++)
-  {
-    Alarm tempAlarm = Alarm(
-        alarmID: data[i]["alarmID"],
-        nameOfDrug: data[i]["nameOfDrug"],
-        time: data[i]["time"]
-    );
-    alarms.add(tempAlarm);
-  }
-  return alarms;
-}
+// List<Alarm> alarmListFromMap(List<dynamic> data) {
+//   List<Alarm> alarms = [];
+//   for (int i = 0; i < data.length; i++)
+//   {
+//     Alarm tempAlarm = Alarm(
+//         alarmID: data[i]["alarmID"],
+//         nameOfDrug: data[i]["nameOfDrug"],
+//         time: data[i]["time"],
+//         takenToday: data[i]["takenToday"]
+//     );
+//     alarms.add(tempAlarm);
+//   }
+//   return alarms;
+// }
 
 List<Alarm> alarmsStringToList(String? data) {
   List<Alarm> list = [];
@@ -337,7 +338,7 @@ List<Alarm> alarmsStringToList(String? data) {
   {
     return list;
   }
-  var alarmStrings = data.substring(1, data.length - 1).split("Alarm");
+  var alarmStrings = data.substring(1, data.length - 1).split(",");
   for (int i = 1; i < alarmStrings.length; i++)
   {
     List<String> singleAlarm = alarmStrings[i].substring(2, alarmStrings[i].length - 1).split(",");
@@ -348,6 +349,7 @@ List<Alarm> alarmsStringToList(String? data) {
         alarmID: alarmID,
         time: time,
         nameOfDrug: nameOfDrug,
+      takenToday: false
     );
     list.add(alarm);
   }

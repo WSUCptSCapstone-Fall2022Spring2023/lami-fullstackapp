@@ -13,17 +13,19 @@ class Alarm {
   final String alarmID;
   final String nameOfDrug;
   late TimeOfDay time;
+  late bool takenToday;
 
   // constructor for the values
   Alarm({
     required this.alarmID,
     required this.time,
     required this.nameOfDrug,
+    required this.takenToday
   });
 
   @override
   String toString() {
-    return 'alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug';
+    return 'alarmID: $alarmID, time: $time, nameOfDrug: $nameOfDrug, takenToday: $takenToday';
   }
 
   // maps the value from the database to the values present in the alarm class
@@ -32,6 +34,7 @@ class Alarm {
       'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
+      'takenToday': takenToday
     };
   }
 
@@ -41,6 +44,7 @@ class Alarm {
       'alarmID': alarmID,
       'time': time.toString(),
       'nameOfDrug': nameOfDrug,
+      'takenToday': takenToday.toString()
     };
   }
 
@@ -50,6 +54,7 @@ class Alarm {
         alarmID: data['alarmID'],
         time: parseTimeOfDayString(data['time']),
         nameOfDrug: data['nameOfDrug'],
+        takenToday: data['takenToday']
     );
     return temp;
   }
@@ -60,30 +65,8 @@ class Alarm {
       alarmID: data['alarmID'] ?? "",
       time: parseTimeOfDayString(data['time'] ?? ""),
       nameOfDrug: data['nameOfDrug'] ?? "",
+      takenToday: stringToBool(data['takenToday'] ?? ""),
     );
     return temp;
-  }
-
-
-  factory Alarm.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options,
-      ) {
-    final data = snapshot.data();
-    return Alarm(
-      alarmID: data?['alarmID'],
-      nameOfDrug: data?['nameOfDrug'],
-      time: data?['time']
-
-
-    );
-  }
-
-  Map<String, dynamic> toFirestore() {
-    return {
-      "alarmID": alarmID,
-      "nameOfDrug": nameOfDrug,
-      "time": time
-    };
   }
 }
