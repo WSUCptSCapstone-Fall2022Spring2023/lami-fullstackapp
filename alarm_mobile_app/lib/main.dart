@@ -26,7 +26,6 @@ import 'notifications.dart';
 // starting point of the program, initializes most of the services for the app
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   AwesomeNotifications().initialize(
     null,
     [

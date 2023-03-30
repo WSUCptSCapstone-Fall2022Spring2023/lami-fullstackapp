@@ -11,11 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'medication.dart';
 
-
-enum RepeatOption {
-  specificDays,
-  daysInterval
-}
+enum RepeatOption { specificDays, daysInterval }
 
 // represents the theming info for light, dark, high-contrast, and dark high-contrast themes
 // should never be instantiated
@@ -28,7 +24,8 @@ abstract class ThemeColors {
       bottomAppBarColor: const Color.fromRGBO(24, 183, 190, 1),
       disabledColor: const Color.fromRGBO(246, 244, 232, 1),
       appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark, color: Color.fromRGBO(24, 183, 190, 1)));
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          color: Color.fromRGBO(24, 183, 190, 1)));
   static ThemeData lightData = ThemeData(
       brightness: Brightness.light,
       primaryColor: Colors.blue,
@@ -59,8 +56,8 @@ class ColumnBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(itemCount,
-              (index) => itemBuilder(context, index)).toList(),
+      children: List.generate(itemCount, (index) => itemBuilder(context, index))
+          .toList(),
     );
   }
 }
@@ -69,7 +66,8 @@ class ColumnBuilder extends StatelessWidget {
 ///@returns the list of alarms if it is found [] if not
 ///This function is async and returns a future to allow for non-asynchrous functions to use this method
 ///Throws an exception if the user was not found or the userid is null
-Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance) async {
+Future<List<Medication>> getMedications(
+    String? uid, FirebaseFirestore instance) async {
   if (uid != null) {
     CollectionReference users = FirebaseFirestore.instance.collection('/users');
     DocumentSnapshot<Object?> snap = await users.doc(uid).get();
@@ -84,6 +82,7 @@ Future<List<Medication>> getMedications(String? uid, FirebaseFirestore instance)
   }
   throw Exception("User does not exist in the database!");
 }
+
 ///gets the user associated with that uid
 ///@param uid: uid that is generated from firebaseauthentication
 ///@return returns the user object that is associated with that uid
@@ -99,6 +98,7 @@ Future<Users> getCurrentUser(String uid) async {
   }
   throw Exception("ERROR USER DOES NOT EXIST");
 }
+
 ///gets the current user object that is stored in the shared preferences
 ///@param pref - instance of sharedpreferences
 ///@return returns the user object - note that alarms is not stored in sharedpreferences
@@ -110,11 +110,13 @@ Users getCurrentUserLocal(SharedPreferences pref) {
       firstname: pref.getString("firstname") ?? '',
       lastname: pref.getString("lastname") ?? '');
 }
+
 /// writes the given user to the shared preferences
 /// @param user: user to be written
 /// @param pref: instance of shared preferences
 /// note: this function is async due to how sharedprefences writes data
-Future<void> writeToSharedPreferences(Users user, SharedPreferences pref) async {
+Future<void> writeToSharedPreferences(
+    Users user, SharedPreferences pref) async {
   await pref.setString("id", user.id);
   await pref.setString("firstname", user.firstname);
   await pref.setString("lastname", user.lastname);
@@ -131,20 +133,17 @@ TimeOfDay parseTimeOfDayString(String time) {
       hour: int.parse(time.split(":")[0]),
       minute: int.parse(time.split(":")[1]));
 }
-List<bool> parseDaysOfWeekString(String days){
-  var parseList = days.substring(1, days.length-1).split(', ');
+
+List<bool> parseDaysOfWeekString(String days) {
+  var parseList = days.substring(1, days.length - 1).split(', ');
   var returnList = List.filled(7, true);
-  for (int i = 0; i < 7; i++)
-    {
-      if (parseList[i] == 'true')
-        {
-          returnList[i] = true;
-        }
-      else
-        {
-          returnList[i] = false;
-        }
+  for (int i = 0; i < 7; i++) {
+    if (parseList[i] == 'true') {
+      returnList[i] = true;
+    } else {
+      returnList[i] = false;
     }
+  }
   return returnList;
 }
 
@@ -276,12 +275,9 @@ Duration parseStringDuration(String dur) {
 
 RepeatOption stringToRepeatOption(String? data) {
   RepeatOption tempRepeatOption;
-  if (data == RepeatOption.daysInterval.toString())
-  {
+  if (data == RepeatOption.daysInterval.toString()) {
     tempRepeatOption = RepeatOption.daysInterval;
-  }
-  else
-  {
+  } else {
     tempRepeatOption = RepeatOption.specificDays;
   }
   return tempRepeatOption;
@@ -298,13 +294,14 @@ String repeatOptionToString(RepeatOption repeatOption) {
 List<Medication> medicationListFromMap(List<dynamic> data) {
   List<Medication> medications = [];
   Medication tempMedication;
-  for (int i = 0; i < data.length; i++)
-  {
-    Medication tempMedication = Medication(id: data[i]["id"], nameOfDrug: data[i]["nameOfDrug"]);
+  for (int i = 0; i < data.length; i++) {
+    Medication tempMedication =
+        Medication(id: data[i]["id"], nameOfDrug: data[i]["nameOfDrug"]);
     tempMedication.description = data[i]["description"];
     tempMedication.repeatOption = stringToRepeatOption(data[i]["repeatOption"]);
     tempMedication.daysOfWeek = parseDaysOfWeekString(data[i]["daysOfWeek"]);
-    tempMedication.repeatDuration = parseStringDuration(data[i]['repeatDuration']);
+    tempMedication.repeatDuration =
+        parseStringDuration(data[i]['repeatDuration']);
     tempMedication.repeatTimes = data[i]["repeatTimes"];
     tempMedication.alarms = alarmsStringToList(data[i]["alarms"]);
     // tempMedication.alarms = convertAlarmsToMap(alarmsStringToList(data[i]["alarms"]));
@@ -330,14 +327,13 @@ List<Medication> medicationListFromMap(List<dynamic> data) {
 
 List<Alarm> alarmsStringToList(String? data) {
   List<Alarm> list = [];
-  if (data == null)
-  {
+  if (data == null) {
     return list;
   }
   var alarmStrings = data.substring(1, data.length - 1).split(",");
-  for (int i = 1; i < alarmStrings.length; i++)
-  {
-    List<String> singleAlarm = alarmStrings[i].substring(2, alarmStrings[i].length - 1).split(",");
+  for (int i = 1; i < alarmStrings.length; i++) {
+    List<String> singleAlarm =
+        alarmStrings[i].substring(2, alarmStrings[i].length - 1).split(",");
     String alarmID = singleAlarm[0].substring(8);
     TimeOfDay time = parseTimeOfDayString(singleAlarm[1].substring(6));
     String nameOfDrug = singleAlarm[2].split(")")[0].substring(13);
@@ -345,8 +341,7 @@ List<Alarm> alarmsStringToList(String? data) {
         alarmID: alarmID,
         time: time,
         nameOfDrug: nameOfDrug,
-      takenToday: false
-    );
+        takenToday: false);
     list.add(alarm);
   }
   return list;
@@ -355,41 +350,36 @@ List<Alarm> alarmsStringToList(String? data) {
 RepeatOption pickerToRepeatOption(int pickerRepeatOption) {
   if (pickerRepeatOption == 0) {
     return RepeatOption.specificDays;
-  }
-  else {
+  } else {
     return RepeatOption.daysInterval;
   }
 }
 
 RepeatOption repeatOptionFromString(String string) {
-  if (string == 'RepeatOption.daysInterval')
-  {
+  if (string == 'RepeatOption.daysInterval') {
     return RepeatOption.daysInterval;
-  }
-  else
-  {
+  } else {
     return RepeatOption.specificDays;
   }
 }
 
-bool stringToBool(String string){
-  if (string.contains("false")){
+bool stringToBool(String string) {
+  if (string.contains("false")) {
     return false;
   }
   return true;
 }
 
-double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute/60.0;
+double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
-List<bool> todaysMedicationsTakenFromString(String? data){
+List<bool> todaysMedicationsTakenFromString(String? data) {
   List<bool> medicationsTaken = [];
-  if (data != null){
+  if (data != null) {
     List<String> parsedString = data.split(',');
     for (int i = 0; i < parsedString.length; i++) {
-      if (parsedString[i].contains('true')){
+      if (parsedString[i].contains('true')) {
         medicationsTaken[i] = true;
-      }
-      else {
+      } else {
         medicationsTaken[i] = false;
       }
     }
@@ -398,12 +388,28 @@ List<bool> todaysMedicationsTakenFromString(String? data){
   return medicationsTaken;
 }
 
-
 List<Map> convertAlarmsToMap(List<Alarm> alarms) {
-List<Map> alarmsMap = [];
-alarms.forEach((Alarm alarm) {
-Map map = alarm.toMap();
-alarmsMap.add(map);
-});
-return alarmsMap;
+  List<Map> alarmsMap = [];
+  alarms.forEach((Alarm alarm) {
+    Map map = alarm.toMap();
+    alarmsMap.add(map);
+  });
+  return alarmsMap;
+}
+
+Future<List<dynamic>> saveMedicationToFirestore(
+    Medication medication, Users currentUser, FirebaseFirestore inst) async {
+  CollectionReference users = inst.collection('/users');
+  DocumentSnapshot<Object?> snap = await users.doc(currentUser.id).get();
+  if (snap.exists) {
+    Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+    if (!data.containsKey('medications')) {
+      // initializing the medications collection if it does not exist
+      data['medications'] = [];
+    }
+    data['medications'].add(medication.toMap());
+    await users.doc(currentUser.id).update(data);
+    return data['medications'];
+  }
+  return [];
 }

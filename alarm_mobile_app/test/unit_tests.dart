@@ -27,42 +27,38 @@ void main() {
     Map<String, dynamic> data = mockUser.toMap();
     instance.collection(usersCollection).doc(uid).set(data);
 
-    Medication mockMedication = Medication(
-      id: "mockID",
-      nameOfDrug: "mockMedication"
-    );
+    Medication mockMedication =
+        Medication(id: "mockID", nameOfDrug: "mockMedication");
     mockMedication.description = "mockDescription";
-    mockMedication.repeatOption = RepeatOption.daily;
+    mockMedication.repeatOption = RepeatOption.specificDays;
     mockMedication.daysOfWeek = List.filled(7, true);
     mockMedication.repeatDuration = Duration(days: 1);
     mockMedication.repeatTimes = 2;
     mockMedication.alarms = [
       Alarm(
-          alarmID: "mockAlarm1",
-          time: TimeOfDay(hour: 8, minute: 30),
-          nameOfDrug: 'mockMedication',
-          dayOfWeek: 'Monday'
+        alarmID: "mockAlarm1",
+        time: TimeOfDay(hour: 8, minute: 30),
+        nameOfDrug: 'mockMedication',
+        takenToday: false,
       )
     ];
 
-
-    test('1. Create an user with data for firestore', ()  {
+    test('1. Create an user with data for firestore', () {
       // expect(instance.dump(), equals(expectedDumpAfterset));
       print(instance.dump());
     });
-
 
     test('2. Add a new medication', () async {
       await instance.collection(usersCollection).doc(uid).set(data);
       CollectionReference users = instance.collection('users');
       DocumentSnapshot<Object?> snap = await users.doc(mockUser.id).get();
       Map<String, dynamic> drugData = snap.data() as Map<String, dynamic>;
-      drugData['medications'] = [];
-      drugData['medications'].add(mockMedication.toMap());
-      users.doc(uid).update(drugData);
+      await saveMedicationToFirestore(mockMedication, mockUser, instance);
+      // drugData['medications'] = [];
+      // drugData['medications'].add(mockMedication.toMap());
+      // users.doc(uid).update(drugData);
       // expect(instance.dump(), equals(expectedDumpAfterset));
       print(instance.dump());
     });
-
   });
 }
