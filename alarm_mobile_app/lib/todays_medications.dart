@@ -88,19 +88,13 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
   @override
   void initState() {
     super.initState();
-
-    int currentDayOfWeek;
-    if (DateTime.now().weekday == 7) {
-      currentDayOfWeek = 0;
-    } else {
-      currentDayOfWeek = DateTime.now().weekday;
-    }
-    for (int i = 0; i < widget.medications.length; i++) {
-      if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
-        allAlarms.addAll(widget.medications[i].alarms);
-      }
-    }
-    allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
+    allAlarms = getAllAlarms(widget.medications);
+    // for (int i = 0; i < widget.medications.length; i++) {
+    //   if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
+    //     allAlarms.addAll(widget.medications[i].alarms);
+    //   }
+    // }
+    // allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
     _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = _isCheckedList.where((element) => element).length;
     checkForNewDay();

@@ -63,7 +63,6 @@ class ColumnBuilder extends StatelessWidget {
 }
 
 
-
 ///gets the user associated with that uid
 ///@param uid: uid that is generated from firebaseauthentication
 ///@return returns the user object that is associated with that uid
@@ -157,9 +156,6 @@ Future<void> writeToSharedPreferences(
   await pref.setString("usertype", user.usertype);
   await pref.setString("email", user.email);
 }
-
-
-
 
 
 ///Gets the list of alarms associated with the given userid
@@ -264,9 +260,22 @@ Future<void> medicationTakenChanged(
   }
 }
 
-
-
-
+List<Alarm> getAllAlarms(List<Medication> medications){
+  int currentDayOfWeek;
+  if (DateTime.now().weekday == 7) {
+    currentDayOfWeek = 0;
+  } else {
+    currentDayOfWeek = DateTime.now().weekday;
+  }
+  List<Alarm> allAlarms = [];
+  for (int i = 0; i < medications.length; i++) {
+    if (medications[i].daysOfWeek[currentDayOfWeek] == true) {
+      allAlarms.addAll(medications[i].alarms);
+    }
+  }
+  allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
+  return allAlarms;
+}
 
 ///Parses the given TimeOfDay string into a TimeOfDayObject
 ///@param time must be in format TimeOfDay(hr:min)
