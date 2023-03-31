@@ -4,67 +4,17 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:alarm_mobile_app/admin_medications.dart';
 import 'package:alarm_mobile_app/medication.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'alarm.dart';
 import 'utils.dart';
 import 'users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'settings.dart';
+import 'package:alarm_mobile_app/admin_medications.dart';
 
-class MedicationItem extends StatelessWidget {
-  MedicationItem({
-    required this.medication,
-  }) : super(key: ObjectKey(medication));
-
-  final Medication medication;
-
-  @override
-  Widget build(BuildContext context) {
-
-    return ListTile(
-      title: Column(children: [
-        Row(children: [
-          Expanded(
-              child: Text(
-                medication.nameOfDrug,
-            textScaleFactor: 1.25,
-          )),
-          Expanded(
-              child: Row(children: [
-            const Text(
-              "Enabled: ",
-              textScaleFactor: 1.25,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(shape: const CircleBorder()),
-                onPressed: () {},
-                child: Text("getText()"))
-          ]))
-        ]),
-        const Divider(
-          color: Colors.black,
-          thickness: 0.0,
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: Text(
-              "Time: "
-                  //+ medication.time.format(context),
-              //textScaleFactor: 1.2,
-            )),
-            Expanded(
-                child: Text(
-              "Desc: " + medication.description,
-              textScaleFactor: 1.2,
-            ))
-          ],
-        )
-      ]),
-    );
-  }
-}
 
 class UserItem extends StatelessWidget {
   UserItem({
@@ -75,27 +25,33 @@ class UserItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(title: Text(users.firstname + " " + users.lastname),
-        //subtitle: Text(users.firstname),
-        children: <Widget>[
-          Column(children: <Widget>[
-            ConstrainedBox(
-                // not know why this is working.
-                // will fix this later once we find a problem.
-                constraints: const BoxConstraints(minHeight: 60.0),
-                child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return MedicationItem(medication: users.medications[index]);
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(
-                          thickness: 4.0,
-                          color: Colors.black,
-                        ),
-                    itemCount: users.medications.length))
-          ])
-        ]);
+    return ListTile(
+      title: Column(children: [
+        const SizedBox(height: 10),
+        Row(children: [
+          Expanded(
+              child: Text(
+                "${users.firstname} ${users.lastname}",
+                textScaleFactor: 1.25,
+              )),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                  minimumSize: const Size(120, 50),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+              onPressed: () async {
+                CollectionReference userCollection = FirebaseFirestore.instance.collection('/users');
+                List<Medication> medications = await getMedications(users.id, userCollection);
+                runApp(AdminMedicationPage(medications: medications));
+              },
+              child: const Text(
+                "Medications",
+                textScaleFactor: 1.3,
+              )),
+        ]),
+      ]),
+    );
   }
 }
 
@@ -121,8 +77,7 @@ class Admin extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.settings, color: Colors.black),
                   onPressed: () async {
-                    Users user = getCurrentUserLocal(
-                        await SharedPreferences.getInstance());
+                    Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
                     runApp(SettingsPage(user: user));
                   }),
             ],

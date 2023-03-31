@@ -88,7 +88,6 @@ Users getCurrentUserLocal(SharedPreferences pref) {
       lastname: pref.getString("lastname") ?? '');
 }
 // gets all the users that are reg type and returns the list of them
-// note has to be async due to querying the db
 Future<List<Users>> getAllUsers(FirebaseFirestore instance) async {
   try {
     // was running into issues w/ caching when testing - decided to clear cache before retrieving most updated info
