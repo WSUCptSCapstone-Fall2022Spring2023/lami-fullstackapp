@@ -30,7 +30,8 @@ void createNotification(Alarm alarm) {
           NotificationActionButton(
               key: alarm.alarmID,
               label: "Dismiss",
-              buttonType: ActionButtonType.DisabledAction)
+              // buttonType: ActionButtonType.DisabledAction
+          )
         ]);
     hour += 1;
   }
@@ -63,7 +64,8 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
         NotificationActionButton(
             key: alarm.alarmID,
             label: "Dismiss",
-            buttonType: ActionButtonType.DisabledAction)
+            // buttonType: ActionButtonType.DisabledAction
+        )
       ]);
 }
 
@@ -83,7 +85,7 @@ void createImmediateNotif(String title, String desc) {
         NotificationActionButton(
           key: "0",
           label: "Dismiss",
-          buttonType: ActionButtonType.DisabledAction,
+          // buttonType: ActionButtonType.DisabledAction,
         )
       ]);
 }

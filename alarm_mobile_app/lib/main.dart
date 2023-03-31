@@ -26,40 +26,40 @@ import 'notifications.dart';
 // starting point of the program, initializes most of the services for the app
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-          channelKey: 'PalouseAlarm',
-          channelName: 'PalouseAlarm',
-          channelDescription: 'PalouseAlarmNotifs',
-          defaultColor: Colors.white,
-          ledColor: Colors.red,
-          importance: NotificationImportance.Max),
-    ],
-    channelGroups: [
-      NotificationChannelGroup(
-          channelGroupkey: "PalouseAlarm", channelGroupName: "PalouseAlarm"),
-    ],
-  );
+  // AwesomeNotifications().initialize(
+  //   null,
+  //   [
+  //     NotificationChannel(
+  //         channelKey: 'PalouseAlarm',
+  //         channelName: 'PalouseAlarm',
+  //         channelDescription: 'PalouseAlarmNotifs',
+  //         defaultColor: Colors.white,
+  //         ledColor: Colors.red,
+  //         importance: NotificationImportance.Max),
+  //   ],
+  //   channelGroups: [
+    //   NotificationChannelGroup(
+    //       channelGroupkey: "PalouseAlarm", channelGroupName: "PalouseAlarm"),
+    // ],
+  // );
 
   // getting permissions (IOS only)
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-  });
+  // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+  //   if (!isAllowed) {
+  //     AwesomeNotifications().requestPermissionToSendNotifications();
+  //   }
+  // });
 
   // used for repeating notifications even w/out the user going back into the app
   // should be using dismissed stream but for some reason it isn't working
-  AwesomeNotifications().displayedStream.listen((ReceivedNotification notif) {
-    AndroidForegroundService.stopForeground();
-    if (notif.payload != null) {
-      Alarm alarm = Alarm.fromStringMap(notif.payload ?? {});
-      createNotificationTomorrow(
-          alarm, DateTime.now().add(const Duration(days: 1)));
-    }
-  });
+  // AwesomeNotifications().displayedStream.listen((ReceivedNotification notif) {
+  //   AndroidForegroundService.stopForeground();
+  //   if (notif.payload != null) {
+  //     Alarm alarm = Alarm.fromStringMap(notif.payload ?? {});
+  //     createNotificationTomorrow(
+  //         alarm, DateTime.now().add(const Duration(days: 1)));
+  //   }
+  // });
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
