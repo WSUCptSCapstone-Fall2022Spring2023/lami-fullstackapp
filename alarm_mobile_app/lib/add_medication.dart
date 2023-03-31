@@ -30,7 +30,7 @@ class AddMedication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const appTitle = "New Medication";
-
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -48,7 +48,7 @@ class AddMedication extends StatelessWidget {
                     Users user = getCurrentUserLocal(
                         await SharedPreferences.getInstance());
                     user.medications = await getMedications(
-                        user.id, FirebaseFirestore.instance);
+                        user.id, users);
                     runApp(MedicationPage(medications: user.medications));
                   }),
             ],
@@ -308,7 +308,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             // await users.doc(currentUser.id).update(data);
             List<Medication> medications = convertMapMedicationsToList(
                 await saveMedicationToFirestore(
-                    newMedication, currentUser, inst));
+                    newMedication, currentUser, users, inst));
             runApp(MedicationPage(medications: medications));
           }
         },

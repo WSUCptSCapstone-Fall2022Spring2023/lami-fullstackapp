@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
     }
     // Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
     // user.medications = await getMedications(user.id, FirebaseFirestore.instance);
-
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
@@ -103,7 +103,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                         onPressed: () async {
                           Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                          runApp(TodaysMedications(medications: await getMedications(user.id, FirebaseFirestore.instance)));
+                          runApp(TodaysMedications(medications: await getMedications(user.id, users)));
                         },
                       ),
                       const SizedBox(width: 40),
@@ -120,7 +120,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                           onPressed: () async {
                             Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                            runApp(MedicationPage(medications: await getMedications(user.id, FirebaseFirestore.instance)));
+                            runApp(MedicationPage(medications: await getMedications(user.id, users)));
                           },
                       ),
                       const SizedBox(width: 40),
@@ -177,7 +177,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
     firstnamecontroller.text = widget.user.firstname;
     lastnamecontroller.text = widget.user.lastname;
     emailcontroller.text = widget.user.email;
-
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -294,8 +294,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                                 await SharedPreferences.getInstance())
                             .usertype ==
                         'reg') {
-                      getMedications(FirebaseAuth.instance.currentUser?.uid,
-                              FirebaseFirestore.instance)
+                      getMedications(FirebaseAuth.instance.currentUser?.uid, users)
                           .then((List<Medication> value) {
                         return runApp(MedicationPage(
                           medications: value,

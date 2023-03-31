@@ -155,7 +155,8 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
-                  selectedDate: DateUtils.dateOnly(_selectedDate),
+                  // selectedDate: DateUtils.dateOnly(_selectedDate),
+                  selectedDate: DateTime(1999, 6, 27),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
                   onDateTimeChanged: (DateTime value) {
@@ -235,17 +236,18 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
                         await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     if (user != null) {
-                      Users currentUser = await getCurrentUser(user.uid);
+                      CollectionReference users = FirebaseFirestore.instance.collection('/users');
+                      Users currentUser = await getCurrentUser(user.uid, users);
                       await writeToSharedPreferences(currentUser, pref);
                       // if (currentUser.usertype == 'admin') {
                       //   return runApp(Admin(users: await getAllUsers(inst)));
                       // }
                       return runApp(
-                          MedicationPage(medications: await getMedications(currentUser.id, inst)));
+                          MedicationPage(medications: await getMedications(currentUser.id, users)));
                       // go to home screen w/ current user
                     } else {
                       //user exists in firebase auth but not in firestore - add to firestore
-                      CollectionReference users = inst.collection('users');
+                      CollectionReference users = inst.collection('/users');
                       Users newuser = Users(
                           email: emailController.text,
                           id: user?.uid.toString() ?? '',

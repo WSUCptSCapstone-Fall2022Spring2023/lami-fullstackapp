@@ -229,17 +229,18 @@ class LogInFormState extends State<LogInForm> {
                     await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     if (user != null) {
-                      Users currentUser = await getCurrentUser(user.uid);
+                      CollectionReference users = inst.collection('/users');
+                      Users currentUser = await getCurrentUser(user.uid, users);
                       await writeToSharedPreferences(currentUser, pref);
                       if (currentUser.usertype == 'admin') {
                         return runApp(Admin(users: await getAllUsers(inst)));
                       }
-                      return runApp(MedicationPage(medications: await getMedications(currentUser.id, inst)));
+                      return runApp(MedicationPage(medications: await getMedications(currentUser.id, users)));
                       // go to home screen w/ current user
                     }
                     else {
                       //user exists in firebase auth but not in firestore - add to firestore
-                      CollectionReference users = inst.collection('users');
+                      CollectionReference users = inst.collection('/users');
                       Users newuser = Users(
                           email: emailcontroller.text,
                           id: user?.uid.toString() ?? '',

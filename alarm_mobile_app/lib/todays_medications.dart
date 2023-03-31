@@ -58,7 +58,7 @@ class AlarmItem extends StatelessWidget {
                 onChanged: (bool? value) {
                   _setState(() {
                     isCheckedList[index] = value!;
-                    onCheckedChanged(value!);
+                    onCheckedChanged(value);
                   });
                 },
               ),
@@ -140,38 +140,39 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     // gets the current user from the local shared preferences
     Users currentUser = getCurrentUserLocal(pref);
     CollectionReference users = inst.collection('/users');
-    DocumentSnapshot<Object?> snap =
-    await users.doc(currentUser.id).get();
-    if (snap.exists) {
-      Map<String, dynamic> data =
-      snap.data() as Map<String, dynamic>;
-      // creating a new alarm from the given information
-      Alarm newAlarm = Alarm(
-          alarmID: allAlarms[index].alarmID,
-          time: allAlarms[index].time,
-          nameOfDrug: allAlarms[index].nameOfDrug,
-          takenToday: _isCheckedList[index]
-      );
-      // updating the alarm that was changed
-      for (int i = 0; i < (data['medications'] as List<dynamic>).length; i++) {
-        for (int j = 0; j <
-            (data['medications'][i]['alarms'] as List<dynamic>).length; j++) {
-          var checkAlarm = data['medications'][i]['alarms'][j]['alarmID'];
-          if (data['medications'][i]['alarms'][j]['alarmID'] ==
-              allAlarms[index].alarmID) {
-            data['medications'][i]['alarms'][j] = newAlarm.toMap();
-            break;
-          }
-        }
-      }
-      await users.doc(currentUser.id).update(data);
-    }
+    await medicationTakenChanged(currentUser, users, allAlarms, index, _isCheckedList);
+    // DocumentSnapshot<Object?> snap =
+    // await users.doc(currentUser.id).get();
+    // if (snap.exists) {
+    //   Map<String, dynamic> data =
+    //   snap.data() as Map<String, dynamic>;
+    //   // creating a new alarm from the given information
+    //   Alarm newAlarm = Alarm(
+    //       alarmID: allAlarms[index].alarmID,
+    //       time: allAlarms[index].time,
+    //       nameOfDrug: allAlarms[index].nameOfDrug,
+    //       takenToday: _isCheckedList[index]
+    //   );
+    //   // updating the alarm that was changed
+    //   for (int i = 0; i < (data['medications'] as List<dynamic>).length; i++) {
+    //     for (int j = 0; j <
+    //         (data['medications'][i]['alarms'] as List<dynamic>).length; j++) {
+    //       var checkAlarm = data['medications'][i]['alarms'][j]['alarmID'];
+    //       if (data['medications'][i]['alarms'][j]['alarmID'] ==
+    //           allAlarms[index].alarmID) {
+    //         data['medications'][i]['alarms'][j] = newAlarm.toMap();
+    //         break;
+    //       }
+    //     }
+    //   }
+    //   await users.doc(currentUser.id).update(data);
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     const appTitle = "Today's Medications";
-    // temp();
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -186,7 +187,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
                 icon: const Icon(Icons.add, color: Colors.black, size: 35),
                 onPressed: () async {
                   Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                  user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                  user.medications = await getMedications(user.id, users);
                   runApp(const AddMedication());
                 }),
           ],
@@ -264,7 +265,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
                     ),
                     onPressed: () async {
                       Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                      user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                      user.medications = await getMedications(user.id, users);
                       runApp(MedicationPage(medications: user.medications));
                     },
                   ),
@@ -282,7 +283,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
                     ),
                     onPressed: () async {
                       Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                      user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                      user.medications = await getMedications(user.id, users);
                       runApp(SettingsPage(user: user));
                     },
                   )

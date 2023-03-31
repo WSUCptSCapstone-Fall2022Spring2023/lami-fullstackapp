@@ -26,36 +26,36 @@ import 'notifications.dart';
 // starting point of the program, initializes most of the services for the app
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // AwesomeNotifications().initialize(
-  //   null,
-  //   [
-  //     NotificationChannel(
-  //         channelKey: 'PalouseAlarm',
-  //         channelName: 'PalouseAlarm',
-  //         channelDescription: 'PalouseAlarmNotifs',
-  //         defaultColor: Colors.white,
-  //         ledColor: Colors.red,
-  //         importance: NotificationImportance.Max),
-  //   ],
-  //   channelGroups: [
-    //   NotificationChannelGroup(
-    //       channelGroupkey: "PalouseAlarm", channelGroupName: "PalouseAlarm"),
-    // ],
-  // );
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+          channelKey: 'PalouseAlarm',
+          channelName: 'PalouseAlarm',
+          channelDescription: 'PalouseAlarmNotifs',
+          defaultColor: Colors.white,
+          ledColor: Colors.red,
+          importance: NotificationImportance.Max),
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+          channelGroupName: "PalouseAlarm", channelGroupKey: 'PalouseAlarm'),
+    ],
+  );
 
   // getting permissions (IOS only)
-  // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-  //   if (!isAllowed) {
-  //     AwesomeNotifications().requestPermissionToSendNotifications();
-  //   }
-  // });
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
 
   // used for repeating notifications even w/out the user going back into the app
   // should be using dismissed stream but for some reason it isn't working
   // AwesomeNotifications().displayedStream.listen((ReceivedNotification notif) {
   //   AndroidForegroundService.stopForeground();
   //   if (notif.payload != null) {
-  //     Alarm alarm = Alarm.fromStringMap(notif.payload ?? {});
+  //     Alarm alarm = Alarm.fromStringMap(notif.payload !! {});
   //     createNotificationTomorrow(
   //         alarm, DateTime.now().add(const Duration(days: 1)));
   //   }
@@ -99,7 +99,8 @@ class _AppState extends State<App> {
             return const ResidentLogIn();
           }
           else {
-            getCurrentUser(auth.currentUser!.uid).then((Users u) {
+            CollectionReference users = FirebaseFirestore.instance.collection('/users');
+            getCurrentUser(auth.currentUser!.uid, users).then((Users u) {
               var pref = SharedPreferences.getInstance();
               pref.then((value) {
                 writeToSharedPreferences(u, value);
@@ -107,11 +108,10 @@ class _AppState extends State<App> {
               // regular user
               if (u.usertype == 'reg') {
                 // gets all their alarms and goes to the home screen
-                getMedications(auth.currentUser?.uid, FirebaseFirestore.instance)
+                CollectionReference users = FirebaseFirestore.instance.collection('/users');
+                getMedications(auth.currentUser?.uid, users)
                     .then((List<Medication> value) {
-                  return runApp(MedicationPage(
-                    medications: value,
-                  ));
+                  return runApp(MedicationPage(medications: value,));
                 }, onError: (e) {
                   Fluttertoast.showToast(
                       msg:

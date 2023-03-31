@@ -74,12 +74,12 @@ class MedicationItem extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () async {
+                                    Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                                    CollectionReference users = FirebaseFirestore.instance.collection('/users');
                                     Navigator.of(context).pop();
-                                    await deleteMedication(medication.id, instance);
+                                    await deleteMedication(medication.id, instance, user.id, users);
                                     runApp(MedicationPage(
-                                        medications: await getMedications(
-                                            prefs.getString("id") ?? '',
-                                            instance)));
+                                        medications: await getMedications(user.id, users)));
                                   },
                                   child: const Text(
                                     "Yes",
@@ -112,6 +112,7 @@ class MedicationPage extends StatelessWidget {
     // when the user enters the home screen, cancel all their notifications
     AwesomeNotifications().cancelAll().then((value) {});
     const appTitle = "My Medications";
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -126,7 +127,7 @@ class MedicationPage extends StatelessWidget {
                 icon: const Icon(Icons.add, color: Colors.black, size: 35),
                 onPressed: () async {
                   Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                  user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+                  user.medications = await getMedications(user.id, users);
                   runApp(const AddMedication());
                 }),
           ],
@@ -151,7 +152,7 @@ class MedicationPage extends StatelessWidget {
                     ),
                     onPressed: () async {
                       Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                      runApp(TodaysMedications(medications: await getMedications(user.id, FirebaseFirestore.instance)));
+                      runApp(TodaysMedications(medications: await getMedications(user.id, users)));
                     },
                   ),
                   const SizedBox(width: 40),
