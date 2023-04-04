@@ -6,6 +6,8 @@
  * upgraded packages/dependnecies
  * animation testing
 
+ https://drive.google.com/file/d/1M2XR-ZG7bnT2ITZaf6fXEdkSAAwdE18u/view?usp=sharing
+ 
 ## Work Summary (Developer Facing)
 
 In this sprint we were able to get a moderate number of things done including the very important unit tests that make sure that the application wil run as intended for when we give it back to the client. Along with the tests we have made some significant progress on the caregiver side of the application which will allow for the access of all the user accounts. Also with some prototypes of animations for the reward system inside the application to help motivate the users to keep using the reminder app. Lastly, we fixed soem depencdy problems since they were causijg some testing problems, this didnt really cahmge anything insidde the app but it was soemthing that changed.
