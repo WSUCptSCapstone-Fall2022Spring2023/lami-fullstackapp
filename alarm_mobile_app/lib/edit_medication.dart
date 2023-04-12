@@ -295,6 +295,15 @@ class EditMedicationFormState extends State<EditMedicationForm> {
             newMedication.repeatDuration = const Duration(days: 1);
             newMedication.repeatTimes = timesPerDay;
             newMedication.alarms = alarms;
+            for (int i = 0; i < alarms.length; i++){
+              Alarm tempAlarm = Alarm(
+                  alarmID: alarms[i].alarmID,
+                  time: alarms[i].time,
+                  nameOfDrug: newMedication.nameOfDrug,
+                  takenToday: alarms[i].takenToday
+              );
+              newMedication.alarms[i] = tempAlarm;
+            }
 
             List<Medication> medications = convertMapMedicationsToList(
                 await editMedication(user, users, newMedication));
