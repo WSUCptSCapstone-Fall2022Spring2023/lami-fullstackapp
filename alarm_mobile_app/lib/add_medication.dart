@@ -282,15 +282,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             // gets the current user from the local shared preferences
             Users currentUser = getCurrentUserLocal(pref);
             CollectionReference users = inst.collection('/users');
-
-            // DocumentSnapshot<Object?> snap =
-            // await users.doc(currentUser.id).get();
-            // if (snap.exists) {
-            //   Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-            //   if (!data.containsKey('medications')) {
-            //     // initializing the medications collection if it does not exist
-            //     data['medications'] = [];
-            //   }
             // creating a new medication from the given information
             String id = Random().nextInt(maxID).toString();
 
@@ -304,11 +295,9 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             newMedication.repeatDuration = const Duration(days: 1);
             newMedication.repeatTimes = timesPerDay;
             newMedication.alarms = alarms;
-            // data['medications'].add(newMedication.toMap());
-            // await users.doc(currentUser.id).update(data);
+
             List<Medication> medications = convertMapMedicationsToList(
-                await saveMedicationToFirestore(
-                    newMedication, currentUser, users, inst));
+                await saveMedicationToFirestore(newMedication, currentUser, users));
             runApp(MedicationPage(medications: medications));
           }
         },

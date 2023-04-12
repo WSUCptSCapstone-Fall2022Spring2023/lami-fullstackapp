@@ -180,8 +180,7 @@ Future<List<Medication>> getMedications(
 Future<List<dynamic>> saveMedicationToFirestore(
     Medication medication,
     Users currentUser,
-    CollectionReference users,
-    FirebaseFirestore inst) async {
+    CollectionReference users) async {
   DocumentSnapshot<Object?> snap = await users.doc(currentUser.id).get();
   if (snap.exists) {
     Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
@@ -202,8 +201,7 @@ Future<List<dynamic>> saveMedicationToFirestore(
 /// @return returns true if the alarm exists in the users alarms collection, false otherwise
 /// note: this function is async due to how firestore works
 Future<bool> deleteMedication(
-    String id,
-    FirebaseFirestore instance,
+    String medicationID,
     String uid,
     CollectionReference users) async {
   DocumentSnapshot<Object?> snap = await users.doc(uid).get();
@@ -212,7 +210,7 @@ Future<bool> deleteMedication(
     // looping through the collection of alarms - note it is a list
     for (int i = 0; i < data['medications'].length; i++) {
       // checking to see if that specific alarm id exists
-      if (data['medications'][i]['id'] == id) {
+      if (data['medications'][i]['id'] == medicationID) {
         data['medications'].removeAt(i);
         break;
       }
@@ -223,8 +221,24 @@ Future<bool> deleteMedication(
   return false;
 }
 
-void editMedication(){
-
+Future<List<dynamic>> editMedication(
+    Users user,
+    CollectionReference users,
+    Medication medication
+    ) async {
+  DocumentSnapshot<Object?> snap = await users.doc(user.id).get();
+  if (snap.exists) {
+    Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+    for (int i = 0; i < data['medications'].length; i++) {
+      if (data['medications'][i]['id'] == medication.id) {
+        data['medications'][i] = medication.toMap();
+        break;
+      }
+    }
+    await users.doc(user.id).update(data);
+    return data['medications'];
+  }
+  return [];
 }
 
 Future<void> medicationTakenChanged(
@@ -276,6 +290,7 @@ List<Alarm> getAllAlarms(List<Medication> medications){
   allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
   return allAlarms;
 }
+
 
 ///Parses the given TimeOfDay string into a TimeOfDayObject
 ///@param time must be in format TimeOfDay(hr:min)

@@ -3,13 +3,10 @@ import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'alarm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
-import 'notifications.dart';
 import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:alarm_mobile_app/todays_medications.dart';
 import 'package:alarm_mobile_app/edit_medication.dart';
 
@@ -24,80 +21,96 @@ class MedicationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String nameOfDrug;
+    if (medication.nameOfDrug.length >= 16){
+      nameOfDrug = "${medication.nameOfDrug.substring(0, 13)}...";
+    }
+    else {
+      nameOfDrug = medication.nameOfDrug;
+    }
     // represents a single alarm in the home screen
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
-        title: Column(children: [
-          const SizedBox(height: 10),
-          Row(children: [
-            Expanded(
-                child: Text(
-                  medication.nameOfDrug,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  textScaleFactor: 1.7,
-                )),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeColors.darkData.primaryColorLight,
-                    minimumSize: const Size(120, 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                onPressed: () {
-                  // runApp(EditMedication(key: key, medication: medication));
-                },
-                child: const Text(
-                  "Edit",
-                  textScaleFactor: 1.3,
-                )),
-            const SizedBox(width: 30),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeColors.darkData.primaryColorLight,
-                    minimumSize: const Size(120, 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                child: const Text(
-                  "Delete",
-                  textScaleFactor: 1.3,
-                ),
-                onPressed: () async {
-                  FirebaseFirestore instance = FirebaseFirestore.instance;
-                  SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-                  // secondary confirmation dialog for deleting an alarm
-                  showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: const Text("Are you sure?"),
-                            actions: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                                    CollectionReference users = FirebaseFirestore.instance.collection('/users');
-                                    Navigator.of(context).pop();
-                                    await deleteMedication(medication.id, instance, user.id, users);
-                                    runApp(MedicationPage(
-                                        medications: await getMedications(user.id, users)));
-                                  },
-                                  child: const Text(
-                                    "Yes",
-                                    textScaleFactor: 1.2,
-                                  )),
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    "No",
-                                    textScaleFactor: 1.2,
-                                  )),
-                            ]);
-                      });
-                })
-          ]),
-        ])
+        title:
+          Row(
+            children: [
+              Column(
+                children: [
+                  Text(
+                        nameOfDrug,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textScaleFactor: 1.45,
+                      )
+                ],
+              ),
+              const Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeColors.darkData.primaryColorLight,
+                          minimumSize: const Size(100, 45),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      onPressed: () {
+                        runApp(EditMedication(key: key, medication: medication));
+                      },
+                      child: const Text(
+                        "Edit",
+                        textScaleFactor: 1.3,
+                      )),
+                  const SizedBox(height: 4),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeColors.darkData.primaryColorLight,
+                          minimumSize: const Size(100, 45),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      child: const Text(
+                        "Delete",
+                        textScaleFactor: 1.3,
+                      ),
+                      onPressed: () async {
+                        FirebaseFirestore instance = FirebaseFirestore.instance;
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        // secondary confirmation dialog for deleting an alarm
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                  title: const Text("Are you sure?"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () async {
+                                          Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                                          CollectionReference users = FirebaseFirestore.instance.collection('/users');
+                                          Navigator.of(context).pop();
+                                          await deleteMedication(medication.id, user.id, users);
+                                          runApp(MedicationPage(
+                                              medications: await getMedications(user.id, users)));
+                                        },
+                                        child: const Text(
+                                          "Yes",
+                                          textScaleFactor: 1.2,
+                                        )),
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          "No",
+                                          textScaleFactor: 1.2,
+                                        )),
+                                  ]);
+                            });
+                      })
+                ],
+              ),
+            ],
+          ),
     );
   }
 }
