@@ -8,12 +8,11 @@ import 'package:alarm_mobile_app/admin_medications.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'alarm.dart';
 import 'utils.dart';
 import 'users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'settings.dart';
-import 'package:alarm_mobile_app/admin_medications.dart';
+import 'package:alarm_mobile_app/admin_settings.dart';
+
 
 
 class UserItem extends StatelessWidget {
@@ -75,10 +74,15 @@ class Admin extends StatelessWidget {
             actions: [
               // settings button
               IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.black),
+                  icon:
+                    const Icon(
+                        Icons.person,
+                        color: Colors.black,
+                        size: 30,
+                    ),
                   onPressed: () async {
                     Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
-                    runApp(SettingsPage(user: user));
+                    runApp(AdminSettingsPage(user: user));
                   }),
             ],
           ),
