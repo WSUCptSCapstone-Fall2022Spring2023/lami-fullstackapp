@@ -34,7 +34,7 @@ class AlarmItem extends StatelessWidget {
             Expanded(child:
             StatefulBuilder(builder: (context, _setState) {
               return Row(children: [
-                Text(alarm.time.toString(), style: const TextStyle(fontSize: 20.0)),
+                Text(alarm.time.format(context), style: const TextStyle(fontSize: 20.0)),
                 const Spacer(),
                 ElevatedButton(
                   style: ButtonStyle(

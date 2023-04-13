@@ -79,9 +79,9 @@ void main() {
       mockUser1.medications.add(mockMedication1);
       mockUser1.medications.add(mockMedication2);
       // Test
-      await saveMedicationToFirestore(mockMedication1, mockUser1, users, instance);
+      await saveMedicationToFirestore(mockMedication1, mockUser1, users);
       // Evaluation
-      List<Medication> result = convertMapMedicationsToList(await saveMedicationToFirestore(mockMedication2, mockUser1, users, instance));
+      List<Medication> result = convertMapMedicationsToList(await saveMedicationToFirestore(mockMedication2, mockUser1, users));
       expect(mockUser1.medications.toString(), equals(result.toString()));
     });
 
@@ -92,9 +92,13 @@ void main() {
       expect(mockUser1.medications.toString(), equals(result.toString()));
     });
 
-    test('4. Edit a medication', () async {
-      //expect(, equals());
-    });
+    // test('4. Edit a medication', () async {
+    //   mockMedication1.daysOfWeek = [false, true, false, true, true, true];
+    //   mockMedication1.description = "I edited this alarm";
+    //   mockUser1.medications[0] = mockMedication1;
+    //   List<Medication> result = convertMapMedicationsToList(await editMedication(mockUser1, users, mockMedication1));
+    //   expect(mockUser1.medications.toString(), equals(result.toString()));
+    // });
 
     test('5. Get all alarms', () async {
       // Setup
@@ -123,42 +127,42 @@ void main() {
       // Setup
       mockUser1.medications.removeAt(0);
       // Test
-      await deleteMedication(mockMedication1.id, instance, uid, users);
+      await deleteMedication(mockMedication1.id, uid, users);
       // Evaluation
       List<Medication> result = await getMedications(uid, users);
       expect(mockUser1.medications.toString(), equals(result.toString()));
     });
 
-    test('8. Update User Information', () async {
-      expect("", equals(""));
-    });
+    // test('8. Update User Information', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('9. Get All Users', () async {
+    //   expect("", equals(""));
+    // });
 
-    test('9. Get All Users', () async {
-      expect("", equals(""));
-    });
-
-    test('10. ', () async {
-      expect("", equals(""));
-    });
-
-    test('11. ', () async {
-      expect("", equals(""));
-    });
-
-    test('12. ', () async {
-      expect("", equals(""));
-    });
-
-    test('13. ', () async {
-      expect("", equals(""));
-    });
-
-    test('14. ', () async {
-      expect("", equals(""));
-    });
-
-    test('15. ', () async {
-      expect("", equals(""));
-    });
+    // test('10. ', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('11. ', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('12. ', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('13. ', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('14. ', () async {
+    //   expect("", equals(""));
+    // });
+    //
+    // test('15. ', () async {
+    //   expect("", equals(""));
+    // });
   });
 }

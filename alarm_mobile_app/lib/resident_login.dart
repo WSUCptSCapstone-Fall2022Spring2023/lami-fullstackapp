@@ -155,6 +155,7 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
+                  options: const DatePickerOptions(backgroundColor: Colors.transparent),
                   // selectedDate: DateUtils.dateOnly(_selectedDate),
                   selectedDate: DateTime(1999, 6, 27),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
