@@ -1,0 +1,22 @@
+.image-container {
+  position: relative;
+}
+
+.animated-image {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation: hop-fade 1s infinite;
+}
+
+@keyframes hop-fade {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-20px);
+  }
+}
