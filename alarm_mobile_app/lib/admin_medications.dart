@@ -44,21 +44,21 @@ class AdminMedicationItem extends StatelessWidget {
 }
 
 class AdminMedicationPage extends StatelessWidget {
-  const AdminMedicationPage({required this.medications, Key? key}) : super(key: key);
+  const AdminMedicationPage({required this.medications, Key? key, required this.username}) : super(key: key);
   final List<Medication> medications;
+  final String username;
 
   @override
   @override
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
     AwesomeNotifications().cancelAll().then((value) {});
-    const appTitle = "My Medications";
-    CollectionReference users = FirebaseFirestore.instance.collection('/users');
+    const appTitle = "John's Medications";
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
       theme: ThemeColors.darkData,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: Scaffold(
         appBar: AppBar(
           title: const Text(appTitle),

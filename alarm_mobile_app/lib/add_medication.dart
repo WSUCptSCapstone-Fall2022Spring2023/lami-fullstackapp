@@ -34,8 +34,8 @@ class AddMedication extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
-      themeMode: ThemeMode.system,
+      theme: ThemeColors.darkData,
+      themeMode: ThemeMode.dark,
       home: Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
@@ -140,6 +140,9 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                 style: const TextStyle(fontSize: 25.0)),
             const Spacer(),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeColors.darkData.primaryColorLight,
+                ),
                 onPressed: () async {
                   Picker(
                       adapter: PickerDataAdapter(data: [
@@ -164,6 +167,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
               style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
         ]),
         WeekdaySelector(
+          selectedFillColor: ThemeColors.darkData.primaryColorLight,
           onChanged: (int day) {
             setState(() {
               final index = (day % 7);
@@ -188,6 +192,9 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                 style: const TextStyle(fontSize: 25.0)),
             const Spacer(),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                ),
                 onPressed: () async {
                   final result = await Picker(
                       adapter: NumberPickerAdapter(data: [
@@ -202,7 +209,8 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                         });
                       }).showDialog(context);
                 },
-                child: const Text("Edit"))
+                child: const Text("Edit")
+            )
           ]);
         }),
         const SizedBox(height: 5),
@@ -221,6 +229,9 @@ class AddMedicationFormState extends State<AddMedicationForm> {
           return Row(children: [
             const Spacer(),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                ),
                 onPressed: () async {
                   if (alarms.isEmpty && timesPerDay != 0) {
                     alarms = populateAlarms();
@@ -267,8 +278,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.red, // button
-          onPrimary: Colors.white, // letter
+          backgroundColor: ThemeColors.darkData.primaryColorLight,
           // shape: CircleBorder(),
           // fixedSize: Size.fromRadius(60),
           // fixedSize: Size.fromHeight(50.0)),

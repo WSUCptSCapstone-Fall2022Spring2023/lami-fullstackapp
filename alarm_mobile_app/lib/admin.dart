@@ -42,13 +42,14 @@ class UserItem extends StatelessWidget {
               onPressed: () async {
                 CollectionReference userCollection = FirebaseFirestore.instance.collection('/users');
                 List<Medication> medications = await getMedications(users.id, userCollection);
-                runApp(AdminMedicationPage(medications: medications));
+                runApp(AdminMedicationPage(medications: medications, username: users.firstname + " " + users.lastname));
               },
               child: const Text(
                 "Medications",
                 textScaleFactor: 1.3,
               )),
         ]),
+        const SizedBox(height: 8)
       ]),
     );
   }
@@ -66,8 +67,8 @@ class Admin extends StatelessWidget {
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
-        theme: ThemeColors.lightData,
-        themeMode: ThemeMode.system,
+        theme: ThemeColors.darkData,
+        themeMode: ThemeMode.dark,
         home: Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
@@ -112,9 +113,10 @@ class AdminScreenState extends State<AdminScreen> {
           return UserItem(users: widget.users[index]);
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
-              thickness: 4.0,
-              color: Colors.black,
-            ),
+          thickness: 3.0,
+          indent: 25,
+          endIndent: 25,
+        ),
         itemCount: widget.users.length);
   }
 }

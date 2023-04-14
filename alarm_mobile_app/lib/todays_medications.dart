@@ -54,6 +54,7 @@ class AlarmItem extends StatelessWidget {
             return Transform.scale(
               scale: 1.5,
               child: Checkbox(
+                activeColor: ThemeColors.darkData.primaryColorLight,
                 value: isCheckedList[index],
                 onChanged: (bool? value) {
                   _setState(() {
@@ -135,32 +136,6 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     Users currentUser = getCurrentUserLocal(pref);
     CollectionReference users = inst.collection('/users');
     await medicationTakenChanged(currentUser, users, allAlarms, index, _isCheckedList);
-    // DocumentSnapshot<Object?> snap =
-    // await users.doc(currentUser.id).get();
-    // if (snap.exists) {
-    //   Map<String, dynamic> data =
-    //   snap.data() as Map<String, dynamic>;
-    //   // creating a new alarm from the given information
-    //   Alarm newAlarm = Alarm(
-    //       alarmID: allAlarms[index].alarmID,
-    //       time: allAlarms[index].time,
-    //       nameOfDrug: allAlarms[index].nameOfDrug,
-    //       takenToday: _isCheckedList[index]
-    //   );
-    //   // updating the alarm that was changed
-    //   for (int i = 0; i < (data['medications'] as List<dynamic>).length; i++) {
-    //     for (int j = 0; j <
-    //         (data['medications'][i]['alarms'] as List<dynamic>).length; j++) {
-    //       var checkAlarm = data['medications'][i]['alarms'][j]['alarmID'];
-    //       if (data['medications'][i]['alarms'][j]['alarmID'] ==
-    //           allAlarms[index].alarmID) {
-    //         data['medications'][i]['alarms'][j] = newAlarm.toMap();
-    //         break;
-    //       }
-    //     }
-    //   }
-    //   await users.doc(currentUser.id).update(data);
-    // }
   }
 
   @override
@@ -191,11 +166,15 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text("character"),
+                const Image(
+                  image: AssetImage('assets/penguin/penguin.jpg'),
+                  width: 100,
+                  height: 100),
                 const SizedBox(height: 130, width: 50),
                 Transform.scale(
                   scale: 1.5,
                   child: CircularProgressIndicator(
+                    color: ThemeColors.darkData.primaryColorLight,
                     value: _checkedCount / _isCheckedList.length,
                     strokeWidth: 10,
                   ),
