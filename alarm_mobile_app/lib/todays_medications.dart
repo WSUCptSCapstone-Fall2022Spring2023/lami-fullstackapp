@@ -17,7 +17,7 @@ import 'utils.dart';
 import 'notifications.dart';
 import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:video_player/video_player.dart';
 
 class AlarmItem extends StatelessWidget {
   AlarmItem({
@@ -85,21 +85,25 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
   late List<bool> _isCheckedList;
   late int _checkedCount;
   late List<Alarm> allAlarms = [];
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
   @override
+
   void initState() {
     super.initState();
     allAlarms = getAllAlarms(widget.medications);
-    // for (int i = 0; i < widget.medications.length; i++) {
-    //   if (widget.medications[i].daysOfWeek[currentDayOfWeek] == true) {
-    //     allAlarms.addAll(widget.medications[i].alarms);
-    //   }
-    // }
-    // allAlarms.sort((a, b) => toDouble(a.time).compareTo(toDouble(b.time)));
     _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = _isCheckedList.where((element) => element).length;
     checkForNewDay();
     checkForDivideByZero();
+    _controller = VideoPlayerController.asset(
+      'assets/penguin/swing2.mp4',
+    );
+    // Initialize the controller and store the Future for later use.
+    _initializeVideoPlayerFuture = _controller.initialize();
+    // Use the controller to loop the video.
+    _controller.setLooping(false);
   }
 
   void checkForNewDay() async {
@@ -124,18 +128,27 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     }
   }
 
-
   void _onCheckboxChanged(int index, bool value) async {
     setState(()  {
       _isCheckedList[index] = value;
       _checkedCount = _isCheckedList.where((element) => element).length;
     });
+    if (_isCheckedList[index] == true) {
+      _controller.play();
+    }
     SharedPreferences pref = await SharedPreferences.getInstance();
     FirebaseFirestore inst = FirebaseFirestore.instance;
     // gets the current user from the local shared preferences
     Users currentUser = getCurrentUserLocal(pref);
     CollectionReference users = inst.collection('/users');
     await medicationTakenChanged(currentUser, users, allAlarms, index, _isCheckedList);
+  }
+
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -166,11 +179,20 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Image(
-                  image: AssetImage('assets/penguin/penguin.jpg'),
-                  width: 100,
-                  height: 100),
-                const SizedBox(height: 130, width: 50),
+                SizedBox(
+                  height: 100,
+                  child:
+                  // Expanded(
+                  //   child:
+                    AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      // Use the VideoPlayer widget to display the video.
+                      child: VideoPlayer(_controller),
+                    ),
+                  // )
+                ),
+
+                const SizedBox(height: 150),
                 Transform.scale(
                   scale: 1.5,
                   child: CircularProgressIndicator(
@@ -265,3 +287,5 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     );
   }
 }
+
+
