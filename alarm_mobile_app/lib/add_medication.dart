@@ -21,6 +21,25 @@ import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'alarm.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+
+// showPlatformDialog(
+//   context: context,
+//   builder: (context) =>
+//     BasicDialogAlert(
+//       title: Text("Current Location Not Available"),
+//       content:
+//         Text("Your current location cannot be determined at this time."),
+//       actions: <Widget>[
+//         BasicDialogAction(
+//           title: Text("OK"),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ],
+//     ),
+// );
 
 // maximum number used for random id generation (2^32 - 1)
 const int maxID = 2147483647;
@@ -53,7 +72,8 @@ class AddMedication extends StatelessWidget {
                   }),
             ],
           ),
-          body: AddMedicationForm(key: key)),
+          body: AddMedicationForm(key: key),
+      ),
     );
   }
 }
@@ -93,11 +113,13 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         body: ListView(
       padding: const EdgeInsets.all(25),
       children: [basicMedicationInformation(), saveMedication()],
-    ));
+    ),
+    );
   }
 
   Widget basicMedicationInformation() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         //// Medication name
         TextFormField(
@@ -121,47 +143,12 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         TextFormField(
           decoration: const InputDecoration(
               border: UnderlineInputBorder(),
-              labelText: 'Dosage Information (Optional):',
+              labelText: 'Additional Notes (Optional):',
               labelStyle: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
           controller: descriptionController,
         ),
         const SizedBox(height: 10),
-        //// Frequency
-        Row(children: const [
-          Text(
-            "Frequency:",
-            style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
-            textAlign: TextAlign.start,
-          )
-        ]),
-        StatefulBuilder(builder: (context, _setState) {
-          return Row(children: [
-            Text(repeatOptionToString(repeatOption),
-                style: const TextStyle(fontSize: 25.0)),
-            const Spacer(),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeColors.darkData.primaryColorLight,
-                ),
-                onPressed: () async {
-                  Picker(
-                      adapter: PickerDataAdapter(data: [
-                        PickerItem(text: const Text("Choose Days")),
-                        PickerItem(text: const Text("Days Interval"))
-                      ]),
-                      hideHeader: true,
-                      title: const Text("Frequency"),
-                      onConfirm: (Picker picker, List value) {
-                        setState(() {
-                          repeatOption = pickerToRepeatOption(value[0]);
-                        });
-                      }).showDialog(context);
-                },
-                child: const Text("Edit"))
-          ]);
-        }),
-        const HorizontalDivider(thickness: 2),
-        //// Repeat Days
+        // Repeat Days
         Row(children: const [
           Text("Repeat (Days):",
               style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
@@ -181,7 +168,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         //// Times Per Day
         Row(children: const [
           Text(
-            "How many times a day?",
+            "How many times per day?",
             style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
             textAlign: TextAlign.start,
           )
@@ -220,7 +207,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
         //// Times Per Day
         Row(children: const [
           Text(
-            "View/Edit Alarms",
+            "Alarm Times",
             style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
             textAlign: TextAlign.start,
           )
@@ -243,7 +230,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                 child: const Text("View/Edit Alarms"))
           ]);
         }),
-        const SizedBox(height: 5),
+        const SizedBox(height: 15),
         //// Cancel
       ],
     );
@@ -255,7 +242,7 @@ class AddMedicationFormState extends State<AddMedicationForm> {
     for (int i = 0; i < timesPerDay; i++) {
       list.add(Alarm(
           alarmID: Random().nextInt(maxID).toString(),
-          time: TimeOfDay(hour: i + 8, minute: i),
+          time: TimeOfDay(hour: i + 8, minute: 0),
           nameOfDrug: medicationController.text,
           takenToday: false));
     }
@@ -294,7 +281,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             CollectionReference users = inst.collection('/users');
             // creating a new medication from the given information
             String id = Random().nextInt(maxID).toString();
-
             Medication newMedication = Medication(
               id: id,
               nameOfDrug: medicationController.text,
@@ -309,6 +295,49 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             List<Medication> medications = convertMapMedicationsToList(
                 await saveMedicationToFirestore(newMedication, currentUser, users));
             runApp(MedicationPage(medications: medications));
+          }
+          else {
+            // AlertDialog(
+            //   content: const Text('Please Enter A Name For Your Medication'),
+            //   actions: [
+            //     TextButton(
+            //       onPressed: () {},
+            //       child: const Text('Close'),
+            //     )
+            //   ],
+            // );
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: const Text(
+                      'Please Enter A Name For Your Medication',
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Dismiss'),
+                    ),
+                  ],
+                );
+              },
+            );
+            // AlertDialog(
+            //   title:const Text('GeeksforGeeks'),
+            //   children: <Widget>[
+            //     SimpleDialogOption(
+            //       onPressed: () { },
+            //       child:const Text('Option 1'),
+            //     ),
+            //     SimpleDialogOption(
+            //       onPressed: () { },
+            //       child: const Text('Option 2'),
+            //     ),
+            //   ],
+            // );
           }
         },
         child: const Text(

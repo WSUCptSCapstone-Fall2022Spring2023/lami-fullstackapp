@@ -18,6 +18,7 @@ import 'notifications.dart';
 import 'users.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:video_player/video_player.dart';
+import 'package:confetti/confetti.dart';
 
 class AlarmItem extends StatelessWidget {
   AlarmItem({
