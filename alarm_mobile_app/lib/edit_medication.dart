@@ -33,8 +33,8 @@ class EditMedication extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
-      theme: ThemeColors.lightData,
-      themeMode: ThemeMode.system,
+      theme: ThemeColors.darkData,
+      themeMode: ThemeMode.dark,
       home: Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
@@ -98,6 +98,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
 
   Widget basicMedicationInformation() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         //// Medication name
         TextFormField(
@@ -121,49 +122,18 @@ class EditMedicationFormState extends State<EditMedicationForm> {
         TextFormField(
           decoration: const InputDecoration(
               border: UnderlineInputBorder(),
-              labelText: 'Dosage Information (Optional):',
+              labelText: 'Additional Notes (Optional):',
               labelStyle: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
           controller: descriptionController,
         ),
         const SizedBox(height: 10),
-        //// Frequency
-        Row(children: const [
-          Text(
-            "Frequency:",
-            style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
-            textAlign: TextAlign.start,
-          )
-        ]),
-        StatefulBuilder(builder: (context, _setState) {
-          return Row(children: [
-            Text(repeatOptionToString(repeatOption),
-                style: const TextStyle(fontSize: 25.0)),
-            const Spacer(),
-            ElevatedButton(
-                onPressed: () async {
-                  Picker(
-                      adapter: PickerDataAdapter(data: [
-                        PickerItem(text: const Text("Choose Days")),
-                        PickerItem(text: const Text("Days Interval"))
-                      ]),
-                      hideHeader: true,
-                      title: const Text("Frequency"),
-                      onConfirm: (Picker picker, List value) {
-                        setState(() {
-                          repeatOption = pickerToRepeatOption(value[0]);
-                        });
-                      }).showDialog(context);
-                },
-                child: const Text("Edit"))
-          ]);
-        }),
-        const HorizontalDivider(thickness: 2),
-        //// Repeat Days
+        // Repeat Days
         Row(children: const [
           Text("Repeat (Days):",
               style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic))
         ]),
         WeekdaySelector(
+          selectedFillColor: ThemeColors.darkData.primaryColorLight,
           onChanged: (int day) {
             setState(() {
               final index = (day % 7);
@@ -177,7 +147,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
         //// Times Per Day
         Row(children: const [
           Text(
-            "How many times a day?",
+            "How many times per day?",
             style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
             textAlign: TextAlign.start,
           )
@@ -188,6 +158,9 @@ class EditMedicationFormState extends State<EditMedicationForm> {
                 style: const TextStyle(fontSize: 25.0)),
             const Spacer(),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                ),
                 onPressed: () async {
                   final result = await Picker(
                       adapter: NumberPickerAdapter(data: [
@@ -202,7 +175,8 @@ class EditMedicationFormState extends State<EditMedicationForm> {
                         });
                       }).showDialog(context);
                 },
-                child: const Text("Edit"))
+                child: const Text("Edit")
+            )
           ]);
         }),
         const SizedBox(height: 5),
@@ -212,7 +186,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
         //// Times Per Day
         Row(children: const [
           Text(
-            "View/Edit Alarms",
+            "Alarm Times",
             style: TextStyle(fontSize: 15.5, fontStyle: FontStyle.italic),
             textAlign: TextAlign.start,
           )
@@ -221,6 +195,9 @@ class EditMedicationFormState extends State<EditMedicationForm> {
           return Row(children: [
             const Spacer(),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                ),
                 onPressed: () async {
                   if (alarms.isEmpty && timesPerDay != 0) {
                     alarms = populateAlarms();
@@ -232,7 +209,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
                 child: const Text("View/Edit Alarms"))
           ]);
         }),
-        const SizedBox(height: 5),
+        const SizedBox(height: 15),
         //// Cancel
       ],
     );
@@ -267,11 +244,7 @@ class EditMedicationFormState extends State<EditMedicationForm> {
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.red, // button
-          onPrimary: Colors.white, // letter
-          // shape: CircleBorder(),
-          // fixedSize: Size.fromRadius(60),
-          // fixedSize: Size.fromHeight(50.0)),
+          backgroundColor: ThemeColors.darkData.primaryColorLight,
           fixedSize: const Size(200.0, 60.0),
         ),
         onPressed: () async {
@@ -305,6 +278,27 @@ class EditMedicationFormState extends State<EditMedicationForm> {
             List<Medication> medications = convertMapMedicationsToList(
                 await editMedication(user, users, newMedication));
             runApp(MedicationPage(medications: medications));
+          }
+          else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: const Text(
+                    'Please Enter A Name For Your Medication',
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Dismiss'),
+                    ),
+                  ],
+                );
+              },
+            );
           }
         },
         child: const Text(
