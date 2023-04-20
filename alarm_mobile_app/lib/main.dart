@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 // represents the initialization + starting point of the app - redirects users to the appropriate screen
 
+import 'package:awesome_notifications/awesome_notifications.dart';
+
 import 'medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,6 +62,8 @@ void main() async {
   //         alarm, DateTime.now().add(const Duration(days: 1)));
   //   }
   // });
+
+
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -109,10 +113,16 @@ class _AppState extends State<App> {
               if (u.usertype == 'reg') {
                 // gets all their alarms and goes to the home screen
                 CollectionReference users = FirebaseFirestore.instance.collection('/users');
-                getMedications(auth.currentUser?.uid, users)
-                    .then((List<Medication> value) {
-                  return runApp(MedicationPage(medications: value,));
-                }, onError: (e) {
+                // getAllAlarms(medications)
+                getMedications(auth.currentUser?.uid, users).then((List<Medication> value) async {
+                  await AwesomeNotifications().cancelAll();
+                  List <Alarm> alarms = getAllAlarms(value);
+                  for (int i = 0; i < alarms.length; i++){
+                    createNotification(alarms[i]);
+                  }
+                  return runApp(MedicationPage(medications: value));
+                },
+              onError: (e) {
                   Fluttertoast.showToast(
                       msg:
                           "ERROR Occured - Please contact the house director - ERROR CODE: DB MISMATCH");

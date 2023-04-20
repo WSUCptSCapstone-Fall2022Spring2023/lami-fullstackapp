@@ -1,10 +1,12 @@
 // holds all the utility functions for this project
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'alarm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'notifications.dart';
 import 'users.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -190,6 +192,12 @@ Future<List<dynamic>> saveMedicationToFirestore(
     }
     data['medications'].add(medication.toMap());
     await users.doc(currentUser.id).update(data);
+    List <Medication> medications = await getMedications(currentUser.id, users);
+    await cancelNotifications();
+    List <Alarm> alarms = getAllAlarms(medications);
+    for (int i = 0; i < alarms.length; i++){
+      createNotification(alarms[i]);
+    }
     return data['medications'];
   }
   return [];
@@ -216,6 +224,12 @@ Future<bool> deleteMedication(
       }
     }
     await users.doc(uid).update(data);
+    List <Medication> medications = await getMedications(uid, users);
+    await cancelNotifications();
+    List <Alarm> alarms = getAllAlarms(medications);
+    for (int i = 0; i < alarms.length; i++){
+      createNotification(alarms[i]);
+    }
     return true;
   }
   return false;
@@ -236,6 +250,12 @@ Future<List<dynamic>> editMedication(
       }
     }
     await users.doc(user.id).update(data);
+    List <Medication> medications = await getMedications(user.id, users);
+    await cancelNotifications();
+    List <Alarm> alarms = getAllAlarms(medications);
+    for (int i = 0; i < alarms.length; i++){
+      createNotification(alarms[i]);
+    }
     return data['medications'];
   }
   return [];

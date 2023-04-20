@@ -123,7 +123,7 @@ class MedicationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
-    AwesomeNotifications().cancelAll().then((value) {});
+    // AwesomeNotifications().cancelAll().then((value) {});
     const appTitle = "My Medications";
     CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(

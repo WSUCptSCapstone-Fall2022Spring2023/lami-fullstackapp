@@ -54,7 +54,6 @@ class AlarmItem extends StatelessWidget {
               ]);
             }),
             )
-
           ],
         )
     );

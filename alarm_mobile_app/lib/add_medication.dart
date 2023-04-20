@@ -7,6 +7,7 @@
 import 'dart:math';
 import 'package:alarm_mobile_app/edit_alarms.dart';
 import 'package:alarm_mobile_app/medication.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'users.dart';
@@ -17,6 +18,8 @@ import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'alarm.dart';
+import 'package:alarm_mobile_app/notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 // maximum number used for random id generation (2^32 - 1)
 const int maxID = 2147483647;
@@ -313,28 +316,36 @@ class AlarmItem extends StatelessWidget {
     enabledController.addListener(() async {});
     return ListTile(
         contentPadding: const EdgeInsets.fromLTRB(35, 10, 50, 10),
-        title: Row(
+        title:
+        Row(
           children: [
-            const SizedBox(width: 10),
-            const Expanded(
-              child: Text("Time:  " + "alarm.time.format(context)",
-                  textScaleFactor: 1.2),
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeColors.darkData.primaryColorLight,
-                    minimumSize: const Size(120, 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                onPressed: () {
-                  // runApp(EditAlarm(alarm: alarm));
-                },
-                child: const Text(
-                  "Edit",
-                  textScaleFactor: 1.3,
-                ))
+            const SizedBox(height: 40),
+            Expanded(child:
+            StatefulBuilder(builder: (context, _setState) {
+              return Row(children: [
+                Text(alarm.time.format(context), style: const TextStyle(fontSize: 20.0)),
+                const Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(ThemeColors.darkData.primaryColorLight)
+                  ),
+                  onPressed: () async {
+                    final TimeOfDay? result = await showTimePicker(
+                        context: context,
+                        initialTime: alarm.time,
+                        initialEntryMode: TimePickerEntryMode.input);
+                    if (result != null) {
+                      _setState(() => alarm.time = result);
+                    }
+                  },
+                  child: const Text('Edit', style: TextStyle(fontSize: 14.0)),
+                )
+              ]);
+            }),
+            )
           ],
-        ));
+        )
+    );
   }
 }
 

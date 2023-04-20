@@ -16,6 +16,9 @@ import 'package:alarm_mobile_app/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/alarm.dart';
+import 'package:alarm_mobile_app/notifications.dart';
+import 'package:alarm_mobile_app/medication.dart';
 
 class ResidentLogIn extends StatelessWidget {
   const ResidentLogIn({Key? key}) : super(key: key);
@@ -243,8 +246,13 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
                       // if (currentUser.usertype == 'admin') {
                       //   return runApp(Admin(users: await getAllUsers(inst)));
                       // }
+                      List <Medication> medications = await getMedications(currentUser.id, users);
+                      List <Alarm> alarms = getAllAlarms(medications);
+                      for (int i = 0; i < alarms.length; i++){
+                        createNotification(alarms[i]);
+                      }
                       return runApp(
-                          MedicationPage(medications: await getMedications(currentUser.id, users)));
+                          MedicationPage(medications: medications));
                       // go to home screen w/ current user
                     } else {
                       //user exists in firebase auth but not in firestore - add to firestore

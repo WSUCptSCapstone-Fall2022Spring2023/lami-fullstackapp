@@ -1,4 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:alarm_mobile_app/main.dart';
 import 'alarm.dart';
 
 void createNotification(Alarm alarm) {
@@ -88,4 +90,12 @@ void createImmediateNotif(String title, String desc) {
           // buttonType: ActionButtonType.DisabledAction,
         )
       ]);
+}
+
+Future<void> resetBadgeCounter() async {
+await AwesomeNotifications().resetGlobalBadge();
+}
+
+Future<void> cancelNotifications() async {
+await AwesomeNotifications().cancelAll();
 }

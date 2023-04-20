@@ -231,35 +231,6 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               },
               controller: emailcontroller,
             ),
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password (no need for name and email address)',
-            //   ),
-            //   controller: passwordcontroller,
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // // password confirmation
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText:
-            //         'Password confirmation (no need for name and email address)',
-            //   ),
-            //   // The validator receives the text that the user has entered.
-            //   validator: (value) {
-            //     if (value != passwordcontroller.text) {
-            //       return 'Passwords must match!';
-            //     }
-            //     return null;
-            //   },
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-
             // Submit
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
@@ -300,11 +271,6 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                           medications: value,
                         ));
                       });
-                      //   return runApp(
-                      //       MedicationPage(
-                      //         medications: getMedications(FirebaseAuth.instance.currentUser?.uid, FirebaseFirestore.instance)
-                      //       )
-                      //   );
                     } else {
                       return runApp(Admin(
                           users:
@@ -321,38 +287,6 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                 ),
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 40.0),
-            //   child: ElevatedButton(
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: ThemeColors.darkData.primaryColorLight,
-            //       fixedSize: const Size(200.0, 60.0),
-            //     ),
-            //     onPressed: () async {
-            //       if (getCurrentUserLocal(await SharedPreferences.getInstance())
-            //               .usertype ==
-            //           'reg') {
-            //         getMedications(FirebaseAuth.instance.currentUser?.uid,
-            //                 FirebaseFirestore.instance)
-            //             .then((List<Medication> value) {
-            //           return runApp(MedicationPage(
-            //             medications: value,
-            //           ));
-            //         });
-            //       } else {
-            //         return runApp(Admin(
-            //             users: await getAllUsers(FirebaseFirestore.instance)));
-            //       }
-            //     },
-            //     child: const Text(
-            //       'Cancel',
-            //       textDirection: TextDirection.ltr,
-            //       style: TextStyle(
-            //         fontSize: 20.0,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               child: ElevatedButton(
@@ -374,7 +308,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                           actions: [
                             TextButton(
                                 onPressed: () async {
-                                  AwesomeNotifications().cancelAll();
+                                  await AwesomeNotifications().cancelAll();
                                   await instance.signOut();
                                   runApp(const ResidentLogIn());
                                 },

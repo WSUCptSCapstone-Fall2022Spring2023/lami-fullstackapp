@@ -8,15 +8,12 @@ import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:alarm_mobile_app/settings.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
-import 'notifications.dart';
 import 'users.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:video_player/video_player.dart';
 import 'package:confetti/confetti.dart';
 
@@ -105,6 +102,10 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     _initializeVideoPlayerFuture = _controller.initialize();
     // Use the controller to loop the video.
     _controller.setLooping(false);
+
+    // for (int i = 0; i < allAlarms.length; i++){
+    //   createNotification(allAlarms[i]);
+    // }
   }
 
   void checkForNewDay() async {
