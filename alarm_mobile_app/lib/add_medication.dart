@@ -4,42 +4,19 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'dart:collection';
 import 'dart:math';
 import 'package:alarm_mobile_app/edit_alarms.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_horizontal_divider/flutter_horizontal_divider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'alarm.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
-
-// showPlatformDialog(
-//   context: context,
-//   builder: (context) =>
-//     BasicDialogAlert(
-//       title: Text("Current Location Not Available"),
-//       content:
-//         Text("Your current location cannot be determined at this time."),
-//       actions: <Widget>[
-//         BasicDialogAction(
-//           title: Text("OK"),
-//           onPressed: () {
-//             Navigator.pop(context);
-//           },
-//         ),
-//       ],
-//     ),
-// );
 
 // maximum number used for random id generation (2^32 - 1)
 const int maxID = 2147483647;
@@ -104,8 +81,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
   late List<Alarm> alarms = [];
   String id = Random().nextInt(maxID).toString();
 
-  // will have to change in the future - depends on type used to get time
-  //final timeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -266,9 +241,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: ThemeColors.darkData.primaryColorLight,
-          // shape: CircleBorder(),
-          // fixedSize: Size.fromRadius(60),
-          // fixedSize: Size.fromHeight(50.0)),
           fixedSize: const Size(200.0, 60.0),
         ),
         onPressed: () async {
@@ -297,15 +269,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
             runApp(MedicationPage(medications: medications));
           }
           else {
-            // AlertDialog(
-            //   content: const Text('Please Enter A Name For Your Medication'),
-            //   actions: [
-            //     TextButton(
-            //       onPressed: () {},
-            //       child: const Text('Close'),
-            //     )
-            //   ],
-            // );
             showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -325,19 +288,6 @@ class AddMedicationFormState extends State<AddMedicationForm> {
                 );
               },
             );
-            // AlertDialog(
-            //   title:const Text('GeeksforGeeks'),
-            //   children: <Widget>[
-            //     SimpleDialogOption(
-            //       onPressed: () { },
-            //       child:const Text('Option 1'),
-            //     ),
-            //     SimpleDialogOption(
-            //       onPressed: () { },
-            //       child: const Text('Option 2'),
-            //     ),
-            //   ],
-            // );
           }
         },
         child: const Text(
