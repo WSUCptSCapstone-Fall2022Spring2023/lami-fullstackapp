@@ -12,7 +12,7 @@ The application will be able to work on phone and online and be able to seperate
 
 ### Prerequisites
 
-To get this application to work for the online application we will be connecting the application to the already existing LAMI house website so no downloading will be needed. However, for the phone insallation it would be best to downlaod the code from the git website and make a shortcut for the code so it can used as an app on the phone. 
+To get this application to work you must have a smartphone. No other requirements
 
 ### Add-ons
 
@@ -24,12 +24,12 @@ No instructiosn for installation yet, will be added as we move ahead to more pro
 
 ## Functionality
 
-So far we just have the same code as the last team that worked on this application, and what they demonstrated was an app that could be set up to have a medication reminder and set up that timer for the medication. This was doen through and in app btton that sent you to another screen that allowed you to input the times of the reminder and the type of medication that was needed. 
+With the final sprint, our app is doen and ready to be used bu the LAMI staff and residents. WHat the app can do is set alarms that can be titled and described, these medication reminders can then be changed or deleted whenever the user would like. Also there is a checklist for daily medications that show up and that can be checked off. Once check off an animation will play to celebrate the users daily progress on their medication.  
 
 
 ## Known Problems
 
-The only problem that was stated by the last years team was that you couldnt set a timer to remind during sleep hours, however this may end up working in our favor since the client wants to make sure that the timer doesnt go off during the night waking the residents. 
+No known problems with the application
 
 ## Additional Documentation
 
