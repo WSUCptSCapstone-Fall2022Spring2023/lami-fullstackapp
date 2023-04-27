@@ -20,7 +20,7 @@ No add ons.
 
 ### Installation Steps
 
-No instructiosn for installation yet, will be added as we move ahead to more progressed versions of the project
+To be able to use this app you needa smart phone from apple or android, then go to their app stores and look up LAMI Reminder and it should show up as one of the first outcomes. 
 
 ## Functionality
 
