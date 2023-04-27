@@ -85,6 +85,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
   late List<Alarm> allAlarms = [];
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
+  late ConfettiController _controllerTopCenter;
 
   @override
 
@@ -98,14 +99,11 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
     _controller = VideoPlayerController.asset(
       'assets/penguin/swing2.mp4',
     );
+    _controllerTopCenter = ConfettiController(duration: const Duration(seconds: 1));
     // Initialize the controller and store the Future for later use.
     _initializeVideoPlayerFuture = _controller.initialize();
     // Use the controller to loop the video.
     _controller.setLooping(false);
-
-    // for (int i = 0; i < allAlarms.length; i++){
-    //   createNotification(allAlarms[i]);
-    // }
   }
 
   void checkForNewDay() async {
@@ -136,7 +134,10 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
       _checkedCount = _isCheckedList.where((element) => element).length;
     });
     if (_isCheckedList[index] == true) {
-      _controller.play();
+      await _controller.play();
+    }
+    if (_checkedCount == _isCheckedList.length) {
+      _controllerTopCenter.play();
     }
     SharedPreferences pref = await SharedPreferences.getInstance();
     FirebaseFirestore inst = FirebaseFirestore.instance;
@@ -148,6 +149,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
 
   @override
   void dispose() {
+    _controllerTopCenter.dispose();
     // Ensure disposing of the VideoPlayerController to free up resources.
     _controller.dispose();
     super.dispose();
@@ -178,6 +180,18 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
         ),
         body: Column(
           children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _controllerTopCenter,
+                blastDirection: 3.14 / 2,
+                maxBlastForce: 5, // set a lower max blast force
+                minBlastForce: 2, // set a lower min blast force
+                emissionFrequency: 0.9,
+                numberOfParticles: 25, // a lot of particles at once
+                gravity: 0.75,
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

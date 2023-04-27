@@ -52,18 +52,6 @@ void main() async {
     }
   });
 
-  // used for repeating notifications even w/out the user going back into the app
-  // should be using dismissed stream but for some reason it isn't working
-  // AwesomeNotifications().displayedStream.listen((ReceivedNotification notif) {
-  //   AndroidForegroundService.stopForeground();
-  //   if (notif.payload != null) {
-  //     Alarm alarm = Alarm.fromStringMap(notif.payload !! {});
-  //     createNotificationTomorrow(
-  //         alarm, DateTime.now().add(const Duration(days: 1)));
-  //   }
-  // });
-
-
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -116,10 +104,7 @@ class _AppState extends State<App> {
                 // getAllAlarms(medications)
                 getMedications(auth.currentUser?.uid, users).then((List<Medication> value) async {
                   await AwesomeNotifications().cancelAll();
-                  List <Alarm> alarms = getAllAlarms(value);
-                  for (int i = 0; i < alarms.length; i++){
-                    createNotification(alarms[i]);
-                  }
+                  setNotificationsForAllAlarms(value);
                   return runApp(MedicationPage(medications: value));
                 },
               onError: (e) {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:alarm_mobile_app/main.dart';
 import 'alarm.dart';
 
-void createNotification(Alarm alarm) {
+void createNotification(Alarm alarm, int dayOfWeek) {
   int hour = alarm.time.hour;
   int minute = alarm.time.minute;
   for (int i = 0; i < 1; i++) {
@@ -14,7 +14,7 @@ void createNotification(Alarm alarm) {
             id: int.parse(alarm.alarmID),
             channelKey: "PalouseAlarm",
             title: "Reminder: " + alarm.nameOfDrug,
-            body: "alarm.description",
+            body: "Medication Reminder",
             wakeUpScreen: true,
             notificationLayout: NotificationLayout.BigText,
             category: NotificationCategory.Alarm,
@@ -23,6 +23,7 @@ void createNotification(Alarm alarm) {
             displayOnForeground: true,
             payload: payload),
         schedule: NotificationCalendar(
+          weekday: dayOfWeek,
           hour: hour,
           minute: minute,
           timeZone: "America/Los_Angeles",
@@ -46,7 +47,7 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
           id: int.parse(alarm.alarmID),
           channelKey: "PalouseAlarm",
           title: "Reminder take: " + alarm.nameOfDrug,
-          body: "alarm.description",
+          body: "Medication Reminder",
           wakeUpScreen: true,
           notificationLayout: NotificationLayout.BigText,
           category: NotificationCategory.Alarm,

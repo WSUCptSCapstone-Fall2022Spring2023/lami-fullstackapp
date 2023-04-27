@@ -6,6 +6,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:alarm_mobile_app/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,16 @@ class Register extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text(appTitle),
+          actions: [
+            // settings button
+            IconButton(
+                icon: const Icon(Icons.exit_to_app,
+                    color: Colors.black, size: 35),
+                onPressed: ()  {
+                        return runApp(const ResidentLogIn());
+                  }
+                ),
+          ],
         ),
         body: const RegisterForm(),
       ),
@@ -73,6 +84,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
+
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: <Widget>[
@@ -144,6 +156,7 @@ class RegisterFormState extends State<RegisterForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
+                  options: const DatePickerOptions(backgroundColor: Colors.transparent),
                   selectedDate: DateUtils.dateOnly(_selectedDate),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
@@ -155,46 +168,6 @@ class RegisterFormState extends State<RegisterForm> {
                 ),
               ),
             ),
-            // password
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password',
-            //   ),
-            //   // The validator receives the text that the user has entered.
-            //   validator: (value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter your password.';
-            //     }
-            //     return null;
-            //   },
-            //   controller: passwordcontroller,
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // // password confirmation
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password confirmation',
-            //   ),
-            //   // The validator receives the text that the user has entered.
-            //   validator: (value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter your password again.';
-            //     }
-            //     if (value != passwordcontroller.text) {
-            //       return 'Passwords must match!';
-            //     }
-            //     return null;
-            //   },
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // // First name
-
             // Submit
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),

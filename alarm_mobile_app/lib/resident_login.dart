@@ -159,8 +159,8 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
                 height: 200,
                 child: ScrollDatePicker(
                   options: const DatePickerOptions(backgroundColor: Colors.transparent),
-                  // selectedDate: DateUtils.dateOnly(_selectedDate),
-                  selectedDate: DateTime(1999, 6, 27),
+                  selectedDate: DateUtils.dateOnly(_selectedDate),
+                  // selectedDate: DateTime(1999, 6, 27),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
                   onDateTimeChanged: (DateTime value) {
@@ -247,10 +247,11 @@ class ResidentLogInFormState extends State<ResidentLogInForm> {
                       //   return runApp(Admin(users: await getAllUsers(inst)));
                       // }
                       List <Medication> medications = await getMedications(currentUser.id, users);
-                      List <Alarm> alarms = getAllAlarms(medications);
-                      for (int i = 0; i < alarms.length; i++){
-                        createNotification(alarms[i]);
-                      }
+                      setNotificationsForAllAlarms(medications);
+                      // List <Alarm> alarms = getAllAlarms(medications);
+                      // for (int i = 0; i < alarms.length; i++){
+                      //   createNotification(alarms[i]);
+                      // }
                       return runApp(
                           MedicationPage(medications: medications));
                       // go to home screen w/ current user
