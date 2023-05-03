@@ -12,6 +12,7 @@ import 'utils.dart';
 import 'users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alarm_mobile_app/admin_settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 
@@ -36,7 +37,7 @@ class UserItem extends StatelessWidget {
           ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: ThemeColors.darkData.primaryColorLight,
-                  minimumSize: const Size(120, 50),
+                  minimumSize: const Size(100, 35),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20))),
               onPressed: () async {
@@ -46,7 +47,26 @@ class UserItem extends StatelessWidget {
               },
               child: const Text(
                 "Medications",
-                textScaleFactor: 1.3,
+              )),
+          const SizedBox(width: 10,),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                  minimumSize: const Size(80, 35),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+              onPressed: () async {
+
+                CollectionReference userCollection = FirebaseFirestore.instance.collection('/users');
+                await deleteUser(users.id, userCollection);
+                // List<Medication> medications = await getMedications(users.id, userCollection);
+                // for (int i = 0; i < medications.length; i++) {
+                //   await deleteMedication(medications[i].id, users.id, userCollection);
+                // }
+                runApp(Admin(users: await getAllUsers(FirebaseFirestore.instance)));
+              },
+              child: const Text(
+                "Delete",
               )),
         ]),
         const SizedBox(height: 8)

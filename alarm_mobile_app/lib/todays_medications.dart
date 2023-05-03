@@ -8,6 +8,7 @@ import 'package:alarm_mobile_app/add_medication.dart';
 import 'package:alarm_mobile_app/medication.dart';
 import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:alarm_mobile_app/settings.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'alarm.dart';
@@ -91,6 +92,7 @@ class _TodaysMedicationsState extends State<TodaysMedications> {
 
   void initState() {
     super.initState();
+    AwesomeNotifications().resetGlobalBadge();
     allAlarms = getAllAlarms(widget.medications);
     _isCheckedList = List.generate(allAlarms.length, (index) => allAlarms[index].takenToday);
     _checkedCount = _isCheckedList.where((element) => element).length;

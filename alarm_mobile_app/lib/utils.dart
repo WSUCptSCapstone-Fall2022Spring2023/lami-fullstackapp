@@ -109,7 +109,7 @@ Future<List<Users>> getAllUsers(FirebaseFirestore instance) async {
         // initializing the alarm collection if it does not exist
         user['medications'] = [];
       }
-      for (var element in user['alarms']) {
+      for (var element in user['medications']) {
         medications.add(Medication.fromMap(element));
       }
       temp.medications = medications;
@@ -229,6 +229,13 @@ Future<bool> deleteMedication(
     return true;
   }
   return false;
+}
+
+Future<void> deleteUser(String uid, CollectionReference users) async {
+  DocumentSnapshot<Object?> snap = await users.doc(uid).get();
+  if (snap.exists) {
+    await users.doc(uid).delete();
+  }
 }
 
 Future<List<dynamic>> editMedication(

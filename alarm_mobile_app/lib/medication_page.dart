@@ -73,8 +73,7 @@ class MedicationItem extends StatelessWidget {
                       ),
                       onPressed: () async {
                         FirebaseFirestore instance = FirebaseFirestore.instance;
-                        SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
                         // secondary confirmation dialog for deleting an alarm
                         showDialog(
                             context: context,

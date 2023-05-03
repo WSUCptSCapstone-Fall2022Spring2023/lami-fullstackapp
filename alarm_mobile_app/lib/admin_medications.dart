@@ -52,8 +52,7 @@ class AdminMedicationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // when the user enters the home screen, cancel all their notifications
-    AwesomeNotifications().cancelAll().then((value) {});
-    const appTitle = "John's Medications";
+    var appTitle = "$username Medications";
     return MaterialApp(
       title: appTitle,
       darkTheme: ThemeColors.darkData,
@@ -61,7 +60,7 @@ class AdminMedicationPage extends StatelessWidget {
       themeMode: ThemeMode.dark,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text(appTitle),
+          title: Text(appTitle),
           actions: [
             // settings button
             IconButton(

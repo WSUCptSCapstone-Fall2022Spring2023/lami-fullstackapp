@@ -101,7 +101,6 @@ class _AppState extends State<App> {
               if (u.usertype == 'reg') {
                 // gets all their alarms and goes to the home screen
                 CollectionReference users = FirebaseFirestore.instance.collection('/users');
-                // getAllAlarms(medications)
                 getMedications(auth.currentUser?.uid, users).then((List<Medication> value) async {
                   await AwesomeNotifications().cancelAll();
                   setNotificationsForAllAlarms(value);
