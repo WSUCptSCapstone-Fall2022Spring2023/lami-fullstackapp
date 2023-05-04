@@ -6,18 +6,17 @@
 
 import 'package:alarm_mobile_app/admin.dart';
 import 'package:alarm_mobile_app/passwordreset.dart';
-import 'package:alarm_mobile_app/login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'register.dart';
+import 'package:alarm_mobile_app/register.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'users.dart';
-import 'home.dart';
+import 'package:alarm_mobile_app/users.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'utils.dart';
+import 'package:alarm_mobile_app/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:scroll_date_picker/scroll_date_picker.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 
 class EmployeeLogIn extends StatelessWidget {
   const EmployeeLogIn({Key? key}) : super(key: key);
@@ -169,7 +168,7 @@ class LogInFormState extends State<LogInForm> {
                 ),
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
-                  runApp(const LogIn());
+                  runApp(const ResidentLogIn());
                 },
                 child: const Text('Resident Login'),
               ),
@@ -207,7 +206,7 @@ class LogInFormState extends State<LogInForm> {
                       UserCredential credential =
                       await auth.signInWithEmailAndPassword(
                           email: emailcontroller.text.trim(),
-                          password: passwordcontroller.toString());
+                          password: passwordcontroller.text.trim());
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
@@ -230,29 +229,30 @@ class LogInFormState extends State<LogInForm> {
                     await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     if (user != null) {
-                      Users currentuser = await getCurrentUser(user.uid);
-                      await writeToSharedPreferences(currentuser, pref);
-                      if (currentuser.usertype == 'admin') {
+                      CollectionReference users = inst.collection('/users');
+                      Users currentUser = await getCurrentUser(user.uid, users);
+                      await writeToSharedPreferences(currentUser, pref);
+                      if (currentUser.usertype == 'admin') {
                         return runApp(Admin(users: await getAllUsers(inst)));
                       }
-                      return runApp(
-                          Home(alarms: await getAlarms(currentuser.id, inst)));
+                      return runApp(MedicationPage(medications: await getMedications(currentUser.id, users)));
                       // go to home screen w/ current user
-                    } else {
+                    }
+                    else {
                       //user exists in firebase auth but not in firestore - add to firestore
-                      CollectionReference users = inst.collection('users');
+                      CollectionReference users = inst.collection('/users');
                       Users newuser = Users(
                           email: emailcontroller.text,
                           id: user?.uid.toString() ?? '',
                           usertype: "reg",
                           firstname: '',
                           lastname: '');
-                      newuser.alarms = [];
+                      newuser.medications = [];
                       Map<String, dynamic> data = newuser.toMap();
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);
                       await writeToSharedPreferences(newuser, pref);
-                      runApp(Home(alarms: []));
+                      runApp(const MedicationPage(medications: []));
                     }
                   } else {
                     //error - user does not exist - display error email/ password is invalid

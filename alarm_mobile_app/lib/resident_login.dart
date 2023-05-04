@@ -4,23 +4,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:alarm_mobile_app/admin.dart';
-import 'package:alarm_mobile_app/passwordreset.dart';
 import 'package:alarm_mobile_app/employee_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'register.dart';
+import 'package:alarm_mobile_app/register.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'users.dart';
-import 'home.dart';
+import 'package:alarm_mobile_app/users.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'utils.dart';
+import 'package:alarm_mobile_app/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/alarm.dart';
+import 'package:alarm_mobile_app/notifications.dart';
+import 'package:alarm_mobile_app/medication.dart';
 
-class LogIn extends StatelessWidget {
-  const LogIn({Key? key}) : super(key: key);
+class ResidentLogIn extends StatelessWidget {
+  const ResidentLogIn({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,43 +77,41 @@ class LogIn extends StatelessWidget {
                     icon: const Icon(Icons.help, color: Colors.black))
               ],
             ),
-            body: const LogInForm(),
+            body: const ResidentLogInForm(),
           );
         }));
   }
 }
 
 // Create a Form widget.
-class LogInForm extends StatefulWidget {
-  const LogInForm({Key? key}) : super(key: key);
+class ResidentLogInForm extends StatefulWidget {
+  const ResidentLogInForm({Key? key}) : super(key: key);
 
   @override
-  LogInFormState createState() {
-    return LogInFormState();
+  ResidentLogInFormState createState() {
+    return ResidentLogInFormState();
   }
 }
 
 // Define a corresponding State class.
 // This class holds data related to the form.
-class LogInFormState extends State<LogInForm> {
+class ResidentLogInFormState extends State<ResidentLogInForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  final emailcontroller = TextEditingController();
-  //final passwordcontroller = TextEditingController();
+  final emailController = TextEditingController();
   late FirebaseAuth auth;
   DateTime _selectedDate = DateTime(DateTime.now().year - 1, 1, 1);
 
-  LogInFormState() {
+  ResidentLogInFormState() {
     auth = FirebaseAuth.instance;
   }
   @override
   void dispose() {
-    emailcontroller.dispose();
-    //passwordcontroller.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
@@ -138,13 +137,13 @@ class LogInFormState extends State<LogInForm> {
                 }
                 return null;
               },
-              controller: emailcontroller,
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               "Date of Birth",
               style: TextStyle(
                   color: Colors.white,
@@ -159,7 +158,9 @@ class LogInFormState extends State<LogInForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
+                  options: const DatePickerOptions(backgroundColor: Colors.transparent),
                   selectedDate: DateUtils.dateOnly(_selectedDate),
+                  // selectedDate: DateTime(1999, 6, 27),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
                   onDateTimeChanged: (DateTime value) {
@@ -170,24 +171,6 @@ class LogInFormState extends State<LogInForm> {
                 ),
               ),
             ),
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password',
-            //   ),
-              // The validator receives the text that the user has entered.
-              // validator: (value) {
-              //   if (value == null || value.isEmpty) {
-              //     return 'Please enter your password.';
-              //   }
-              //   return null;
-              // },
-            //   controller: passwordcontroller,
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // Forgot password?
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
               child: ElevatedButton(
@@ -233,16 +216,16 @@ class LogInFormState extends State<LogInForm> {
                     try {
                       UserCredential credential =
                           await auth.signInWithEmailAndPassword(
-                              email: emailcontroller.text.trim(),
-                              password: _selectedDate.toString());
+                              email: emailController.text.trim(),
+                              password: _selectedDate.toString() + "R3sident&AcCount*");
                       user = credential.user;
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
                         Fluttertoast.showToast(
-                            msg: "Invalid username or password");
+                            msg: "Invalid email");
                       } else if (e.code == 'wrong-password') {
                         Fluttertoast.showToast(
-                            msg: "Invalid username or password");
+                            msg: "Invalid date of birth");
                       } else {
                         Fluttertoast.showToast(msg: e.code);
                       }
@@ -257,29 +240,36 @@ class LogInFormState extends State<LogInForm> {
                         await SharedPreferences.getInstance();
                     FirebaseFirestore inst = FirebaseFirestore.instance;
                     if (user != null) {
-                      Users currentuser = await getCurrentUser(user.uid);
-                      await writeToSharedPreferences(currentuser, pref);
-                      if (currentuser.usertype == 'admin') {
-                        return runApp(Admin(users: await getAllUsers(inst)));
-                      }
+                      CollectionReference users = FirebaseFirestore.instance.collection('/users');
+                      Users currentUser = await getCurrentUser(user.uid, users);
+                      await writeToSharedPreferences(currentUser, pref);
+                      // if (currentUser.usertype == 'admin') {
+                      //   return runApp(Admin(users: await getAllUsers(inst)));
+                      // }
+                      List <Medication> medications = await getMedications(currentUser.id, users);
+                      setNotificationsForAllAlarms(medications);
+                      // List <Alarm> alarms = getAllAlarms(medications);
+                      // for (int i = 0; i < alarms.length; i++){
+                      //   createNotification(alarms[i]);
+                      // }
                       return runApp(
-                          Home(alarms: await getAlarms(currentuser.id, inst)));
+                          MedicationPage(medications: medications));
                       // go to home screen w/ current user
                     } else {
                       //user exists in firebase auth but not in firestore - add to firestore
-                      CollectionReference users = inst.collection('users');
+                      CollectionReference users = inst.collection('/users');
                       Users newuser = Users(
-                          email: emailcontroller.text,
+                          email: emailController.text,
                           id: user?.uid.toString() ?? '',
                           usertype: "reg",
                           firstname: '',
                           lastname: '');
-                      newuser.alarms = [];
+                      newuser.medications = [];
                       Map<String, dynamic> data = newuser.toMap();
                       data['alarms'] = [];
                       users.doc(newuser.id.toString()).set(data);
                       await writeToSharedPreferences(newuser, pref);
-                      runApp(Home(alarms: []));
+                      runApp(const MedicationPage(medications: []));
                     }
                   } else {
                     //error - user does not exist - display error email/ password is invalid

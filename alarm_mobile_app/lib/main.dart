@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 // represents the initialization + starting point of the app - redirects users to the appropriate screen
 
-import 'package:alarm_mobile_app/home.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+
+import 'medication.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'alarm.dart';
@@ -25,7 +28,6 @@ import 'notifications.dart';
 // starting point of the program, initializes most of the services for the app
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   AwesomeNotifications().initialize(
     null,
     [
@@ -39,7 +41,7 @@ void main() async {
     ],
     channelGroups: [
       NotificationChannelGroup(
-          channelGroupkey: "PalouseAlarm", channelGroupName: "PalouseAlarm"),
+          channelGroupName: "PalouseAlarm", channelGroupKey: 'PalouseAlarm'),
     ],
   );
 
@@ -50,16 +52,6 @@ void main() async {
     }
   });
 
-  // used for repeating notifications even w/out the user going back into the app
-  // should be using dismissed stream but for some reason it isn't working
-  AwesomeNotifications().displayedStream.listen((ReceivedNotification notif) {
-    AndroidForegroundService.stopForeground();
-    if (notif.payload != null) {
-      Alarm alarm = Alarm.fromStringMap(notif.payload ?? {});
-      createNotificationTomorrow(
-          alarm, DateTime.now().add(const Duration(days: 1)));
-    }
-  });
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -96,9 +88,11 @@ class _AppState extends State<App> {
         if (snapshot.connectionState == ConnectionState.done) {
           FirebaseAuth auth = FirebaseAuth.instance;
           if (auth.currentUser == null) {
-            return const LogIn();
-          } else {
-            getCurrentUser(auth.currentUser!.uid).then((Users u) {
+            return const ResidentLogIn();
+          }
+          else {
+            CollectionReference users = FirebaseFirestore.instance.collection('/users');
+            getCurrentUser(auth.currentUser!.uid, users).then((Users u) {
               var pref = SharedPreferences.getInstance();
               pref.then((value) {
                 writeToSharedPreferences(u, value);
@@ -106,16 +100,17 @@ class _AppState extends State<App> {
               // regular user
               if (u.usertype == 'reg') {
                 // gets all their alarms and goes to the home screen
-                getAlarms(auth.currentUser?.uid, FirebaseFirestore.instance)
-                    .then((List<Alarm> value) {
-                  return runApp(Home(
-                    alarms: value,
-                  ));
-                }, onError: (e) {
+                CollectionReference users = FirebaseFirestore.instance.collection('/users');
+                getMedications(auth.currentUser?.uid, users).then((List<Medication> value) async {
+                  await AwesomeNotifications().cancelAll();
+                  setNotificationsForAllAlarms(value);
+                  return runApp(MedicationPage(medications: value));
+                },
+              onError: (e) {
                   Fluttertoast.showToast(
                       msg:
                           "ERROR Occured - Please contact the house director - ERROR CODE: DB MISMATCH");
-                  return runApp(const LogIn());
+                  return runApp(const ResidentLogIn());
                 });
                 // if the current user is admin, run getAllUsers()
               } else if (u.usertype == 'admin') {
@@ -129,13 +124,13 @@ class _AppState extends State<App> {
                   Fluttertoast.showToast(
                       msg: // at least, this is reached.
                           "ERROR Occured on admin user - Please contact the house director - ERROR CODE: DB MISMATCH");
-                  return runApp(const LogIn());
+                  return runApp(const ResidentLogIn());
                 });
               } else {
                 Fluttertoast.showToast(
                     msg: // at least, this is reached.
                         "ERROR occured: invalid user type");
-                return runApp(const LogIn());
+                return runApp(const ResidentLogIn());
               }
             });
           }

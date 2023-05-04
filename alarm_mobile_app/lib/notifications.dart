@@ -1,18 +1,20 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:alarm_mobile_app/main.dart';
 import 'alarm.dart';
 
-void createNotification(Alarm alarm) {
+void createNotification(Alarm alarm, int dayOfWeek) {
   int hour = alarm.time.hour;
   int minute = alarm.time.minute;
-  for (int i = 0; i < alarm.repeattimes; i++) {
+  for (int i = 0; i < 1; i++) {
     if (hour >= 24) hour -= 24;
     Map<String, String> payload = alarm.toStringMap();
     AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: int.parse(alarm.id),
+            id: int.parse(alarm.alarmID),
             channelKey: "PalouseAlarm",
             title: "Reminder: " + alarm.nameOfDrug,
-            body: alarm.description,
+            body: "Medication Reminder",
             wakeUpScreen: true,
             notificationLayout: NotificationLayout.BigText,
             category: NotificationCategory.Alarm,
@@ -21,6 +23,7 @@ void createNotification(Alarm alarm) {
             displayOnForeground: true,
             payload: payload),
         schedule: NotificationCalendar(
+          weekday: dayOfWeek,
           hour: hour,
           minute: minute,
           timeZone: "America/Los_Angeles",
@@ -28,11 +31,12 @@ void createNotification(Alarm alarm) {
         ),
         actionButtons: [
           NotificationActionButton(
-              key: alarm.id,
+              key: alarm.alarmID,
               label: "Dismiss",
-              buttonType: ActionButtonType.DisabledAction)
+              // buttonType: ActionButtonType.DisabledAction
+          )
         ]);
-    hour += alarm.repeatduration.inHours;
+    hour += 1;
   }
 }
 
@@ -40,10 +44,10 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
   Map<String, String> payload = alarm.toStringMap();
   AwesomeNotifications().createNotification(
       content: NotificationContent(
-          id: int.parse(alarm.id),
+          id: int.parse(alarm.alarmID),
           channelKey: "PalouseAlarm",
           title: "Reminder take: " + alarm.nameOfDrug,
-          body: alarm.description,
+          body: "Medication Reminder",
           wakeUpScreen: true,
           notificationLayout: NotificationLayout.BigText,
           category: NotificationCategory.Alarm,
@@ -61,9 +65,10 @@ void createNotificationTomorrow(Alarm alarm, DateTime tomorrow) {
           allowWhileIdle: true),
       actionButtons: [
         NotificationActionButton(
-            key: alarm.id,
+            key: alarm.alarmID,
             label: "Dismiss",
-            buttonType: ActionButtonType.DisabledAction)
+            // buttonType: ActionButtonType.DisabledAction
+        )
       ]);
 }
 
@@ -83,7 +88,15 @@ void createImmediateNotif(String title, String desc) {
         NotificationActionButton(
           key: "0",
           label: "Dismiss",
-          buttonType: ActionButtonType.DisabledAction,
+          // buttonType: ActionButtonType.DisabledAction,
         )
       ]);
+}
+
+Future<void> resetBadgeCounter() async {
+await AwesomeNotifications().resetGlobalBadge();
+}
+
+Future<void> cancelNotifications() async {
+await AwesomeNotifications().cancelAll();
 }

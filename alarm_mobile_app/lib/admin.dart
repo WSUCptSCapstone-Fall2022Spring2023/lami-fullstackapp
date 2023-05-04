@@ -4,79 +4,17 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:alarm_mobile_app/admin_medications.dart';
+import 'package:alarm_mobile_app/medication.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'alarm.dart';
 import 'utils.dart';
 import 'users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'settings.dart';
+import 'package:alarm_mobile_app/admin_settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AlarmItem extends StatelessWidget {
-  AlarmItem({
-    required this.alarm,
-  }) : super(key: ObjectKey(alarm));
 
-  final Alarm alarm;
-
-  @override
-  Widget build(BuildContext context) {
-    String getText() {
-      if (alarm.enabled) {
-        return "On";
-      }
-      return "Off";
-    }
-
-    Color getColor() {
-      if (alarm.enabled) {
-        return Colors.lightGreen;
-      }
-      return Colors.red;
-    }
-
-    return ListTile(
-      title: Column(children: [
-        Row(children: [
-          Expanded(
-              child: Text(
-            alarm.nameOfDrug,
-            textScaleFactor: 1.25,
-          )),
-          Expanded(
-              child: Row(children: [
-            const Text(
-              "Enabled: ",
-              textScaleFactor: 1.25,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: getColor(), shape: const CircleBorder()),
-                onPressed: () {},
-                child: Text(getText()))
-          ]))
-        ]),
-        const Divider(
-          color: Colors.black,
-          thickness: 0.0,
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: Text(
-              "Time: " + alarm.time.format(context),
-              textScaleFactor: 1.2,
-            )),
-            Expanded(
-                child: Text(
-              "Desc: " + alarm.description,
-              textScaleFactor: 1.2,
-            ))
-          ],
-        )
-      ]),
-    );
-  }
-}
 
 class UserItem extends StatelessWidget {
   UserItem({
@@ -87,27 +25,53 @@ class UserItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(title: Text(users.firstname + " " + users.lastname),
-        //subtitle: Text(users.firstname),
-        children: <Widget>[
-          Column(children: <Widget>[
-            ConstrainedBox(
-                // not know why this is working.
-                // will fix this later once we find a problem.
-                constraints: const BoxConstraints(minHeight: 60.0),
-                child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return AlarmItem(alarm: users.alarms[index]);
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(
-                          thickness: 4.0,
-                          color: Colors.black,
-                        ),
-                    itemCount: users.alarms.length))
-          ])
-        ]);
+    return ListTile(
+      title: Column(children: [
+        const SizedBox(height: 10),
+        Row(children: [
+          Expanded(
+              child: Text(
+                "${users.firstname} ${users.lastname}",
+                textScaleFactor: 1.25,
+              )),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                  minimumSize: const Size(100, 35),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+              onPressed: () async {
+                CollectionReference userCollection = FirebaseFirestore.instance.collection('/users');
+                List<Medication> medications = await getMedications(users.id, userCollection);
+                runApp(AdminMedicationPage(medications: medications, username: users.firstname + " " + users.lastname));
+              },
+              child: const Text(
+                "Medications",
+              )),
+          const SizedBox(width: 10,),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: ThemeColors.darkData.primaryColorLight,
+                  minimumSize: const Size(80, 35),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+              onPressed: () async {
+
+                CollectionReference userCollection = FirebaseFirestore.instance.collection('/users');
+                await deleteUser(users.id, userCollection);
+                // List<Medication> medications = await getMedications(users.id, userCollection);
+                // for (int i = 0; i < medications.length; i++) {
+                //   await deleteMedication(medications[i].id, users.id, userCollection);
+                // }
+                runApp(Admin(users: await getAllUsers(FirebaseFirestore.instance)));
+              },
+              child: const Text(
+                "Delete",
+              )),
+        ]),
+        const SizedBox(height: 8)
+      ]),
+    );
   }
 }
 
@@ -123,19 +87,23 @@ class Admin extends StatelessWidget {
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
-        theme: ThemeColors.lightData,
-        themeMode: ThemeMode.system,
+        theme: ThemeColors.darkData,
+        themeMode: ThemeMode.dark,
         home: Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
             actions: [
               // settings button
               IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.black),
+                  icon:
+                    const Icon(
+                        Icons.person,
+                        color: Colors.black,
+                        size: 30,
+                    ),
                   onPressed: () async {
-                    Users user = getCurrentUserLocal(
-                        await SharedPreferences.getInstance());
-                    runApp(SettingsPage(user: user));
+                    Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                    runApp(AdminSettingsPage(user: user));
                   }),
             ],
           ),
@@ -165,9 +133,10 @@ class AdminScreenState extends State<AdminScreen> {
           return UserItem(users: widget.users[index]);
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(
-              thickness: 4.0,
-              color: Colors.black,
-            ),
+          thickness: 3.0,
+          indent: 25,
+          endIndent: 25,
+        ),
         itemCount: widget.users.length);
   }
 }

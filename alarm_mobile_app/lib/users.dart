@@ -1,3 +1,6 @@
+import 'package:alarm_mobile_app/medication.dart';
+import 'package:alarm_mobile_app/utils.dart';
+
 import 'alarm.dart';
 
 // represents the users class for all usersd
@@ -10,8 +13,7 @@ class Users {
   final String email;
   final String firstname;
   final String lastname;
-  late List<Alarm> alarms;
-  late DateTime dateOfBirth;
+  late List<Medication> medications;
   // constructor for the values
   Users({
     required this.id,
@@ -24,7 +26,7 @@ class Users {
   // should be used only for testing purposes
   @override
   String toString() {
-    return 'User{id: $id, email: $email, usertype: $usertype, firstname: $firstname, lastname: $lastname, dateOfBirth: $dateOfBirth)\nAlarms{$alarms} ';
+    return 'User{id: $id, email: $email, usertype: $usertype, firstname: $firstname, lastname: $lastname)\nMedications{$medications} ';
   }
 
   // maps the value from the database to the values present in the user class
@@ -35,8 +37,7 @@ class Users {
       'email': email,
       'firstname': firstname,
       'lastname': lastname,
-      'dateOfBirth': dateOfBirth,
-      'alarms': alarms,
+      'medications': medications,
     };
   }
 
@@ -49,8 +50,7 @@ class Users {
       firstname: data['firstname'] ?? "unknown firstname",
       lastname: data['lastname'] ?? "unknown lastname",
     );
-    temp.alarms = [];
-    temp.dateOfBirth = DateTime.now();
+    temp.medications = convertMapMedicationsToList(data['medications']);
     return temp;
   }
 

@@ -5,14 +5,15 @@
 // Copyright 2018 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
 import 'package:alarm_mobile_app/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'users.dart';
+import 'package:alarm_mobile_app/users.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
@@ -32,6 +33,16 @@ class Register extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text(appTitle),
+          actions: [
+            // settings button
+            IconButton(
+                icon: const Icon(Icons.exit_to_app,
+                    color: Colors.black, size: 35),
+                onPressed: ()  {
+                        return runApp(const ResidentLogIn());
+                  }
+                ),
+          ],
         ),
         body: const RegisterForm(),
       ),
@@ -73,6 +84,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
+
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: <Widget>[
@@ -144,6 +156,7 @@ class RegisterFormState extends State<RegisterForm> {
               child: SizedBox(
                 height: 200,
                 child: ScrollDatePicker(
+                  options: const DatePickerOptions(backgroundColor: Colors.transparent),
                   selectedDate: DateUtils.dateOnly(_selectedDate),
                   minimumDate: DateTime(DateTime.now().year - 100, 1, 1),
                   maximumDate: DateTime(DateTime.now().year - 10, 12, 31),
@@ -155,46 +168,6 @@ class RegisterFormState extends State<RegisterForm> {
                 ),
               ),
             ),
-            // password
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password',
-            //   ),
-            //   // The validator receives the text that the user has entered.
-            //   validator: (value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter your password.';
-            //     }
-            //     return null;
-            //   },
-            //   controller: passwordcontroller,
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // // password confirmation
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     border: UnderlineInputBorder(),
-            //     labelText: 'Password confirmation',
-            //   ),
-            //   // The validator receives the text that the user has entered.
-            //   validator: (value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter your password again.';
-            //     }
-            //     if (value != passwordcontroller.text) {
-            //       return 'Passwords must match!';
-            //     }
-            //     return null;
-            //   },
-            //   obscureText: true,
-            //   enableSuggestions: false,
-            //   autocorrect: false,
-            // ),
-            // // First name
-
             // Submit
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
@@ -214,7 +187,7 @@ class RegisterFormState extends State<RegisterForm> {
                     try {
                       user = (await auth.createUserWithEmailAndPassword(
                               email: emailcontroller.text,
-                              password: _selectedDate.toString()))
+                              password: _selectedDate.toString() + "R3sident&AcCount*"))
                           .user;
                     } on FirebaseAuthException catch (e) {
                       // if (e.code == 'weak-password') {
@@ -236,15 +209,14 @@ class RegisterFormState extends State<RegisterForm> {
                           firstname: firstnamecontroller.text,
                           lastname: lastnamecontroller.text,
                       );
-                      newuser.dateOfBirth = _selectedDate;
-                      newuser.alarms = [];
+                      newuser.medications = [];
                       await writeToSharedPreferences(newuser, pref);
                       // adds the user to the database
                       CollectionReference users =
                           FirebaseFirestore.instance.collection('/users');
                       Map<String, dynamic> data = newuser.toMap();
                       users.doc(newuser.id.toString()).set(data);
-                      runApp(Home(alarms: []));
+                      runApp(const MedicationPage(medications: []));
                     }
                   }
                 },

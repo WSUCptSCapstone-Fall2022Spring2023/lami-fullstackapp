@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:547099170398:android:de23c7142de8a41a5b46cf",
+        "mobilesdk_app_id": "1:547099170398:android:30aef29216576f205b46cf",
         "android_client_info": {
           "package_name": "com.example.alarm_mobile_app"
         }
@@ -29,6 +29,51 @@
             {
               "client_id": "547099170398-dec6cj05qao2gf5tpq8f8kihfegcmcb3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "547099170398-6equ39frv3ra3klg23gk3eq6ltpsu07f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alarmMobileApp",
+                "app_store_id": "6448479764"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547099170398:android:30aef29216576f205b46cf",
+        "android_client_info": {
+          "package_name": "com.lami_android.alarm_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547099170398-dec6cj05qao2gf5tpq8f8kihfegcmcb3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCFUlDP6sg7nsKKWuOpLj9VhX8-pa37pI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547099170398-dec6cj05qao2gf5tpq8f8kihfegcmcb3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "547099170398-6equ39frv3ra3klg23gk3eq6ltpsu07f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alarmMobileApp",
+                "app_store_id": "6448479764"
+              }
             }
           ]
         }

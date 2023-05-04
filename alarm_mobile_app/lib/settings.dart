@@ -6,9 +6,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:alarm_mobile_app/admin.dart';
-import 'package:alarm_mobile_app/alarm.dart';
-import 'package:alarm_mobile_app/home.dart';
-import 'package:alarm_mobile_app/login.dart';
+import 'package:alarm_mobile_app/resident_login.dart';
+import 'package:alarm_mobile_app/medication.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +18,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:alarm_mobile_app/medication_page.dart';
+import 'package:alarm_mobile_app/todays_medications.dart';
 
 class SettingsPage extends StatelessWidget {
   final Users user;
@@ -26,14 +27,16 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = "Alliance House Medication Reminder";
+    const appTitle = "Profile";
     // temporary URL - will replace w/ video once that is recorded
     final Uri _url =
         Uri.parse('https://www.youtube.com/channel/UCwEi93Tw9U6z8u4KKXxJJ1g');
     void _launchURL() async {
       if (!await launchUrl(_url)) throw 'Could not launch $_url';
     }
-
+    // Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+    // user.medications = await getMedications(user.id, FirebaseFirestore.instance);
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     return MaterialApp(
         title: appTitle,
         darkTheme: ThemeColors.darkData,
@@ -81,6 +84,63 @@ class SettingsPage extends StatelessWidget {
             body: SettingsPageForm(
               user: user,
             ),
+            bottomNavigationBar: BottomAppBar(
+                color: ThemeColors.darkData.primaryColorDark,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.calendar_view_day,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                        onPressed: () async {
+                          Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                          runApp(TodaysMedications(medications: await getMedications(user.id, users)));
+                        },
+                      ),
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.medication,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                          onPressed: () async {
+                            Users user = getCurrentUserLocal(await SharedPreferences.getInstance());
+                            runApp(MedicationPage(medications: await getMedications(user.id, users)));
+                          },
+                      ),
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeColors.darkData.primaryColorLight,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20)
+                        ),
+                        child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: ThemeColors.darkData.primaryColorDark
+                        ),
+                        onPressed: () async {
+                          SharedPreferences pref = await SharedPreferences.getInstance();
+                          runApp(SettingsPage(user: getCurrentUserLocal(pref)));
+                        },
+                      )
+                    ])),
           );
         }));
   }
@@ -117,7 +177,7 @@ class SettingsPageFormState extends State<SettingsPageForm> {
     firstnamecontroller.text = widget.user.firstname;
     lastnamecontroller.text = widget.user.lastname;
     emailcontroller.text = widget.user.email;
-
+    CollectionReference users = FirebaseFirestore.instance.collection('/users');
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -171,35 +231,6 @@ class SettingsPageFormState extends State<SettingsPageForm> {
               },
               controller: emailcontroller,
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Password (no need for name and email address)',
-              ),
-              controller: passwordcontroller,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            // password confirmation
-            TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText:
-                    'Password confirmation (no need for name and email address)',
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value != passwordcontroller.text) {
-                  return 'Passwords must match!';
-                }
-                return null;
-              },
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-
             // Submit
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
@@ -234,11 +265,10 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                                 await SharedPreferences.getInstance())
                             .usertype ==
                         'reg') {
-                      getAlarms(FirebaseAuth.instance.currentUser?.uid,
-                              FirebaseFirestore.instance)
-                          .then((List<Alarm> value) {
-                        return runApp(Home(
-                          alarms: value,
+                      getMedications(FirebaseAuth.instance.currentUser?.uid, users)
+                          .then((List<Medication> value) {
+                        return runApp(MedicationPage(
+                          medications: value,
                         ));
                       });
                     } else {
@@ -250,38 +280,6 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                 },
                 child: const Text(
                   'Save Changes',
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeColors.darkData.primaryColorLight,
-                  fixedSize: const Size(200.0, 60.0),
-                ),
-                onPressed: () async {
-                  if (getCurrentUserLocal(await SharedPreferences.getInstance())
-                          .usertype ==
-                      'reg') {
-                    getAlarms(FirebaseAuth.instance.currentUser?.uid,
-                            FirebaseFirestore.instance)
-                        .then((List<Alarm> value) {
-                      return runApp(Home(
-                        alarms: value,
-                      ));
-                    });
-                  } else {
-                    return runApp(Admin(
-                        users: await getAllUsers(FirebaseFirestore.instance)));
-                  }
-                },
-                child: const Text(
-                  'Cancel',
                   textDirection: TextDirection.ltr,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -310,9 +308,9 @@ class SettingsPageFormState extends State<SettingsPageForm> {
                           actions: [
                             TextButton(
                                 onPressed: () async {
-                                  AwesomeNotifications().cancelAll();
+                                  await AwesomeNotifications().cancelAll();
                                   await instance.signOut();
-                                  runApp(const LogIn());
+                                  runApp(const ResidentLogIn());
                                 },
                                 child: const Text(
                                   "Confirm",
